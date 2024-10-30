@@ -86,11 +86,11 @@ blocks and permutation flows. The flow is just a standard torch
 <code class="sourceCode R"><span><span class="va">x</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/torch/man/torch_randn.html" class="external-link">torch_randn</a></span><span class="op">(</span><span class="fl">5</span>, <span class="fl">2</span><span class="op">)</span></span>
 <span><span class="fu">flow_model</span><span class="op">(</span><span class="va">x</span><span class="op">)</span></span>
 <span><span class="co">#&gt; torch_tensor</span></span>
-<span><span class="co">#&gt; -2.7923 -1.0702</span></span>
-<span><span class="co">#&gt;  1.2795  1.9476</span></span>
-<span><span class="co">#&gt;  0.7161 -0.4379</span></span>
-<span><span class="co">#&gt;  2.1949 -0.6206</span></span>
-<span><span class="co">#&gt; -0.0540  0.8265</span></span>
+<span><span class="co">#&gt; -1.0808  0.7528</span></span>
+<span><span class="co">#&gt; -0.0569  0.6706</span></span>
+<span><span class="co">#&gt; -0.4926  0.5504</span></span>
+<span><span class="co">#&gt;  0.0781 -0.0565</span></span>
+<span><span class="co">#&gt; -0.3703 -0.3097</span></span>
 <span><span class="co">#&gt; [ CPUFloatType{5,2} ][ grad_fn = &lt;CatBackward0&gt; ]</span></span></code></pre></div>
 <p>The first dimension of the input acts as a batch dimension, so the
 flow can be used to generate multiple samples at once. The above code
@@ -100,11 +100,11 @@ flow. This can also be done directly using the
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/generate_from_conditional_flow.html">generate_from_conditional_flow</a></span><span class="op">(</span><span class="va">flow_model</span>, <span class="fl">5</span><span class="op">)</span></span>
 <span><span class="co">#&gt; torch_tensor</span></span>
-<span><span class="co">#&gt;  1.4131  0.3444</span></span>
-<span><span class="co">#&gt;  1.6553  0.0222</span></span>
-<span><span class="co">#&gt;  1.1972  0.4625</span></span>
-<span><span class="co">#&gt;  0.5416  1.2305</span></span>
-<span><span class="co">#&gt;  1.1299  0.3818</span></span>
+<span><span class="co">#&gt; -1.6493 -0.8393</span></span>
+<span><span class="co">#&gt; -0.8854  0.1991</span></span>
+<span><span class="co">#&gt;  0.2094 -1.9553</span></span>
+<span><span class="co">#&gt; -0.3530 -1.2090</span></span>
+<span><span class="co">#&gt;  1.3110 -1.7502</span></span>
 <span><span class="co">#&gt; [ CPUFloatType{5,2} ][ grad_fn = &lt;ReshapeAliasBackward0&gt; ]</span></span></code></pre></div>
 </div>
 <div class="section level2">
@@ -128,11 +128,11 @@ follows:</p>
 <code class="sourceCode R"><span><span class="va">conditioning</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/torch/man/torch_randn.html" class="external-link">torch_randn</a></span><span class="op">(</span><span class="fl">3</span><span class="op">)</span></span>
 <span><span class="fu"><a href="../reference/generate_from_conditional_flow.html">generate_from_conditional_flow</a></span><span class="op">(</span><span class="va">conditioned_flow_model</span>, <span class="fl">5</span>, <span class="va">conditioning</span><span class="op">)</span></span>
 <span><span class="co">#&gt; torch_tensor</span></span>
-<span><span class="co">#&gt; -1.3610  2.0440</span></span>
-<span><span class="co">#&gt;  0.5794  1.5490</span></span>
-<span><span class="co">#&gt;  0.9226 -0.0148</span></span>
-<span><span class="co">#&gt;  0.1208  0.5399</span></span>
-<span><span class="co">#&gt;  0.5182 -0.1098</span></span>
+<span><span class="co">#&gt;  0.0442  0.2643</span></span>
+<span><span class="co">#&gt; -1.4209  0.7983</span></span>
+<span><span class="co">#&gt;  0.8411  0.2335</span></span>
+<span><span class="co">#&gt;  1.5025 -1.8936</span></span>
+<span><span class="co">#&gt;  0.4730  0.3170</span></span>
 <span><span class="co">#&gt; [ CPUFloatType{5,2} ][ grad_fn = &lt;ReshapeAliasBackward0&gt; ]</span></span></code></pre></div>
 <p>We can also do this for a batch of conditioning variables:</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
@@ -140,34 +140,34 @@ follows:</p>
 <span><span class="fu"><a href="../reference/generate_from_conditional_flow.html">generate_from_conditional_flow</a></span><span class="op">(</span><span class="va">conditioned_flow_model</span>, <span class="fl">5</span>, <span class="va">conditioning</span><span class="op">)</span></span>
 <span><span class="co">#&gt; torch_tensor</span></span>
 <span><span class="co">#&gt; (1,.,.) = </span></span>
-<span><span class="co">#&gt;  -0.5536 -1.8502</span></span>
-<span><span class="co">#&gt;   0.1914  1.8221</span></span>
-<span><span class="co">#&gt;   0.5914 -0.5867</span></span>
-<span><span class="co">#&gt;  -0.7080 -0.7218</span></span>
-<span><span class="co">#&gt;   2.0412 -0.5226</span></span>
-<span><span class="co">#&gt;   0.3709 -0.1188</span></span>
-<span><span class="co">#&gt;   0.0776  1.3011</span></span>
-<span><span class="co">#&gt;  -0.7197 -0.9601</span></span>
+<span><span class="co">#&gt;   0.9532  0.2470</span></span>
+<span><span class="co">#&gt;  -1.7212 -1.3995</span></span>
+<span><span class="co">#&gt;  -1.3869  1.0181</span></span>
+<span><span class="co">#&gt;  -0.8706 -1.6796</span></span>
+<span><span class="co">#&gt;  -0.0254 -0.5515</span></span>
+<span><span class="co">#&gt;  -0.2966  0.8886</span></span>
+<span><span class="co">#&gt;  -1.0506  1.8536</span></span>
+<span><span class="co">#&gt;   1.6009  1.0924</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; (2,.,.) = </span></span>
-<span><span class="co">#&gt;  -0.1502  0.1993</span></span>
-<span><span class="co">#&gt;   1.5647 -0.3269</span></span>
-<span><span class="co">#&gt;  -0.9076 -1.1331</span></span>
-<span><span class="co">#&gt;  -0.2833  1.3072</span></span>
-<span><span class="co">#&gt;   0.3172 -0.0440</span></span>
-<span><span class="co">#&gt;   1.3629  1.2759</span></span>
-<span><span class="co">#&gt;  -0.9947  0.3235</span></span>
-<span><span class="co">#&gt;   0.0762  0.2103</span></span>
+<span><span class="co">#&gt;   0.8489  0.6032</span></span>
+<span><span class="co">#&gt;  -0.9127  2.6108</span></span>
+<span><span class="co">#&gt;   1.3084  1.2020</span></span>
+<span><span class="co">#&gt;   0.0801  0.9216</span></span>
+<span><span class="co">#&gt;  -0.6925 -0.9336</span></span>
+<span><span class="co">#&gt;  -0.2774  0.1147</span></span>
+<span><span class="co">#&gt;   1.4264 -0.0361</span></span>
+<span><span class="co">#&gt;   0.2125  0.2887</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; (3,.,.) = </span></span>
-<span><span class="co">#&gt;  -1.5188 -0.3238</span></span>
-<span><span class="co">#&gt;  -0.6533 -0.3198</span></span>
-<span><span class="co">#&gt;  -1.7981 -0.5759</span></span>
-<span><span class="co">#&gt;  -0.3649 -0.3481</span></span>
-<span><span class="co">#&gt;  -0.4145 -1.7805</span></span>
-<span><span class="co">#&gt;  -0.2633  0.2814</span></span>
-<span><span class="co">#&gt;   1.5091 -1.2413</span></span>
-<span><span class="co">#&gt;  -0.9167 -1.0015</span></span>
+<span><span class="co">#&gt;   0.2245 -0.0159</span></span>
+<span><span class="co">#&gt;  -0.6654  2.4575</span></span>
+<span><span class="co">#&gt;   0.6303  1.5191</span></span>
+<span><span class="co">#&gt;   0.0516  0.8272</span></span>
+<span><span class="co">#&gt;   0.7993 -1.1295</span></span>
+<span><span class="co">#&gt;  -1.0556 -0.1425</span></span>
+<span><span class="co">#&gt;   1.2447  0.3269</span></span>
+<span><span class="co">#&gt;  -0.8212 -1.6791</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; ... [the output was truncated (use n=-1 to disable)]</span></span>
 <span><span class="co">#&gt; [ CPUFloatType{5,8,2} ][ grad_fn = &lt;ReshapeAliasBackward0&gt; ]</span></span></code></pre></div>
@@ -196,36 +196,36 @@ can generate samples from this distribution as follows:</p>
 <span><span class="fu">generate_samples</span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="co">#&gt; $target</span></span>
 <span><span class="co">#&gt; torch_tensor</span></span>
-<span><span class="co">#&gt;  1.2932  0.6658</span></span>
-<span><span class="co">#&gt; -0.4149  2.0761</span></span>
-<span><span class="co">#&gt;  0.6302  1.6129</span></span>
-<span><span class="co">#&gt;  0.0837  0.8933</span></span>
-<span><span class="co">#&gt;  0.2105  0.5960</span></span>
-<span><span class="co">#&gt; -0.6306  1.3975</span></span>
-<span><span class="co">#&gt; -3.9089  2.2017</span></span>
-<span><span class="co">#&gt;  0.2945  0.2309</span></span>
-<span><span class="co">#&gt; -0.4993  0.6696</span></span>
-<span><span class="co">#&gt;  0.0994  1.9279</span></span>
-<span><span class="co">#&gt; -0.6066  1.4805</span></span>
-<span><span class="co">#&gt;  0.0577  0.1713</span></span>
-<span><span class="co">#&gt; -0.1251  0.1240</span></span>
-<span><span class="co">#&gt;  0.2170  0.4068</span></span>
-<span><span class="co">#&gt;  0.0704  1.2522</span></span>
-<span><span class="co">#&gt;  1.6138  1.0051</span></span>
-<span><span class="co">#&gt; -0.2028  0.6509</span></span>
-<span><span class="co">#&gt; -0.8154  1.3649</span></span>
-<span><span class="co">#&gt; -1.0470  1.1528</span></span>
-<span><span class="co">#&gt;  1.8005  1.6006</span></span>
-<span><span class="co">#&gt;  0.6750  0.5814</span></span>
-<span><span class="co">#&gt; -0.1133  0.2386</span></span>
-<span><span class="co">#&gt; -0.1103  0.2851</span></span>
-<span><span class="co">#&gt;  1.8651  1.3176</span></span>
-<span><span class="co">#&gt;  0.0080  0.0258</span></span>
-<span><span class="co">#&gt;  0.0048  0.9614</span></span>
-<span><span class="co">#&gt; -0.5999  1.0139</span></span>
-<span><span class="co">#&gt;  0.0148  0.0108</span></span>
-<span><span class="co">#&gt;  0.3778  0.3078</span></span>
-<span><span class="co">#&gt;  0.1903  0.4806</span></span>
+<span><span class="co">#&gt;  7.8788e-01  1.4398e+00</span></span>
+<span><span class="co">#&gt; -2.6057e-02  2.4682e-01</span></span>
+<span><span class="co">#&gt; -6.4316e-01  1.8022e+00</span></span>
+<span><span class="co">#&gt;  3.4578e-01  4.7498e-01</span></span>
+<span><span class="co">#&gt;  1.1357e-02  4.1975e-01</span></span>
+<span><span class="co">#&gt;  2.5780e-01  3.6613e-01</span></span>
+<span><span class="co">#&gt; -2.4863e-01  2.4616e-01</span></span>
+<span><span class="co">#&gt;  1.5419e+00  1.0356e+00</span></span>
+<span><span class="co">#&gt; -5.5220e-01  5.3484e-01</span></span>
+<span><span class="co">#&gt;  7.4871e-01  1.3190e+00</span></span>
+<span><span class="co">#&gt;  2.3045e+00  1.8485e+00</span></span>
+<span><span class="co">#&gt; -3.6404e-01  1.2531e+00</span></span>
+<span><span class="co">#&gt;  5.2128e-01  6.4139e-01</span></span>
+<span><span class="co">#&gt;  1.1297e+00  1.0620e+00</span></span>
+<span><span class="co">#&gt;  3.3069e-01  1.8917e-01</span></span>
+<span><span class="co">#&gt;  3.1709e+00  2.1927e+00</span></span>
+<span><span class="co">#&gt; -3.4434e-01  5.4823e-01</span></span>
+<span><span class="co">#&gt; -3.7244e-01  3.5381e-01</span></span>
+<span><span class="co">#&gt; -2.8761e-01  8.6225e-01</span></span>
+<span><span class="co">#&gt; -1.5669e+00  1.2912e+00</span></span>
+<span><span class="co">#&gt;  5.3189e-02  4.8690e-01</span></span>
+<span><span class="co">#&gt; -1.9733e+00  1.0005e+00</span></span>
+<span><span class="co">#&gt;  1.1799e+00  8.1232e-01</span></span>
+<span><span class="co">#&gt; -6.3777e-02  1.0186e-01</span></span>
+<span><span class="co">#&gt; -7.7077e-01  1.1977e+00</span></span>
+<span><span class="co">#&gt; -2.2670e-01  6.2771e-01</span></span>
+<span><span class="co">#&gt;  1.0578e+00  8.9986e-01</span></span>
+<span><span class="co">#&gt; -1.1583e+00  1.5445e+00</span></span>
+<span><span class="co">#&gt; -1.9057e-01  5.0637e-01</span></span>
+<span><span class="co">#&gt;  2.3035e-01  2.7780e-01</span></span>
 <span><span class="co">#&gt; ... [the output was truncated (use n=-1 to disable)]</span></span>
 <span><span class="co">#&gt; [ CPUFloatType{1024,2} ]</span></span></code></pre></div>
 <p>This function can be used to train the flow to match the distribution
@@ -243,69 +243,69 @@ using the <code>train_conditional_flow</code> function:</p>
 <span>  <span class="op">}</span></span>
 <span><span class="op">)</span></span>
 <span><span class="co">#&gt; = Starting epoch 1 </span></span>
-<span><span class="co">#&gt; Test loss: 0.3303271 </span></span>
+<span><span class="co">#&gt; Test loss: 0.3681934 </span></span>
 <span><span class="co">#&gt; = Starting epoch 2 </span></span>
-<span><span class="co">#&gt; Test loss: 0.1664859 </span></span>
+<span><span class="co">#&gt; Test loss: 0.1731545 </span></span>
 <span><span class="co">#&gt; = Starting epoch 3 </span></span>
-<span><span class="co">#&gt; Test loss: 0.03623903 </span></span>
+<span><span class="co">#&gt; Test loss: 0.08943295 </span></span>
 <span><span class="co">#&gt; = Starting epoch 4 </span></span>
-<span><span class="co">#&gt; Test loss: -0.07940441 </span></span>
+<span><span class="co">#&gt; Test loss: 0.08311474 </span></span>
 <span><span class="co">#&gt; = Starting epoch 5 </span></span>
-<span><span class="co">#&gt; Test loss: -0.1015946 </span></span>
+<span><span class="co">#&gt; Test loss: 0.003827512 </span></span>
 <span><span class="co">#&gt; = Starting epoch 6 </span></span>
-<span><span class="co">#&gt; Test loss: -0.1273149 </span></span>
+<span><span class="co">#&gt; Test loss: -0.05494535 </span></span>
 <span><span class="co">#&gt; = Starting epoch 7 </span></span>
-<span><span class="co">#&gt; Test loss: -0.168892 </span></span>
+<span><span class="co">#&gt; Test loss: -0.07960838 </span></span>
 <span><span class="co">#&gt; = Starting epoch 8 </span></span>
-<span><span class="co">#&gt; Test loss: -0.2119405 </span></span>
+<span><span class="co">#&gt; Test loss: -0.1083888 </span></span>
 <span><span class="co">#&gt; = Starting epoch 9 </span></span>
-<span><span class="co">#&gt; Test loss: -0.254711 </span></span>
+<span><span class="co">#&gt; Test loss: -0.124995 </span></span>
 <span><span class="co">#&gt; = Starting epoch 10 </span></span>
-<span><span class="co">#&gt; Test loss: -0.2822396 </span></span>
+<span><span class="co">#&gt; Test loss: -0.1213961 </span></span>
 <span><span class="co">#&gt; = Starting epoch 11 </span></span>
-<span><span class="co">#&gt; Test loss: -0.2970874 </span></span>
+<span><span class="co">#&gt; Test loss: -0.1421451 </span></span>
 <span><span class="co">#&gt; = Starting epoch 12 </span></span>
-<span><span class="co">#&gt; Test loss: -0.3079001 </span></span>
+<span><span class="co">#&gt; Test loss: -0.1581177 </span></span>
 <span><span class="co">#&gt; = Starting epoch 13 </span></span>
-<span><span class="co">#&gt; Test loss: -0.3041632 </span></span>
+<span><span class="co">#&gt; Test loss: -0.1550937 </span></span>
 <span><span class="co">#&gt; = Starting epoch 14 </span></span>
-<span><span class="co">#&gt; Test loss: -0.3303123 </span></span>
+<span><span class="co">#&gt; Test loss: -0.1776897 </span></span>
 <span><span class="co">#&gt; = Starting epoch 15 </span></span>
-<span><span class="co">#&gt; Test loss: -0.3427449 </span></span>
+<span><span class="co">#&gt; Test loss: -0.1658533 </span></span>
 <span><span class="co">#&gt; = Starting epoch 16 </span></span>
-<span><span class="co">#&gt; Test loss: -0.3440132 </span></span>
+<span><span class="co">#&gt; Test loss: -0.1651983 </span></span>
 <span><span class="co">#&gt; = Starting epoch 17 </span></span>
-<span><span class="co">#&gt; Test loss: -0.3472028 </span></span>
+<span><span class="co">#&gt; Test loss: -0.1884031 </span></span>
 <span><span class="co">#&gt; = Starting epoch 18 </span></span>
-<span><span class="co">#&gt; Test loss: -0.3569107 </span></span>
+<span><span class="co">#&gt; Test loss: -0.1749389 </span></span>
 <span><span class="co">#&gt; = Starting epoch 19 </span></span>
-<span><span class="co">#&gt; Test loss: -0.3671342 </span></span>
+<span><span class="co">#&gt; Test loss: -0.16663 </span></span>
 <span><span class="co">#&gt; = Starting epoch 20 </span></span>
-<span><span class="co">#&gt; Test loss: -0.358309 </span></span>
+<span><span class="co">#&gt; Test loss: -0.201172 </span></span>
 <span><span class="co">#&gt; = Starting epoch 21 </span></span>
-<span><span class="co">#&gt; Test loss: -0.3456832 </span></span>
+<span><span class="co">#&gt; Test loss: -0.1752094 </span></span>
 <span><span class="co">#&gt; = Starting epoch 22 </span></span>
-<span><span class="co">#&gt; Test loss: -0.3395391 </span></span>
+<span><span class="co">#&gt; Test loss: -0.1965127 </span></span>
 <span><span class="co">#&gt; = Starting epoch 23 </span></span>
-<span><span class="co">#&gt; Test loss: -0.3692303 </span></span>
+<span><span class="co">#&gt; Test loss: -0.2101095 </span></span>
 <span><span class="co">#&gt; = Starting epoch 24 </span></span>
-<span><span class="co">#&gt; Test loss: -0.3505052 </span></span>
+<span><span class="co">#&gt; Test loss: -0.1986583 </span></span>
 <span><span class="co">#&gt; = Starting epoch 25 </span></span>
-<span><span class="co">#&gt; Test loss: -0.3633822 </span></span>
+<span><span class="co">#&gt; Test loss: -0.2089123 </span></span>
 <span><span class="co">#&gt; = Starting epoch 26 </span></span>
-<span><span class="co">#&gt; Test loss: -0.3481818 </span></span>
+<span><span class="co">#&gt; Test loss: -0.188476 </span></span>
 <span><span class="co">#&gt; = Starting epoch 27 </span></span>
-<span><span class="co">#&gt; Test loss: -0.39016 </span></span>
+<span><span class="co">#&gt; Test loss: -0.192108 </span></span>
 <span><span class="co">#&gt; = Starting epoch 28 </span></span>
-<span><span class="co">#&gt; Test loss: -0.3673509 </span></span>
+<span><span class="co">#&gt; Test loss: -0.2005045 </span></span>
 <span><span class="co">#&gt; = Starting epoch 29 </span></span>
-<span><span class="co">#&gt; Test loss: -0.3825444 </span></span>
+<span><span class="co">#&gt; Test loss: -0.2180158 </span></span>
 <span><span class="co">#&gt; = Starting epoch 30 </span></span>
-<span><span class="co">#&gt; Test loss: -0.3884587 </span></span>
+<span><span class="co">#&gt; Test loss: -0.2170632 </span></span>
 <span><span class="co">#&gt; = Starting epoch 31 </span></span>
-<span><span class="co">#&gt; Test loss: -0.4036498 </span></span>
+<span><span class="co">#&gt; Test loss: -0.1891847 </span></span>
 <span><span class="co">#&gt; = Starting epoch 32 </span></span>
-<span><span class="co">#&gt; Test loss: -0.3864982</span></span></code></pre></div>
+<span><span class="co">#&gt; Test loss: -0.2197366</span></span></code></pre></div>
 <p>It looks as though the test loss has converged. We can sample from
 the trained flow as follows and compare the samples to the test set:</p>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
@@ -369,261 +369,261 @@ with four replicates:</p>
 <span>  <span class="op">}</span></span>
 <span><span class="op">)</span></span>
 <span><span class="co">#&gt; = Starting epoch 1 </span></span>
-<span><span class="co">#&gt; Test loss: -0.01026028 </span></span>
+<span><span class="co">#&gt; Test loss: 0.534803 </span></span>
 <span><span class="co">#&gt; = Starting epoch 2 </span></span>
-<span><span class="co">#&gt; Test loss: -0.3655937 </span></span>
+<span><span class="co">#&gt; Test loss: 0.05451959 </span></span>
 <span><span class="co">#&gt; = Starting epoch 3 </span></span>
-<span><span class="co">#&gt; Test loss: -0.4625674 </span></span>
+<span><span class="co">#&gt; Test loss: -0.3842063 </span></span>
 <span><span class="co">#&gt; = Starting epoch 4 </span></span>
-<span><span class="co">#&gt; Test loss: -0.5143663 </span></span>
+<span><span class="co">#&gt; Test loss: -0.4006451 </span></span>
 <span><span class="co">#&gt; = Starting epoch 5 </span></span>
-<span><span class="co">#&gt; Test loss: -0.6936328 </span></span>
+<span><span class="co">#&gt; Test loss: -0.4253501 </span></span>
 <span><span class="co">#&gt; = Starting epoch 6 </span></span>
-<span><span class="co">#&gt; Test loss: -0.7643004 </span></span>
+<span><span class="co">#&gt; Test loss: -0.7676612 </span></span>
 <span><span class="co">#&gt; = Starting epoch 7 </span></span>
-<span><span class="co">#&gt; Test loss: -0.8798914 </span></span>
+<span><span class="co">#&gt; Test loss: -0.9444218 </span></span>
 <span><span class="co">#&gt; = Starting epoch 8 </span></span>
-<span><span class="co">#&gt; Test loss: -0.9715847 </span></span>
+<span><span class="co">#&gt; Test loss: -0.9582071 </span></span>
 <span><span class="co">#&gt; = Starting epoch 9 </span></span>
-<span><span class="co">#&gt; Test loss: -1.078904 </span></span>
+<span><span class="co">#&gt; Test loss: -1.142243 </span></span>
 <span><span class="co">#&gt; = Starting epoch 10 </span></span>
-<span><span class="co">#&gt; Test loss: -1.130721 </span></span>
+<span><span class="co">#&gt; Test loss: -1.171176 </span></span>
 <span><span class="co">#&gt; = Starting epoch 11 </span></span>
-<span><span class="co">#&gt; Test loss: -1.202526 </span></span>
+<span><span class="co">#&gt; Test loss: -1.214064 </span></span>
 <span><span class="co">#&gt; = Starting epoch 12 </span></span>
-<span><span class="co">#&gt; Test loss: -1.264344 </span></span>
+<span><span class="co">#&gt; Test loss: -1.327534 </span></span>
 <span><span class="co">#&gt; = Starting epoch 13 </span></span>
-<span><span class="co">#&gt; Test loss: -1.310742 </span></span>
+<span><span class="co">#&gt; Test loss: -1.344086 </span></span>
 <span><span class="co">#&gt; = Starting epoch 14 </span></span>
-<span><span class="co">#&gt; Test loss: -1.332542 </span></span>
+<span><span class="co">#&gt; Test loss: -1.409258 </span></span>
 <span><span class="co">#&gt; = Starting epoch 15 </span></span>
-<span><span class="co">#&gt; Test loss: -1.374379 </span></span>
+<span><span class="co">#&gt; Test loss: -1.433921 </span></span>
 <span><span class="co">#&gt; = Starting epoch 16 </span></span>
-<span><span class="co">#&gt; Test loss: -1.402187 </span></span>
+<span><span class="co">#&gt; Test loss: -1.472062 </span></span>
 <span><span class="co">#&gt; = Starting epoch 17 </span></span>
-<span><span class="co">#&gt; Test loss: -1.433073 </span></span>
+<span><span class="co">#&gt; Test loss: -1.492841 </span></span>
 <span><span class="co">#&gt; = Starting epoch 18 </span></span>
-<span><span class="co">#&gt; Test loss: -1.458863 </span></span>
+<span><span class="co">#&gt; Test loss: -1.498963 </span></span>
 <span><span class="co">#&gt; = Starting epoch 19 </span></span>
-<span><span class="co">#&gt; Test loss: -1.472629 </span></span>
+<span><span class="co">#&gt; Test loss: -1.490147 </span></span>
 <span><span class="co">#&gt; = Starting epoch 20 </span></span>
-<span><span class="co">#&gt; Test loss: -1.491572 </span></span>
+<span><span class="co">#&gt; Test loss: -1.507898 </span></span>
 <span><span class="co">#&gt; = Starting epoch 21 </span></span>
-<span><span class="co">#&gt; Test loss: -1.499941 </span></span>
+<span><span class="co">#&gt; Test loss: -1.52212 </span></span>
 <span><span class="co">#&gt; = Starting epoch 22 </span></span>
-<span><span class="co">#&gt; Test loss: -1.538698 </span></span>
+<span><span class="co">#&gt; Test loss: -1.531517 </span></span>
 <span><span class="co">#&gt; = Starting epoch 23 </span></span>
-<span><span class="co">#&gt; Test loss: -1.568175 </span></span>
+<span><span class="co">#&gt; Test loss: -1.558928 </span></span>
 <span><span class="co">#&gt; = Starting epoch 24 </span></span>
-<span><span class="co">#&gt; Test loss: -1.605546 </span></span>
+<span><span class="co">#&gt; Test loss: -1.566565 </span></span>
 <span><span class="co">#&gt; = Starting epoch 25 </span></span>
-<span><span class="co">#&gt; Test loss: -1.631798 </span></span>
+<span><span class="co">#&gt; Test loss: -1.572523 </span></span>
 <span><span class="co">#&gt; = Starting epoch 26 </span></span>
-<span><span class="co">#&gt; Test loss: -1.622324 </span></span>
+<span><span class="co">#&gt; Test loss: -1.582784 </span></span>
 <span><span class="co">#&gt; = Starting epoch 27 </span></span>
-<span><span class="co">#&gt; Test loss: -1.645052 </span></span>
+<span><span class="co">#&gt; Test loss: -1.595016 </span></span>
 <span><span class="co">#&gt; = Starting epoch 28 </span></span>
-<span><span class="co">#&gt; Test loss: -1.645933 </span></span>
+<span><span class="co">#&gt; Test loss: -1.586329 </span></span>
 <span><span class="co">#&gt; = Starting epoch 29 </span></span>
-<span><span class="co">#&gt; Test loss: -1.709629 </span></span>
+<span><span class="co">#&gt; Test loss: -1.585752 </span></span>
 <span><span class="co">#&gt; = Starting epoch 30 </span></span>
-<span><span class="co">#&gt; Test loss: -1.71081 </span></span>
+<span><span class="co">#&gt; Test loss: -1.62569 </span></span>
 <span><span class="co">#&gt; = Starting epoch 31 </span></span>
-<span><span class="co">#&gt; Test loss: -1.714415 </span></span>
+<span><span class="co">#&gt; Test loss: -1.625619 </span></span>
 <span><span class="co">#&gt; = Starting epoch 32 </span></span>
-<span><span class="co">#&gt; Test loss: -1.731633 </span></span>
+<span><span class="co">#&gt; Test loss: -1.631832 </span></span>
 <span><span class="co">#&gt; = Starting epoch 33 </span></span>
-<span><span class="co">#&gt; Test loss: -1.742423 </span></span>
+<span><span class="co">#&gt; Test loss: -1.629756 </span></span>
 <span><span class="co">#&gt; = Starting epoch 34 </span></span>
-<span><span class="co">#&gt; Test loss: -1.750221 </span></span>
+<span><span class="co">#&gt; Test loss: -1.681527 </span></span>
 <span><span class="co">#&gt; = Starting epoch 35 </span></span>
-<span><span class="co">#&gt; Test loss: -1.763516 </span></span>
+<span><span class="co">#&gt; Test loss: -1.671902 </span></span>
 <span><span class="co">#&gt; = Starting epoch 36 </span></span>
-<span><span class="co">#&gt; Test loss: -1.767103 </span></span>
+<span><span class="co">#&gt; Test loss: -1.682701 </span></span>
 <span><span class="co">#&gt; = Starting epoch 37 </span></span>
-<span><span class="co">#&gt; Test loss: -1.782497 </span></span>
+<span><span class="co">#&gt; Test loss: -1.70417 </span></span>
 <span><span class="co">#&gt; = Starting epoch 38 </span></span>
-<span><span class="co">#&gt; Test loss: -1.793903 </span></span>
+<span><span class="co">#&gt; Test loss: -1.690642 </span></span>
 <span><span class="co">#&gt; = Starting epoch 39 </span></span>
-<span><span class="co">#&gt; Test loss: -1.804983 </span></span>
+<span><span class="co">#&gt; Test loss: -1.74608 </span></span>
 <span><span class="co">#&gt; = Starting epoch 40 </span></span>
-<span><span class="co">#&gt; Test loss: -1.80777 </span></span>
+<span><span class="co">#&gt; Test loss: -1.769941 </span></span>
 <span><span class="co">#&gt; = Starting epoch 41 </span></span>
-<span><span class="co">#&gt; Test loss: -1.805197 </span></span>
+<span><span class="co">#&gt; Test loss: -1.783761 </span></span>
 <span><span class="co">#&gt; = Starting epoch 42 </span></span>
-<span><span class="co">#&gt; Test loss: -1.817356 </span></span>
+<span><span class="co">#&gt; Test loss: -1.809124 </span></span>
 <span><span class="co">#&gt; = Starting epoch 43 </span></span>
-<span><span class="co">#&gt; Test loss: -1.809583 </span></span>
+<span><span class="co">#&gt; Test loss: -1.794601 </span></span>
 <span><span class="co">#&gt; = Starting epoch 44 </span></span>
-<span><span class="co">#&gt; Test loss: -1.805326 </span></span>
+<span><span class="co">#&gt; Test loss: -1.817965 </span></span>
 <span><span class="co">#&gt; = Starting epoch 45 </span></span>
-<span><span class="co">#&gt; Test loss: -1.820926 </span></span>
+<span><span class="co">#&gt; Test loss: -1.847829 </span></span>
 <span><span class="co">#&gt; = Starting epoch 46 </span></span>
-<span><span class="co">#&gt; Test loss: -1.84256 </span></span>
+<span><span class="co">#&gt; Test loss: -1.794403 </span></span>
 <span><span class="co">#&gt; = Starting epoch 47 </span></span>
-<span><span class="co">#&gt; Test loss: -1.832799 </span></span>
+<span><span class="co">#&gt; Test loss: -1.841875 </span></span>
 <span><span class="co">#&gt; = Starting epoch 48 </span></span>
-<span><span class="co">#&gt; Test loss: -1.836125 </span></span>
+<span><span class="co">#&gt; Test loss: -1.805445 </span></span>
 <span><span class="co">#&gt; = Starting epoch 49 </span></span>
-<span><span class="co">#&gt; Test loss: -1.838932 </span></span>
+<span><span class="co">#&gt; Test loss: -1.804091 </span></span>
 <span><span class="co">#&gt; = Starting epoch 50 </span></span>
-<span><span class="co">#&gt; Test loss: -1.822402 </span></span>
+<span><span class="co">#&gt; Test loss: -1.843179 </span></span>
 <span><span class="co">#&gt; = Starting epoch 51 </span></span>
-<span><span class="co">#&gt; Test loss: -1.856667 </span></span>
+<span><span class="co">#&gt; Test loss: -1.85344 </span></span>
 <span><span class="co">#&gt; = Starting epoch 52 </span></span>
-<span><span class="co">#&gt; Test loss: -1.848106 </span></span>
+<span><span class="co">#&gt; Test loss: -1.869657 </span></span>
 <span><span class="co">#&gt; = Starting epoch 53 </span></span>
-<span><span class="co">#&gt; Test loss: -1.84777 </span></span>
+<span><span class="co">#&gt; Test loss: -1.868137 </span></span>
 <span><span class="co">#&gt; = Starting epoch 54 </span></span>
-<span><span class="co">#&gt; Test loss: -1.870488 </span></span>
+<span><span class="co">#&gt; Test loss: -1.853948 </span></span>
 <span><span class="co">#&gt; = Starting epoch 55 </span></span>
-<span><span class="co">#&gt; Test loss: -1.840014 </span></span>
+<span><span class="co">#&gt; Test loss: -1.872815 </span></span>
 <span><span class="co">#&gt; = Starting epoch 56 </span></span>
-<span><span class="co">#&gt; Test loss: -1.845079 </span></span>
+<span><span class="co">#&gt; Test loss: -1.875667 </span></span>
 <span><span class="co">#&gt; = Starting epoch 57 </span></span>
-<span><span class="co">#&gt; Test loss: -1.872239 </span></span>
+<span><span class="co">#&gt; Test loss: -1.877827 </span></span>
 <span><span class="co">#&gt; = Starting epoch 58 </span></span>
-<span><span class="co">#&gt; Test loss: -1.850912 </span></span>
+<span><span class="co">#&gt; Test loss: -1.879238 </span></span>
 <span><span class="co">#&gt; = Starting epoch 59 </span></span>
-<span><span class="co">#&gt; Test loss: -1.843353 </span></span>
+<span><span class="co">#&gt; Test loss: -1.855247 </span></span>
 <span><span class="co">#&gt; = Starting epoch 60 </span></span>
-<span><span class="co">#&gt; Test loss: -1.880292 </span></span>
+<span><span class="co">#&gt; Test loss: -1.906546 </span></span>
 <span><span class="co">#&gt; = Starting epoch 61 </span></span>
-<span><span class="co">#&gt; Test loss: -1.861412 </span></span>
+<span><span class="co">#&gt; Test loss: -1.88128 </span></span>
 <span><span class="co">#&gt; = Starting epoch 62 </span></span>
-<span><span class="co">#&gt; Test loss: -1.848735 </span></span>
+<span><span class="co">#&gt; Test loss: -1.847252 </span></span>
 <span><span class="co">#&gt; = Starting epoch 63 </span></span>
-<span><span class="co">#&gt; Test loss: -1.840015 </span></span>
+<span><span class="co">#&gt; Test loss: -1.903187 </span></span>
 <span><span class="co">#&gt; = Starting epoch 64 </span></span>
-<span><span class="co">#&gt; Test loss: -1.813757 </span></span>
+<span><span class="co">#&gt; Test loss: -1.915287 </span></span>
 <span><span class="co">#&gt; = Starting epoch 65 </span></span>
-<span><span class="co">#&gt; Test loss: -1.848653 </span></span>
+<span><span class="co">#&gt; Test loss: -1.866653 </span></span>
 <span><span class="co">#&gt; = Starting epoch 66 </span></span>
-<span><span class="co">#&gt; Test loss: -1.800615 </span></span>
+<span><span class="co">#&gt; Test loss: -1.908902 </span></span>
 <span><span class="co">#&gt; = Starting epoch 67 </span></span>
-<span><span class="co">#&gt; Test loss: -1.838908 </span></span>
+<span><span class="co">#&gt; Test loss: -1.906551 </span></span>
 <span><span class="co">#&gt; = Starting epoch 68 </span></span>
-<span><span class="co">#&gt; Test loss: -1.877653 </span></span>
+<span><span class="co">#&gt; Test loss: -1.9002 </span></span>
 <span><span class="co">#&gt; = Starting epoch 69 </span></span>
-<span><span class="co">#&gt; Test loss: -1.890018 </span></span>
+<span><span class="co">#&gt; Test loss: -1.918943 </span></span>
 <span><span class="co">#&gt; = Starting epoch 70 </span></span>
-<span><span class="co">#&gt; Test loss: -1.886408 </span></span>
+<span><span class="co">#&gt; Test loss: -1.91935 </span></span>
 <span><span class="co">#&gt; = Starting epoch 71 </span></span>
-<span><span class="co">#&gt; Test loss: -1.886407 </span></span>
+<span><span class="co">#&gt; Test loss: -1.922166 </span></span>
 <span><span class="co">#&gt; = Starting epoch 72 </span></span>
-<span><span class="co">#&gt; Test loss: -1.885205 </span></span>
+<span><span class="co">#&gt; Test loss: -1.908466 </span></span>
 <span><span class="co">#&gt; = Starting epoch 73 </span></span>
-<span><span class="co">#&gt; Test loss: -1.882865 </span></span>
+<span><span class="co">#&gt; Test loss: -1.893883 </span></span>
 <span><span class="co">#&gt; = Starting epoch 74 </span></span>
-<span><span class="co">#&gt; Test loss: -1.887155 </span></span>
+<span><span class="co">#&gt; Test loss: -1.902402 </span></span>
 <span><span class="co">#&gt; = Starting epoch 75 </span></span>
-<span><span class="co">#&gt; Test loss: -1.889557 </span></span>
+<span><span class="co">#&gt; Test loss: -1.915049 </span></span>
 <span><span class="co">#&gt; = Starting epoch 76 </span></span>
-<span><span class="co">#&gt; Test loss: -1.888396 </span></span>
+<span><span class="co">#&gt; Test loss: -1.909708 </span></span>
 <span><span class="co">#&gt; = Starting epoch 77 </span></span>
-<span><span class="co">#&gt; Test loss: -1.906168 </span></span>
+<span><span class="co">#&gt; Test loss: -1.904714 </span></span>
 <span><span class="co">#&gt; = Starting epoch 78 </span></span>
-<span><span class="co">#&gt; Test loss: -1.911298 </span></span>
+<span><span class="co">#&gt; Test loss: -1.901391 </span></span>
 <span><span class="co">#&gt; = Starting epoch 79 </span></span>
-<span><span class="co">#&gt; Test loss: -1.887131 </span></span>
+<span><span class="co">#&gt; Test loss: -1.909754 </span></span>
 <span><span class="co">#&gt; = Starting epoch 80 </span></span>
-<span><span class="co">#&gt; Test loss: -1.891274 </span></span>
+<span><span class="co">#&gt; Test loss: -1.944473 </span></span>
 <span><span class="co">#&gt; = Starting epoch 81 </span></span>
-<span><span class="co">#&gt; Test loss: -1.898869 </span></span>
+<span><span class="co">#&gt; Test loss: -1.943312 </span></span>
 <span><span class="co">#&gt; = Starting epoch 82 </span></span>
-<span><span class="co">#&gt; Test loss: -1.910275 </span></span>
+<span><span class="co">#&gt; Test loss: -1.896371 </span></span>
 <span><span class="co">#&gt; = Starting epoch 83 </span></span>
-<span><span class="co">#&gt; Test loss: -1.897227 </span></span>
+<span><span class="co">#&gt; Test loss: -1.927615 </span></span>
 <span><span class="co">#&gt; = Starting epoch 84 </span></span>
-<span><span class="co">#&gt; Test loss: -1.883102 </span></span>
+<span><span class="co">#&gt; Test loss: -1.938322 </span></span>
 <span><span class="co">#&gt; = Starting epoch 85 </span></span>
-<span><span class="co">#&gt; Test loss: -1.919648 </span></span>
+<span><span class="co">#&gt; Test loss: -1.937566 </span></span>
 <span><span class="co">#&gt; = Starting epoch 86 </span></span>
-<span><span class="co">#&gt; Test loss: -1.899716 </span></span>
+<span><span class="co">#&gt; Test loss: -1.940899 </span></span>
 <span><span class="co">#&gt; = Starting epoch 87 </span></span>
-<span><span class="co">#&gt; Test loss: -1.895078 </span></span>
+<span><span class="co">#&gt; Test loss: -1.939729 </span></span>
 <span><span class="co">#&gt; = Starting epoch 88 </span></span>
-<span><span class="co">#&gt; Test loss: -1.918574 </span></span>
+<span><span class="co">#&gt; Test loss: -1.940131 </span></span>
 <span><span class="co">#&gt; = Starting epoch 89 </span></span>
-<span><span class="co">#&gt; Test loss: -1.910406 </span></span>
+<span><span class="co">#&gt; Test loss: -1.938543 </span></span>
 <span><span class="co">#&gt; = Starting epoch 90 </span></span>
-<span><span class="co">#&gt; Test loss: -1.922003 </span></span>
+<span><span class="co">#&gt; Test loss: -1.936819 </span></span>
 <span><span class="co">#&gt; = Starting epoch 91 </span></span>
-<span><span class="co">#&gt; Test loss: -1.920544 </span></span>
+<span><span class="co">#&gt; Test loss: -1.946276 </span></span>
 <span><span class="co">#&gt; = Starting epoch 92 </span></span>
-<span><span class="co">#&gt; Test loss: -1.882514 </span></span>
+<span><span class="co">#&gt; Test loss: -1.955831 </span></span>
 <span><span class="co">#&gt; = Starting epoch 93 </span></span>
-<span><span class="co">#&gt; Test loss: -1.899041 </span></span>
+<span><span class="co">#&gt; Test loss: -1.961447 </span></span>
 <span><span class="co">#&gt; = Starting epoch 94 </span></span>
-<span><span class="co">#&gt; Test loss: -1.910424 </span></span>
+<span><span class="co">#&gt; Test loss: -1.967436 </span></span>
 <span><span class="co">#&gt; = Starting epoch 95 </span></span>
-<span><span class="co">#&gt; Test loss: -1.901064 </span></span>
+<span><span class="co">#&gt; Test loss: -1.961917 </span></span>
 <span><span class="co">#&gt; = Starting epoch 96 </span></span>
-<span><span class="co">#&gt; Test loss: -1.905755 </span></span>
+<span><span class="co">#&gt; Test loss: -1.976218 </span></span>
 <span><span class="co">#&gt; = Starting epoch 97 </span></span>
-<span><span class="co">#&gt; Test loss: -1.905185 </span></span>
+<span><span class="co">#&gt; Test loss: -1.962273 </span></span>
 <span><span class="co">#&gt; = Starting epoch 98 </span></span>
-<span><span class="co">#&gt; Test loss: -1.909925 </span></span>
+<span><span class="co">#&gt; Test loss: -1.961828 </span></span>
 <span><span class="co">#&gt; = Starting epoch 99 </span></span>
-<span><span class="co">#&gt; Test loss: -1.911866 </span></span>
+<span><span class="co">#&gt; Test loss: -1.964146 </span></span>
 <span><span class="co">#&gt; = Starting epoch 100 </span></span>
-<span><span class="co">#&gt; Test loss: -1.922466 </span></span>
+<span><span class="co">#&gt; Test loss: -1.956355 </span></span>
 <span><span class="co">#&gt; = Starting epoch 101 </span></span>
-<span><span class="co">#&gt; Test loss: -1.927726 </span></span>
+<span><span class="co">#&gt; Test loss: -1.969866 </span></span>
 <span><span class="co">#&gt; = Starting epoch 102 </span></span>
-<span><span class="co">#&gt; Test loss: -1.93288 </span></span>
+<span><span class="co">#&gt; Test loss: -1.954705 </span></span>
 <span><span class="co">#&gt; = Starting epoch 103 </span></span>
-<span><span class="co">#&gt; Test loss: -1.918553 </span></span>
+<span><span class="co">#&gt; Test loss: -1.960121 </span></span>
 <span><span class="co">#&gt; = Starting epoch 104 </span></span>
-<span><span class="co">#&gt; Test loss: -1.932656 </span></span>
+<span><span class="co">#&gt; Test loss: -1.970976 </span></span>
 <span><span class="co">#&gt; = Starting epoch 105 </span></span>
-<span><span class="co">#&gt; Test loss: -1.925886 </span></span>
+<span><span class="co">#&gt; Test loss: -1.980017 </span></span>
 <span><span class="co">#&gt; = Starting epoch 106 </span></span>
-<span><span class="co">#&gt; Test loss: -1.898918 </span></span>
+<span><span class="co">#&gt; Test loss: -1.963052 </span></span>
 <span><span class="co">#&gt; = Starting epoch 107 </span></span>
-<span><span class="co">#&gt; Test loss: -1.921544 </span></span>
+<span><span class="co">#&gt; Test loss: -1.881214 </span></span>
 <span><span class="co">#&gt; = Starting epoch 108 </span></span>
-<span><span class="co">#&gt; Test loss: -1.925718 </span></span>
+<span><span class="co">#&gt; Test loss: -1.933649 </span></span>
 <span><span class="co">#&gt; = Starting epoch 109 </span></span>
-<span><span class="co">#&gt; Test loss: -1.924069 </span></span>
+<span><span class="co">#&gt; Test loss: -1.9528 </span></span>
 <span><span class="co">#&gt; = Starting epoch 110 </span></span>
-<span><span class="co">#&gt; Test loss: -1.931161 </span></span>
+<span><span class="co">#&gt; Test loss: -1.956538 </span></span>
 <span><span class="co">#&gt; = Starting epoch 111 </span></span>
-<span><span class="co">#&gt; Test loss: -1.920967 </span></span>
+<span><span class="co">#&gt; Test loss: -1.932954 </span></span>
 <span><span class="co">#&gt; = Starting epoch 112 </span></span>
-<span><span class="co">#&gt; Test loss: -1.935023 </span></span>
+<span><span class="co">#&gt; Test loss: -1.95204 </span></span>
 <span><span class="co">#&gt; = Starting epoch 113 </span></span>
-<span><span class="co">#&gt; Test loss: -1.924235 </span></span>
+<span><span class="co">#&gt; Test loss: -1.951706 </span></span>
 <span><span class="co">#&gt; = Starting epoch 114 </span></span>
-<span><span class="co">#&gt; Test loss: -1.940003 </span></span>
+<span><span class="co">#&gt; Test loss: -1.968708 </span></span>
 <span><span class="co">#&gt; = Starting epoch 115 </span></span>
-<span><span class="co">#&gt; Test loss: -1.938148 </span></span>
+<span><span class="co">#&gt; Test loss: -1.972026 </span></span>
 <span><span class="co">#&gt; = Starting epoch 116 </span></span>
-<span><span class="co">#&gt; Test loss: -1.930139 </span></span>
+<span><span class="co">#&gt; Test loss: -1.952219 </span></span>
 <span><span class="co">#&gt; = Starting epoch 117 </span></span>
-<span><span class="co">#&gt; Test loss: -1.943265 </span></span>
+<span><span class="co">#&gt; Test loss: -1.964265 </span></span>
 <span><span class="co">#&gt; = Starting epoch 118 </span></span>
-<span><span class="co">#&gt; Test loss: -1.955107 </span></span>
+<span><span class="co">#&gt; Test loss: -1.942905 </span></span>
 <span><span class="co">#&gt; = Starting epoch 119 </span></span>
-<span><span class="co">#&gt; Test loss: -1.955816 </span></span>
+<span><span class="co">#&gt; Test loss: -1.976171 </span></span>
 <span><span class="co">#&gt; = Starting epoch 120 </span></span>
-<span><span class="co">#&gt; Test loss: -1.944199 </span></span>
+<span><span class="co">#&gt; Test loss: -1.977234 </span></span>
 <span><span class="co">#&gt; = Starting epoch 121 </span></span>
-<span><span class="co">#&gt; Test loss: -1.959842 </span></span>
+<span><span class="co">#&gt; Test loss: -1.966406 </span></span>
 <span><span class="co">#&gt; = Starting epoch 122 </span></span>
-<span><span class="co">#&gt; Test loss: -1.940913 </span></span>
+<span><span class="co">#&gt; Test loss: -1.973279 </span></span>
 <span><span class="co">#&gt; = Starting epoch 123 </span></span>
-<span><span class="co">#&gt; Test loss: -1.933706 </span></span>
+<span><span class="co">#&gt; Test loss: -1.960329 </span></span>
 <span><span class="co">#&gt; = Starting epoch 124 </span></span>
-<span><span class="co">#&gt; Test loss: -1.948694 </span></span>
+<span><span class="co">#&gt; Test loss: -1.967616 </span></span>
 <span><span class="co">#&gt; = Starting epoch 125 </span></span>
-<span><span class="co">#&gt; Test loss: -1.959797 </span></span>
+<span><span class="co">#&gt; Test loss: -1.971576 </span></span>
 <span><span class="co">#&gt; = Starting epoch 126 </span></span>
-<span><span class="co">#&gt; Test loss: -1.940021 </span></span>
+<span><span class="co">#&gt; Test loss: -1.91573 </span></span>
 <span><span class="co">#&gt; = Starting epoch 127 </span></span>
-<span><span class="co">#&gt; Test loss: -1.931657 </span></span>
+<span><span class="co">#&gt; Test loss: -1.960496 </span></span>
 <span><span class="co">#&gt; = Starting epoch 128 </span></span>
-<span><span class="co">#&gt; Test loss: -1.932685</span></span></code></pre></div>
+<span><span class="co">#&gt; Test loss: -1.980793</span></span></code></pre></div>
 <p>We can generate samples from the trained flow as follows, where now
 the samples are conditioned on the values of
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>y</mi><annotation encoding="application/x-tex">y</annotation></semantics></math>:</p>
@@ -682,11 +682,11 @@ summarizing network:</p>
 <span><span class="va">summary_model</span> <span class="op">&lt;-</span> <span class="fu">summarizing_network</span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="fu">summary_model</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/torch/man/torch_randn.html" class="external-link">torch_randn</a></span><span class="op">(</span><span class="fl">5</span>, <span class="fl">4</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt; torch_tensor</span></span>
-<span><span class="co">#&gt; -0.5487 -0.8018 -0.4978  0.6187  0.5484 -1.1230 -0.4610  0.3235</span></span>
-<span><span class="co">#&gt; -0.4885 -1.2713 -0.5874  0.6904  0.7862 -0.5346 -0.1978  1.0954</span></span>
-<span><span class="co">#&gt; -0.6294 -1.1134 -0.6981  0.5459  0.4280 -1.3652 -0.6421  0.2720</span></span>
-<span><span class="co">#&gt; -0.5171 -1.0251 -0.5442  0.6885  0.7225 -0.7858 -0.3231  0.7294</span></span>
-<span><span class="co">#&gt; -0.6550 -1.3697 -0.7703  0.7731  0.6833 -0.8562 -0.5714  0.5932</span></span>
+<span><span class="co">#&gt;  1.0446 -1.4383  0.2688 -0.3974 -0.4079 -0.2595  0.8759  0.3917</span></span>
+<span><span class="co">#&gt;  0.9625 -1.3571  0.1596 -0.4102 -0.4270 -0.2036  0.8177  0.2869</span></span>
+<span><span class="co">#&gt;  0.7540 -1.3033  0.5883 -0.2222 -0.4103 -0.1208  0.4979  0.4422</span></span>
+<span><span class="co">#&gt;  1.0327 -1.3428  0.0387 -0.4325 -0.4290 -0.2331  0.9128  0.2348</span></span>
+<span><span class="co">#&gt;  0.9107 -1.3527  0.5879 -0.3269 -0.4518 -0.0992  0.5681  0.4810</span></span>
 <span><span class="co">#&gt; [ CPUFloatType{5,8} ][ grad_fn = &lt;SumBackward1&gt; ]</span></span></code></pre></div>
 <p>We can combine the summarizing network with the flow in a
 <code>nn_summarizing_conditional_flow</code> object:</p>
@@ -729,261 +729,261 @@ summarizing network:</p>
 <span>  <span class="op">}</span></span>
 <span><span class="op">)</span></span>
 <span><span class="co">#&gt; = Starting epoch 1 </span></span>
-<span><span class="co">#&gt; Test loss: 2.407111 </span></span>
+<span><span class="co">#&gt; Test loss: 1.574244 </span></span>
 <span><span class="co">#&gt; = Starting epoch 2 </span></span>
-<span><span class="co">#&gt; Test loss: 1.212426 </span></span>
+<span><span class="co">#&gt; Test loss: 0.7241438 </span></span>
 <span><span class="co">#&gt; = Starting epoch 3 </span></span>
-<span><span class="co">#&gt; Test loss: 0.7560397 </span></span>
+<span><span class="co">#&gt; Test loss: -0.3044046 </span></span>
 <span><span class="co">#&gt; = Starting epoch 4 </span></span>
-<span><span class="co">#&gt; Test loss: -0.09847659 </span></span>
+<span><span class="co">#&gt; Test loss: -0.8607371 </span></span>
 <span><span class="co">#&gt; = Starting epoch 5 </span></span>
-<span><span class="co">#&gt; Test loss: -0.9846375 </span></span>
+<span><span class="co">#&gt; Test loss: -1.32246 </span></span>
 <span><span class="co">#&gt; = Starting epoch 6 </span></span>
-<span><span class="co">#&gt; Test loss: -1.75985 </span></span>
+<span><span class="co">#&gt; Test loss: -1.833584 </span></span>
 <span><span class="co">#&gt; = Starting epoch 7 </span></span>
-<span><span class="co">#&gt; Test loss: -2.143885 </span></span>
+<span><span class="co">#&gt; Test loss: -2.144691 </span></span>
 <span><span class="co">#&gt; = Starting epoch 8 </span></span>
-<span><span class="co">#&gt; Test loss: -2.612402 </span></span>
+<span><span class="co">#&gt; Test loss: -2.33896 </span></span>
 <span><span class="co">#&gt; = Starting epoch 9 </span></span>
-<span><span class="co">#&gt; Test loss: -2.917896 </span></span>
+<span><span class="co">#&gt; Test loss: -2.565217 </span></span>
 <span><span class="co">#&gt; = Starting epoch 10 </span></span>
-<span><span class="co">#&gt; Test loss: -2.989022 </span></span>
+<span><span class="co">#&gt; Test loss: -2.753399 </span></span>
 <span><span class="co">#&gt; = Starting epoch 11 </span></span>
-<span><span class="co">#&gt; Test loss: -3.128965 </span></span>
+<span><span class="co">#&gt; Test loss: -2.85758 </span></span>
 <span><span class="co">#&gt; = Starting epoch 12 </span></span>
-<span><span class="co">#&gt; Test loss: -3.269648 </span></span>
+<span><span class="co">#&gt; Test loss: -2.84146 </span></span>
 <span><span class="co">#&gt; = Starting epoch 13 </span></span>
-<span><span class="co">#&gt; Test loss: -3.27159 </span></span>
+<span><span class="co">#&gt; Test loss: -3.001434 </span></span>
 <span><span class="co">#&gt; = Starting epoch 14 </span></span>
-<span><span class="co">#&gt; Test loss: -3.171492 </span></span>
+<span><span class="co">#&gt; Test loss: -2.991717 </span></span>
 <span><span class="co">#&gt; = Starting epoch 15 </span></span>
-<span><span class="co">#&gt; Test loss: -3.384243 </span></span>
+<span><span class="co">#&gt; Test loss: -3.159557 </span></span>
 <span><span class="co">#&gt; = Starting epoch 16 </span></span>
-<span><span class="co">#&gt; Test loss: -3.422923 </span></span>
+<span><span class="co">#&gt; Test loss: -3.162273 </span></span>
 <span><span class="co">#&gt; = Starting epoch 17 </span></span>
-<span><span class="co">#&gt; Test loss: -3.425862 </span></span>
+<span><span class="co">#&gt; Test loss: -3.200001 </span></span>
 <span><span class="co">#&gt; = Starting epoch 18 </span></span>
-<span><span class="co">#&gt; Test loss: -3.445925 </span></span>
+<span><span class="co">#&gt; Test loss: -3.165203 </span></span>
 <span><span class="co">#&gt; = Starting epoch 19 </span></span>
-<span><span class="co">#&gt; Test loss: -3.503057 </span></span>
+<span><span class="co">#&gt; Test loss: -3.200622 </span></span>
 <span><span class="co">#&gt; = Starting epoch 20 </span></span>
-<span><span class="co">#&gt; Test loss: -3.499537 </span></span>
+<span><span class="co">#&gt; Test loss: -3.129771 </span></span>
 <span><span class="co">#&gt; = Starting epoch 21 </span></span>
-<span><span class="co">#&gt; Test loss: -3.427943 </span></span>
+<span><span class="co">#&gt; Test loss: -3.340514 </span></span>
 <span><span class="co">#&gt; = Starting epoch 22 </span></span>
-<span><span class="co">#&gt; Test loss: -3.45365 </span></span>
+<span><span class="co">#&gt; Test loss: -3.334933 </span></span>
 <span><span class="co">#&gt; = Starting epoch 23 </span></span>
-<span><span class="co">#&gt; Test loss: -3.491708 </span></span>
+<span><span class="co">#&gt; Test loss: -3.140084 </span></span>
 <span><span class="co">#&gt; = Starting epoch 24 </span></span>
-<span><span class="co">#&gt; Test loss: -3.467996 </span></span>
+<span><span class="co">#&gt; Test loss: -3.428811 </span></span>
 <span><span class="co">#&gt; = Starting epoch 25 </span></span>
-<span><span class="co">#&gt; Test loss: -3.437028 </span></span>
+<span><span class="co">#&gt; Test loss: -3.358447 </span></span>
 <span><span class="co">#&gt; = Starting epoch 26 </span></span>
-<span><span class="co">#&gt; Test loss: -3.544612 </span></span>
+<span><span class="co">#&gt; Test loss: -3.34107 </span></span>
 <span><span class="co">#&gt; = Starting epoch 27 </span></span>
-<span><span class="co">#&gt; Test loss: -3.585669 </span></span>
+<span><span class="co">#&gt; Test loss: -3.496951 </span></span>
 <span><span class="co">#&gt; = Starting epoch 28 </span></span>
-<span><span class="co">#&gt; Test loss: -3.567622 </span></span>
+<span><span class="co">#&gt; Test loss: -3.238567 </span></span>
 <span><span class="co">#&gt; = Starting epoch 29 </span></span>
-<span><span class="co">#&gt; Test loss: -3.333916 </span></span>
+<span><span class="co">#&gt; Test loss: -3.291882 </span></span>
 <span><span class="co">#&gt; = Starting epoch 30 </span></span>
-<span><span class="co">#&gt; Test loss: -3.548683 </span></span>
+<span><span class="co">#&gt; Test loss: -3.485584 </span></span>
 <span><span class="co">#&gt; = Starting epoch 31 </span></span>
-<span><span class="co">#&gt; Test loss: -3.499856 </span></span>
+<span><span class="co">#&gt; Test loss: -3.402894 </span></span>
 <span><span class="co">#&gt; = Starting epoch 32 </span></span>
-<span><span class="co">#&gt; Test loss: -3.537848 </span></span>
+<span><span class="co">#&gt; Test loss: -3.356515 </span></span>
 <span><span class="co">#&gt; = Starting epoch 33 </span></span>
-<span><span class="co">#&gt; Test loss: -3.601494 </span></span>
+<span><span class="co">#&gt; Test loss: -3.232612 </span></span>
 <span><span class="co">#&gt; = Starting epoch 34 </span></span>
-<span><span class="co">#&gt; Test loss: -3.543561 </span></span>
+<span><span class="co">#&gt; Test loss: -3.355391 </span></span>
 <span><span class="co">#&gt; = Starting epoch 35 </span></span>
-<span><span class="co">#&gt; Test loss: -3.555198 </span></span>
+<span><span class="co">#&gt; Test loss: -3.460827 </span></span>
 <span><span class="co">#&gt; = Starting epoch 36 </span></span>
-<span><span class="co">#&gt; Test loss: -3.483772 </span></span>
+<span><span class="co">#&gt; Test loss: -3.168393 </span></span>
 <span><span class="co">#&gt; = Starting epoch 37 </span></span>
-<span><span class="co">#&gt; Test loss: -3.60998 </span></span>
+<span><span class="co">#&gt; Test loss: -3.421952 </span></span>
 <span><span class="co">#&gt; = Starting epoch 38 </span></span>
-<span><span class="co">#&gt; Test loss: -3.641078 </span></span>
+<span><span class="co">#&gt; Test loss: -3.491556 </span></span>
 <span><span class="co">#&gt; = Starting epoch 39 </span></span>
-<span><span class="co">#&gt; Test loss: -3.574831 </span></span>
+<span><span class="co">#&gt; Test loss: -3.358643 </span></span>
 <span><span class="co">#&gt; = Starting epoch 40 </span></span>
-<span><span class="co">#&gt; Test loss: -3.615891 </span></span>
+<span><span class="co">#&gt; Test loss: -3.54554 </span></span>
 <span><span class="co">#&gt; = Starting epoch 41 </span></span>
-<span><span class="co">#&gt; Test loss: -3.396698 </span></span>
+<span><span class="co">#&gt; Test loss: -3.551698 </span></span>
 <span><span class="co">#&gt; = Starting epoch 42 </span></span>
-<span><span class="co">#&gt; Test loss: -3.304199 </span></span>
+<span><span class="co">#&gt; Test loss: -3.560892 </span></span>
 <span><span class="co">#&gt; = Starting epoch 43 </span></span>
-<span><span class="co">#&gt; Test loss: -3.423701 </span></span>
+<span><span class="co">#&gt; Test loss: -3.520125 </span></span>
 <span><span class="co">#&gt; = Starting epoch 44 </span></span>
-<span><span class="co">#&gt; Test loss: -3.630068 </span></span>
+<span><span class="co">#&gt; Test loss: -3.549436 </span></span>
 <span><span class="co">#&gt; = Starting epoch 45 </span></span>
-<span><span class="co">#&gt; Test loss: -3.583911 </span></span>
+<span><span class="co">#&gt; Test loss: -3.507196 </span></span>
 <span><span class="co">#&gt; = Starting epoch 46 </span></span>
-<span><span class="co">#&gt; Test loss: -3.55188 </span></span>
+<span><span class="co">#&gt; Test loss: -3.579283 </span></span>
 <span><span class="co">#&gt; = Starting epoch 47 </span></span>
-<span><span class="co">#&gt; Test loss: -3.387761 </span></span>
+<span><span class="co">#&gt; Test loss: -3.525897 </span></span>
 <span><span class="co">#&gt; = Starting epoch 48 </span></span>
-<span><span class="co">#&gt; Test loss: -3.523147 </span></span>
+<span><span class="co">#&gt; Test loss: -3.587598 </span></span>
 <span><span class="co">#&gt; = Starting epoch 49 </span></span>
-<span><span class="co">#&gt; Test loss: -3.653002 </span></span>
+<span><span class="co">#&gt; Test loss: -3.538502 </span></span>
 <span><span class="co">#&gt; = Starting epoch 50 </span></span>
-<span><span class="co">#&gt; Test loss: -3.662555 </span></span>
+<span><span class="co">#&gt; Test loss: -3.510669 </span></span>
 <span><span class="co">#&gt; = Starting epoch 51 </span></span>
-<span><span class="co">#&gt; Test loss: -3.607737 </span></span>
+<span><span class="co">#&gt; Test loss: -3.414809 </span></span>
 <span><span class="co">#&gt; = Starting epoch 52 </span></span>
-<span><span class="co">#&gt; Test loss: -3.588757 </span></span>
+<span><span class="co">#&gt; Test loss: -3.620072 </span></span>
 <span><span class="co">#&gt; = Starting epoch 53 </span></span>
-<span><span class="co">#&gt; Test loss: -3.563539 </span></span>
+<span><span class="co">#&gt; Test loss: -3.581496 </span></span>
 <span><span class="co">#&gt; = Starting epoch 54 </span></span>
-<span><span class="co">#&gt; Test loss: -3.65528 </span></span>
+<span><span class="co">#&gt; Test loss: -3.579683 </span></span>
 <span><span class="co">#&gt; = Starting epoch 55 </span></span>
-<span><span class="co">#&gt; Test loss: -3.644793 </span></span>
+<span><span class="co">#&gt; Test loss: -3.607559 </span></span>
 <span><span class="co">#&gt; = Starting epoch 56 </span></span>
-<span><span class="co">#&gt; Test loss: -3.680789 </span></span>
+<span><span class="co">#&gt; Test loss: -3.558431 </span></span>
 <span><span class="co">#&gt; = Starting epoch 57 </span></span>
-<span><span class="co">#&gt; Test loss: -3.709698 </span></span>
+<span><span class="co">#&gt; Test loss: -3.615346 </span></span>
 <span><span class="co">#&gt; = Starting epoch 58 </span></span>
-<span><span class="co">#&gt; Test loss: -3.696075 </span></span>
+<span><span class="co">#&gt; Test loss: -3.643393 </span></span>
 <span><span class="co">#&gt; = Starting epoch 59 </span></span>
-<span><span class="co">#&gt; Test loss: -3.700157 </span></span>
+<span><span class="co">#&gt; Test loss: -3.611146 </span></span>
 <span><span class="co">#&gt; = Starting epoch 60 </span></span>
-<span><span class="co">#&gt; Test loss: -3.714779 </span></span>
+<span><span class="co">#&gt; Test loss: -3.63971 </span></span>
 <span><span class="co">#&gt; = Starting epoch 61 </span></span>
-<span><span class="co">#&gt; Test loss: -3.685379 </span></span>
+<span><span class="co">#&gt; Test loss: -3.436054 </span></span>
 <span><span class="co">#&gt; = Starting epoch 62 </span></span>
-<span><span class="co">#&gt; Test loss: -3.657196 </span></span>
+<span><span class="co">#&gt; Test loss: -3.66148 </span></span>
 <span><span class="co">#&gt; = Starting epoch 63 </span></span>
-<span><span class="co">#&gt; Test loss: -3.63801 </span></span>
+<span><span class="co">#&gt; Test loss: -3.608995 </span></span>
 <span><span class="co">#&gt; = Starting epoch 64 </span></span>
-<span><span class="co">#&gt; Test loss: -3.669672 </span></span>
+<span><span class="co">#&gt; Test loss: -3.552791 </span></span>
 <span><span class="co">#&gt; = Starting epoch 65 </span></span>
-<span><span class="co">#&gt; Test loss: -3.686205 </span></span>
+<span><span class="co">#&gt; Test loss: -3.612177 </span></span>
 <span><span class="co">#&gt; = Starting epoch 66 </span></span>
-<span><span class="co">#&gt; Test loss: -3.590966 </span></span>
+<span><span class="co">#&gt; Test loss: -3.574007 </span></span>
 <span><span class="co">#&gt; = Starting epoch 67 </span></span>
-<span><span class="co">#&gt; Test loss: -3.647135 </span></span>
+<span><span class="co">#&gt; Test loss: -3.529003 </span></span>
 <span><span class="co">#&gt; = Starting epoch 68 </span></span>
-<span><span class="co">#&gt; Test loss: -3.653116 </span></span>
+<span><span class="co">#&gt; Test loss: -3.612651 </span></span>
 <span><span class="co">#&gt; = Starting epoch 69 </span></span>
-<span><span class="co">#&gt; Test loss: -3.630519 </span></span>
+<span><span class="co">#&gt; Test loss: -3.625959 </span></span>
 <span><span class="co">#&gt; = Starting epoch 70 </span></span>
-<span><span class="co">#&gt; Test loss: -3.619336 </span></span>
+<span><span class="co">#&gt; Test loss: -3.657987 </span></span>
 <span><span class="co">#&gt; = Starting epoch 71 </span></span>
-<span><span class="co">#&gt; Test loss: -3.702343 </span></span>
+<span><span class="co">#&gt; Test loss: -3.56734 </span></span>
 <span><span class="co">#&gt; = Starting epoch 72 </span></span>
-<span><span class="co">#&gt; Test loss: -3.700398 </span></span>
+<span><span class="co">#&gt; Test loss: -3.279169 </span></span>
 <span><span class="co">#&gt; = Starting epoch 73 </span></span>
-<span><span class="co">#&gt; Test loss: -3.704268 </span></span>
+<span><span class="co">#&gt; Test loss: -3.555853 </span></span>
 <span><span class="co">#&gt; = Starting epoch 74 </span></span>
-<span><span class="co">#&gt; Test loss: -3.750893 </span></span>
+<span><span class="co">#&gt; Test loss: -3.610017 </span></span>
 <span><span class="co">#&gt; = Starting epoch 75 </span></span>
-<span><span class="co">#&gt; Test loss: -3.707319 </span></span>
+<span><span class="co">#&gt; Test loss: -3.610652 </span></span>
 <span><span class="co">#&gt; = Starting epoch 76 </span></span>
-<span><span class="co">#&gt; Test loss: -3.739875 </span></span>
+<span><span class="co">#&gt; Test loss: -3.619583 </span></span>
 <span><span class="co">#&gt; = Starting epoch 77 </span></span>
-<span><span class="co">#&gt; Test loss: -3.720145 </span></span>
+<span><span class="co">#&gt; Test loss: -3.668786 </span></span>
 <span><span class="co">#&gt; = Starting epoch 78 </span></span>
-<span><span class="co">#&gt; Test loss: -3.594006 </span></span>
+<span><span class="co">#&gt; Test loss: -3.667622 </span></span>
 <span><span class="co">#&gt; = Starting epoch 79 </span></span>
-<span><span class="co">#&gt; Test loss: -3.571221 </span></span>
+<span><span class="co">#&gt; Test loss: -3.623619 </span></span>
 <span><span class="co">#&gt; = Starting epoch 80 </span></span>
-<span><span class="co">#&gt; Test loss: -3.61453 </span></span>
+<span><span class="co">#&gt; Test loss: -3.630304 </span></span>
 <span><span class="co">#&gt; = Starting epoch 81 </span></span>
-<span><span class="co">#&gt; Test loss: -3.653942 </span></span>
+<span><span class="co">#&gt; Test loss: -3.630752 </span></span>
 <span><span class="co">#&gt; = Starting epoch 82 </span></span>
-<span><span class="co">#&gt; Test loss: -3.649405 </span></span>
+<span><span class="co">#&gt; Test loss: -3.51798 </span></span>
 <span><span class="co">#&gt; = Starting epoch 83 </span></span>
-<span><span class="co">#&gt; Test loss: -3.735116 </span></span>
+<span><span class="co">#&gt; Test loss: -3.711401 </span></span>
 <span><span class="co">#&gt; = Starting epoch 84 </span></span>
-<span><span class="co">#&gt; Test loss: -3.749139 </span></span>
+<span><span class="co">#&gt; Test loss: -3.65629 </span></span>
 <span><span class="co">#&gt; = Starting epoch 85 </span></span>
-<span><span class="co">#&gt; Test loss: -3.68428 </span></span>
+<span><span class="co">#&gt; Test loss: -3.63108 </span></span>
 <span><span class="co">#&gt; = Starting epoch 86 </span></span>
-<span><span class="co">#&gt; Test loss: -3.661481 </span></span>
+<span><span class="co">#&gt; Test loss: -3.633556 </span></span>
 <span><span class="co">#&gt; = Starting epoch 87 </span></span>
-<span><span class="co">#&gt; Test loss: -3.687494 </span></span>
+<span><span class="co">#&gt; Test loss: -3.50097 </span></span>
 <span><span class="co">#&gt; = Starting epoch 88 </span></span>
-<span><span class="co">#&gt; Test loss: -3.64241 </span></span>
+<span><span class="co">#&gt; Test loss: -3.705051 </span></span>
 <span><span class="co">#&gt; = Starting epoch 89 </span></span>
-<span><span class="co">#&gt; Test loss: -3.669975 </span></span>
+<span><span class="co">#&gt; Test loss: -3.668865 </span></span>
 <span><span class="co">#&gt; = Starting epoch 90 </span></span>
-<span><span class="co">#&gt; Test loss: -3.653802 </span></span>
+<span><span class="co">#&gt; Test loss: -3.647611 </span></span>
 <span><span class="co">#&gt; = Starting epoch 91 </span></span>
-<span><span class="co">#&gt; Test loss: -3.734066 </span></span>
+<span><span class="co">#&gt; Test loss: -3.675408 </span></span>
 <span><span class="co">#&gt; = Starting epoch 92 </span></span>
-<span><span class="co">#&gt; Test loss: -3.697551 </span></span>
+<span><span class="co">#&gt; Test loss: -3.626387 </span></span>
 <span><span class="co">#&gt; = Starting epoch 93 </span></span>
-<span><span class="co">#&gt; Test loss: -3.649123 </span></span>
+<span><span class="co">#&gt; Test loss: -3.568609 </span></span>
 <span><span class="co">#&gt; = Starting epoch 94 </span></span>
-<span><span class="co">#&gt; Test loss: -3.636194 </span></span>
+<span><span class="co">#&gt; Test loss: -3.56734 </span></span>
 <span><span class="co">#&gt; = Starting epoch 95 </span></span>
-<span><span class="co">#&gt; Test loss: -3.716277 </span></span>
+<span><span class="co">#&gt; Test loss: -3.468691 </span></span>
 <span><span class="co">#&gt; = Starting epoch 96 </span></span>
-<span><span class="co">#&gt; Test loss: -3.708285 </span></span>
+<span><span class="co">#&gt; Test loss: -3.466813 </span></span>
 <span><span class="co">#&gt; = Starting epoch 97 </span></span>
-<span><span class="co">#&gt; Test loss: -3.715071 </span></span>
+<span><span class="co">#&gt; Test loss: -3.483512 </span></span>
 <span><span class="co">#&gt; = Starting epoch 98 </span></span>
-<span><span class="co">#&gt; Test loss: -3.692323 </span></span>
+<span><span class="co">#&gt; Test loss: -3.443024 </span></span>
 <span><span class="co">#&gt; = Starting epoch 99 </span></span>
-<span><span class="co">#&gt; Test loss: -3.664004 </span></span>
+<span><span class="co">#&gt; Test loss: -3.514345 </span></span>
 <span><span class="co">#&gt; = Starting epoch 100 </span></span>
-<span><span class="co">#&gt; Test loss: -3.663263 </span></span>
+<span><span class="co">#&gt; Test loss: -3.548022 </span></span>
 <span><span class="co">#&gt; = Starting epoch 101 </span></span>
-<span><span class="co">#&gt; Test loss: -3.62086 </span></span>
+<span><span class="co">#&gt; Test loss: -3.641847 </span></span>
 <span><span class="co">#&gt; = Starting epoch 102 </span></span>
-<span><span class="co">#&gt; Test loss: -3.65812 </span></span>
+<span><span class="co">#&gt; Test loss: -3.696399 </span></span>
 <span><span class="co">#&gt; = Starting epoch 103 </span></span>
-<span><span class="co">#&gt; Test loss: -3.71594 </span></span>
+<span><span class="co">#&gt; Test loss: -3.709307 </span></span>
 <span><span class="co">#&gt; = Starting epoch 104 </span></span>
-<span><span class="co">#&gt; Test loss: -3.67838 </span></span>
+<span><span class="co">#&gt; Test loss: -3.66789 </span></span>
 <span><span class="co">#&gt; = Starting epoch 105 </span></span>
-<span><span class="co">#&gt; Test loss: -3.745847 </span></span>
+<span><span class="co">#&gt; Test loss: -3.626213 </span></span>
 <span><span class="co">#&gt; = Starting epoch 106 </span></span>
-<span><span class="co">#&gt; Test loss: -3.778446 </span></span>
+<span><span class="co">#&gt; Test loss: -3.650015 </span></span>
 <span><span class="co">#&gt; = Starting epoch 107 </span></span>
-<span><span class="co">#&gt; Test loss: -3.682349 </span></span>
+<span><span class="co">#&gt; Test loss: -3.633201 </span></span>
 <span><span class="co">#&gt; = Starting epoch 108 </span></span>
-<span><span class="co">#&gt; Test loss: -3.498996 </span></span>
+<span><span class="co">#&gt; Test loss: -3.678688 </span></span>
 <span><span class="co">#&gt; = Starting epoch 109 </span></span>
-<span><span class="co">#&gt; Test loss: -3.501881 </span></span>
+<span><span class="co">#&gt; Test loss: -3.550354 </span></span>
 <span><span class="co">#&gt; = Starting epoch 110 </span></span>
-<span><span class="co">#&gt; Test loss: -3.524402 </span></span>
+<span><span class="co">#&gt; Test loss: -3.560554 </span></span>
 <span><span class="co">#&gt; = Starting epoch 111 </span></span>
-<span><span class="co">#&gt; Test loss: -3.667991 </span></span>
+<span><span class="co">#&gt; Test loss: -3.672982 </span></span>
 <span><span class="co">#&gt; = Starting epoch 112 </span></span>
-<span><span class="co">#&gt; Test loss: -3.714862 </span></span>
+<span><span class="co">#&gt; Test loss: -3.692151 </span></span>
 <span><span class="co">#&gt; = Starting epoch 113 </span></span>
-<span><span class="co">#&gt; Test loss: -3.667079 </span></span>
+<span><span class="co">#&gt; Test loss: -3.666807 </span></span>
 <span><span class="co">#&gt; = Starting epoch 114 </span></span>
-<span><span class="co">#&gt; Test loss: -3.735161 </span></span>
+<span><span class="co">#&gt; Test loss: -3.626893 </span></span>
 <span><span class="co">#&gt; = Starting epoch 115 </span></span>
-<span><span class="co">#&gt; Test loss: -3.639978 </span></span>
+<span><span class="co">#&gt; Test loss: -3.671937 </span></span>
 <span><span class="co">#&gt; = Starting epoch 116 </span></span>
-<span><span class="co">#&gt; Test loss: -3.689489 </span></span>
+<span><span class="co">#&gt; Test loss: -3.685948 </span></span>
 <span><span class="co">#&gt; = Starting epoch 117 </span></span>
-<span><span class="co">#&gt; Test loss: -3.72748 </span></span>
+<span><span class="co">#&gt; Test loss: -3.68107 </span></span>
 <span><span class="co">#&gt; = Starting epoch 118 </span></span>
-<span><span class="co">#&gt; Test loss: -3.622025 </span></span>
+<span><span class="co">#&gt; Test loss: -3.686219 </span></span>
 <span><span class="co">#&gt; = Starting epoch 119 </span></span>
-<span><span class="co">#&gt; Test loss: -3.640612 </span></span>
+<span><span class="co">#&gt; Test loss: -3.648484 </span></span>
 <span><span class="co">#&gt; = Starting epoch 120 </span></span>
-<span><span class="co">#&gt; Test loss: -3.684299 </span></span>
+<span><span class="co">#&gt; Test loss: -3.660866 </span></span>
 <span><span class="co">#&gt; = Starting epoch 121 </span></span>
-<span><span class="co">#&gt; Test loss: -3.569317 </span></span>
+<span><span class="co">#&gt; Test loss: -3.606271 </span></span>
 <span><span class="co">#&gt; = Starting epoch 122 </span></span>
-<span><span class="co">#&gt; Test loss: -3.563317 </span></span>
+<span><span class="co">#&gt; Test loss: -3.559162 </span></span>
 <span><span class="co">#&gt; = Starting epoch 123 </span></span>
-<span><span class="co">#&gt; Test loss: -3.618245 </span></span>
+<span><span class="co">#&gt; Test loss: -3.385818 </span></span>
 <span><span class="co">#&gt; = Starting epoch 124 </span></span>
-<span><span class="co">#&gt; Test loss: -3.626799 </span></span>
+<span><span class="co">#&gt; Test loss: -3.524805 </span></span>
 <span><span class="co">#&gt; = Starting epoch 125 </span></span>
-<span><span class="co">#&gt; Test loss: -3.570152 </span></span>
+<span><span class="co">#&gt; Test loss: -3.543543 </span></span>
 <span><span class="co">#&gt; = Starting epoch 126 </span></span>
-<span><span class="co">#&gt; Test loss: -3.653208 </span></span>
+<span><span class="co">#&gt; Test loss: -3.612239 </span></span>
 <span><span class="co">#&gt; = Starting epoch 127 </span></span>
-<span><span class="co">#&gt; Test loss: -3.75489 </span></span>
+<span><span class="co">#&gt; Test loss: -3.63977 </span></span>
 <span><span class="co">#&gt; = Starting epoch 128 </span></span>
-<span><span class="co">#&gt; Test loss: -3.743892</span></span></code></pre></div>
+<span><span class="co">#&gt; Test loss: -3.596399</span></span></code></pre></div>
 <p>We can generate samples from the trained model as before:</p>
 <div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Generate 1024 samples for each of the first 4 conditioning variables in the test set</span></span>
@@ -1095,266 +1095,266 @@ network:</p>
 <span>  <span class="op">}</span></span>
 <span><span class="op">)</span></span>
 <span><span class="co">#&gt; = Starting epoch 1 </span></span>
-<span><span class="co">#&gt; Test loss: 1.114183 </span></span>
+<span><span class="co">#&gt; Test loss: 0.9928708 </span></span>
 <span><span class="co">#&gt; = Starting epoch 2 </span></span>
-<span><span class="co">#&gt; Test loss: 0.9904878 </span></span>
+<span><span class="co">#&gt; Test loss: 0.8868349 </span></span>
 <span><span class="co">#&gt; = Starting epoch 3 </span></span>
-<span><span class="co">#&gt; Test loss: 0.898364 </span></span>
+<span><span class="co">#&gt; Test loss: 0.8074927 </span></span>
 <span><span class="co">#&gt; = Starting epoch 4 </span></span>
-<span><span class="co">#&gt; Test loss: 0.8301572 </span></span>
+<span><span class="co">#&gt; Test loss: 0.7510419 </span></span>
 <span><span class="co">#&gt; = Starting epoch 5 </span></span>
-<span><span class="co">#&gt; Test loss: 0.7798548 </span></span>
+<span><span class="co">#&gt; Test loss: 0.7076584 </span></span>
 <span><span class="co">#&gt; = Starting epoch 6 </span></span>
-<span><span class="co">#&gt; Test loss: 0.7349331 </span></span>
+<span><span class="co">#&gt; Test loss: 0.6670234 </span></span>
 <span><span class="co">#&gt; = Starting epoch 7 </span></span>
-<span><span class="co">#&gt; Test loss: 0.6870576 </span></span>
+<span><span class="co">#&gt; Test loss: 0.6202478 </span></span>
 <span><span class="co">#&gt; = Starting epoch 8 </span></span>
-<span><span class="co">#&gt; Test loss: 0.6315499 </span></span>
+<span><span class="co">#&gt; Test loss: 0.5660973 </span></span>
 <span><span class="co">#&gt; = Starting epoch 9 </span></span>
-<span><span class="co">#&gt; Test loss: 0.5680075 </span></span>
+<span><span class="co">#&gt; Test loss: 0.5029263 </span></span>
 <span><span class="co">#&gt; = Starting epoch 10 </span></span>
-<span><span class="co">#&gt; Test loss: 0.4959138 </span></span>
+<span><span class="co">#&gt; Test loss: 0.4330521 </span></span>
 <span><span class="co">#&gt; = Starting epoch 11 </span></span>
-<span><span class="co">#&gt; Test loss: 0.4165191 </span></span>
+<span><span class="co">#&gt; Test loss: 0.3588629 </span></span>
 <span><span class="co">#&gt; = Starting epoch 12 </span></span>
-<span><span class="co">#&gt; Test loss: 0.3353714 </span></span>
+<span><span class="co">#&gt; Test loss: 0.2829671 </span></span>
 <span><span class="co">#&gt; = Starting epoch 13 </span></span>
-<span><span class="co">#&gt; Test loss: 0.2602472 </span></span>
+<span><span class="co">#&gt; Test loss: 0.2060382 </span></span>
 <span><span class="co">#&gt; = Starting epoch 14 </span></span>
-<span><span class="co">#&gt; Test loss: 0.1867695 </span></span>
+<span><span class="co">#&gt; Test loss: 0.1270101 </span></span>
 <span><span class="co">#&gt; = Starting epoch 15 </span></span>
-<span><span class="co">#&gt; Test loss: 0.1029147 </span></span>
+<span><span class="co">#&gt; Test loss: 0.04405332 </span></span>
 <span><span class="co">#&gt; = Starting epoch 16 </span></span>
-<span><span class="co">#&gt; Test loss: 0.02968627 </span></span>
+<span><span class="co">#&gt; Test loss: -0.04372722 </span></span>
 <span><span class="co">#&gt; = Starting epoch 17 </span></span>
-<span><span class="co">#&gt; Test loss: -0.0513432 </span></span>
+<span><span class="co">#&gt; Test loss: -0.1331659 </span></span>
 <span><span class="co">#&gt; = Starting epoch 18 </span></span>
-<span><span class="co">#&gt; Test loss: -0.1315356 </span></span>
+<span><span class="co">#&gt; Test loss: -0.2274369 </span></span>
 <span><span class="co">#&gt; = Starting epoch 19 </span></span>
-<span><span class="co">#&gt; Test loss: -0.1768593 </span></span>
+<span><span class="co">#&gt; Test loss: -0.3039972 </span></span>
 <span><span class="co">#&gt; = Starting epoch 20 </span></span>
-<span><span class="co">#&gt; Test loss: -0.2214944 </span></span>
+<span><span class="co">#&gt; Test loss: -0.3722357 </span></span>
 <span><span class="co">#&gt; = Starting epoch 21 </span></span>
-<span><span class="co">#&gt; Test loss: -0.2788162 </span></span>
+<span><span class="co">#&gt; Test loss: -0.4265049 </span></span>
 <span><span class="co">#&gt; = Starting epoch 22 </span></span>
-<span><span class="co">#&gt; Test loss: -0.3401788 </span></span>
+<span><span class="co">#&gt; Test loss: -0.4655787 </span></span>
 <span><span class="co">#&gt; = Starting epoch 23 </span></span>
-<span><span class="co">#&gt; Test loss: -0.3391945 </span></span>
+<span><span class="co">#&gt; Test loss: -0.5478845 </span></span>
 <span><span class="co">#&gt; = Starting epoch 24 </span></span>
-<span><span class="co">#&gt; Test loss: -0.3496705 </span></span>
+<span><span class="co">#&gt; Test loss: -0.5946691 </span></span>
 <span><span class="co">#&gt; = Starting epoch 25 </span></span>
-<span><span class="co">#&gt; Test loss: -0.4407607 </span></span>
+<span><span class="co">#&gt; Test loss: -0.6014633 </span></span>
 <span><span class="co">#&gt; = Starting epoch 26 </span></span>
-<span><span class="co">#&gt; Test loss: -0.5158315 </span></span>
+<span><span class="co">#&gt; Test loss: -0.6825407 </span></span>
 <span><span class="co">#&gt; = Starting epoch 27 </span></span>
-<span><span class="co">#&gt; Test loss: -0.4912127 </span></span>
+<span><span class="co">#&gt; Test loss: -0.7550218 </span></span>
 <span><span class="co">#&gt; = Starting epoch 28 </span></span>
-<span><span class="co">#&gt; Test loss: -0.5814264 </span></span>
+<span><span class="co">#&gt; Test loss: -0.7568789 </span></span>
 <span><span class="co">#&gt; = Starting epoch 29 </span></span>
-<span><span class="co">#&gt; Test loss: -0.5837266 </span></span>
+<span><span class="co">#&gt; Test loss: -0.7990778 </span></span>
 <span><span class="co">#&gt; = Starting epoch 30 </span></span>
-<span><span class="co">#&gt; Test loss: -0.5951191 </span></span>
+<span><span class="co">#&gt; Test loss: -0.8640732 </span></span>
 <span><span class="co">#&gt; = Starting epoch 31 </span></span>
-<span><span class="co">#&gt; Test loss: -0.686202 </span></span>
+<span><span class="co">#&gt; Test loss: -0.9222073 </span></span>
 <span><span class="co">#&gt; = Starting epoch 32 </span></span>
-<span><span class="co">#&gt; Test loss: -0.7412958 </span></span>
+<span><span class="co">#&gt; Test loss: -0.9239739 </span></span>
 <span><span class="co">#&gt; = Starting epoch 33 </span></span>
-<span><span class="co">#&gt; Test loss: -0.8144095 </span></span>
+<span><span class="co">#&gt; Test loss: -0.9878463 </span></span>
 <span><span class="co">#&gt; = Starting epoch 34 </span></span>
-<span><span class="co">#&gt; Test loss: -0.8510625 </span></span>
+<span><span class="co">#&gt; Test loss: -1.020743 </span></span>
 <span><span class="co">#&gt; = Starting epoch 35 </span></span>
-<span><span class="co">#&gt; Test loss: -0.9156491 </span></span>
+<span><span class="co">#&gt; Test loss: -1.057794 </span></span>
 <span><span class="co">#&gt; = Starting epoch 36 </span></span>
-<span><span class="co">#&gt; Test loss: -0.9556894 </span></span>
+<span><span class="co">#&gt; Test loss: -1.130462 </span></span>
 <span><span class="co">#&gt; = Starting epoch 37 </span></span>
-<span><span class="co">#&gt; Test loss: -0.9820101 </span></span>
+<span><span class="co">#&gt; Test loss: -1.157508 </span></span>
 <span><span class="co">#&gt; = Starting epoch 38 </span></span>
-<span><span class="co">#&gt; Test loss: -0.9925916 </span></span>
+<span><span class="co">#&gt; Test loss: -1.146127 </span></span>
 <span><span class="co">#&gt; = Starting epoch 39 </span></span>
-<span><span class="co">#&gt; Test loss: -0.9764043 </span></span>
+<span><span class="co">#&gt; Test loss: -1.249669 </span></span>
 <span><span class="co">#&gt; = Starting epoch 40 </span></span>
-<span><span class="co">#&gt; Test loss: -1.103951 </span></span>
+<span><span class="co">#&gt; Test loss: -1.285013 </span></span>
 <span><span class="co">#&gt; = Starting epoch 41 </span></span>
-<span><span class="co">#&gt; Test loss: -1.19149 </span></span>
+<span><span class="co">#&gt; Test loss: -1.210985 </span></span>
 <span><span class="co">#&gt; = Starting epoch 42 </span></span>
-<span><span class="co">#&gt; Test loss: -1.195981 </span></span>
+<span><span class="co">#&gt; Test loss: -1.356092 </span></span>
 <span><span class="co">#&gt; = Starting epoch 43 </span></span>
-<span><span class="co">#&gt; Test loss: -1.1418 </span></span>
+<span><span class="co">#&gt; Test loss: -1.296778 </span></span>
 <span><span class="co">#&gt; = Starting epoch 44 </span></span>
-<span><span class="co">#&gt; Test loss: -1.215958 </span></span>
+<span><span class="co">#&gt; Test loss: -1.380302 </span></span>
 <span><span class="co">#&gt; = Starting epoch 45 </span></span>
-<span><span class="co">#&gt; Test loss: -1.32622 </span></span>
+<span><span class="co">#&gt; Test loss: -1.416913 </span></span>
 <span><span class="co">#&gt; = Starting epoch 46 </span></span>
-<span><span class="co">#&gt; Test loss: -1.348115 </span></span>
+<span><span class="co">#&gt; Test loss: -1.418661 </span></span>
 <span><span class="co">#&gt; = Starting epoch 47 </span></span>
-<span><span class="co">#&gt; Test loss: -1.309621 </span></span>
+<span><span class="co">#&gt; Test loss: -1.486886 </span></span>
 <span><span class="co">#&gt; = Starting epoch 48 </span></span>
-<span><span class="co">#&gt; Test loss: -1.250608 </span></span>
+<span><span class="co">#&gt; Test loss: -1.475264 </span></span>
 <span><span class="co">#&gt; = Starting epoch 49 </span></span>
-<span><span class="co">#&gt; Test loss: -1.384329 </span></span>
+<span><span class="co">#&gt; Test loss: -1.512016 </span></span>
 <span><span class="co">#&gt; = Starting epoch 50 </span></span>
-<span><span class="co">#&gt; Test loss: -1.47451 </span></span>
+<span><span class="co">#&gt; Test loss: -1.564949 </span></span>
 <span><span class="co">#&gt; = Starting epoch 51 </span></span>
-<span><span class="co">#&gt; Test loss: -1.431957 </span></span>
+<span><span class="co">#&gt; Test loss: -1.580116 </span></span>
 <span><span class="co">#&gt; = Starting epoch 52 </span></span>
-<span><span class="co">#&gt; Test loss: -1.520393 </span></span>
+<span><span class="co">#&gt; Test loss: -1.604746 </span></span>
 <span><span class="co">#&gt; = Starting epoch 53 </span></span>
-<span><span class="co">#&gt; Test loss: -1.537099 </span></span>
+<span><span class="co">#&gt; Test loss: -1.624109 </span></span>
 <span><span class="co">#&gt; = Starting epoch 54 </span></span>
-<span><span class="co">#&gt; Test loss: -1.552404 </span></span>
+<span><span class="co">#&gt; Test loss: -1.645937 </span></span>
 <span><span class="co">#&gt; = Starting epoch 55 </span></span>
-<span><span class="co">#&gt; Test loss: -1.550065 </span></span>
+<span><span class="co">#&gt; Test loss: -1.59718 </span></span>
 <span><span class="co">#&gt; = Starting epoch 56 </span></span>
-<span><span class="co">#&gt; Test loss: -1.55057 </span></span>
+<span><span class="co">#&gt; Test loss: -1.570375 </span></span>
 <span><span class="co">#&gt; = Starting epoch 57 </span></span>
-<span><span class="co">#&gt; Test loss: -1.332315 </span></span>
+<span><span class="co">#&gt; Test loss: -1.651296 </span></span>
 <span><span class="co">#&gt; = Starting epoch 58 </span></span>
-<span><span class="co">#&gt; Test loss: -1.566451 </span></span>
+<span><span class="co">#&gt; Test loss: -1.730751 </span></span>
 <span><span class="co">#&gt; = Starting epoch 59 </span></span>
-<span><span class="co">#&gt; Test loss: -1.428077 </span></span>
+<span><span class="co">#&gt; Test loss: -1.641065 </span></span>
 <span><span class="co">#&gt; = Starting epoch 60 </span></span>
-<span><span class="co">#&gt; Test loss: -1.625435 </span></span>
+<span><span class="co">#&gt; Test loss: -1.693434 </span></span>
 <span><span class="co">#&gt; = Starting epoch 61 </span></span>
-<span><span class="co">#&gt; Test loss: -1.529246 </span></span>
+<span><span class="co">#&gt; Test loss: -1.754691 </span></span>
 <span><span class="co">#&gt; = Starting epoch 62 </span></span>
-<span><span class="co">#&gt; Test loss: -1.555048 </span></span>
+<span><span class="co">#&gt; Test loss: -1.702812 </span></span>
 <span><span class="co">#&gt; = Starting epoch 63 </span></span>
-<span><span class="co">#&gt; Test loss: -1.511905 </span></span>
+<span><span class="co">#&gt; Test loss: -1.818582 </span></span>
 <span><span class="co">#&gt; = Starting epoch 64 </span></span>
-<span><span class="co">#&gt; Test loss: -1.626473 </span></span>
+<span><span class="co">#&gt; Test loss: -1.725415 </span></span>
 <span><span class="co">#&gt; = Starting epoch 65 </span></span>
-<span><span class="co">#&gt; Test loss: -1.550612 </span></span>
+<span><span class="co">#&gt; Test loss: -1.808562 </span></span>
 <span><span class="co">#&gt; = Starting epoch 66 </span></span>
-<span><span class="co">#&gt; Test loss: -1.706589 </span></span>
+<span><span class="co">#&gt; Test loss: -1.847326 </span></span>
 <span><span class="co">#&gt; = Starting epoch 67 </span></span>
-<span><span class="co">#&gt; Test loss: -1.702441 </span></span>
+<span><span class="co">#&gt; Test loss: -1.776105 </span></span>
 <span><span class="co">#&gt; = Starting epoch 68 </span></span>
-<span><span class="co">#&gt; Test loss: -1.718573 </span></span>
+<span><span class="co">#&gt; Test loss: -1.867734 </span></span>
 <span><span class="co">#&gt; = Starting epoch 69 </span></span>
-<span><span class="co">#&gt; Test loss: -1.640859 </span></span>
+<span><span class="co">#&gt; Test loss: -1.842206 </span></span>
 <span><span class="co">#&gt; = Starting epoch 70 </span></span>
-<span><span class="co">#&gt; Test loss: -1.765782 </span></span>
+<span><span class="co">#&gt; Test loss: -1.834485 </span></span>
 <span><span class="co">#&gt; = Starting epoch 71 </span></span>
-<span><span class="co">#&gt; Test loss: -1.765418 </span></span>
+<span><span class="co">#&gt; Test loss: -1.936842 </span></span>
 <span><span class="co">#&gt; = Starting epoch 72 </span></span>
-<span><span class="co">#&gt; Test loss: -1.791939 </span></span>
+<span><span class="co">#&gt; Test loss: -1.834474 </span></span>
 <span><span class="co">#&gt; = Starting epoch 73 </span></span>
-<span><span class="co">#&gt; Test loss: -1.777526 </span></span>
+<span><span class="co">#&gt; Test loss: -1.894279 </span></span>
 <span><span class="co">#&gt; = Starting epoch 74 </span></span>
-<span><span class="co">#&gt; Test loss: -1.878359 </span></span>
+<span><span class="co">#&gt; Test loss: -1.967239 </span></span>
 <span><span class="co">#&gt; = Starting epoch 75 </span></span>
-<span><span class="co">#&gt; Test loss: -1.855221 </span></span>
+<span><span class="co">#&gt; Test loss: -1.856185 </span></span>
 <span><span class="co">#&gt; = Starting epoch 76 </span></span>
-<span><span class="co">#&gt; Test loss: -1.855754 </span></span>
+<span><span class="co">#&gt; Test loss: -1.958865 </span></span>
 <span><span class="co">#&gt; = Starting epoch 77 </span></span>
-<span><span class="co">#&gt; Test loss: -1.914015 </span></span>
+<span><span class="co">#&gt; Test loss: -1.968769 </span></span>
 <span><span class="co">#&gt; = Starting epoch 78 </span></span>
-<span><span class="co">#&gt; Test loss: -1.867642 </span></span>
+<span><span class="co">#&gt; Test loss: -1.95998 </span></span>
 <span><span class="co">#&gt; = Starting epoch 79 </span></span>
-<span><span class="co">#&gt; Test loss: -1.920561 </span></span>
+<span><span class="co">#&gt; Test loss: -2.033075 </span></span>
 <span><span class="co">#&gt; = Starting epoch 80 </span></span>
-<span><span class="co">#&gt; Test loss: -1.914371 </span></span>
+<span><span class="co">#&gt; Test loss: -1.974779 </span></span>
 <span><span class="co">#&gt; = Starting epoch 81 </span></span>
-<span><span class="co">#&gt; Test loss: -1.736178 </span></span>
+<span><span class="co">#&gt; Test loss: -2.022638 </span></span>
 <span><span class="co">#&gt; = Starting epoch 82 </span></span>
-<span><span class="co">#&gt; Test loss: -1.82915 </span></span>
+<span><span class="co">#&gt; Test loss: -2.065017 </span></span>
 <span><span class="co">#&gt; = Starting epoch 83 </span></span>
-<span><span class="co">#&gt; Test loss: -1.950683 </span></span>
+<span><span class="co">#&gt; Test loss: -2.01162 </span></span>
 <span><span class="co">#&gt; = Starting epoch 84 </span></span>
-<span><span class="co">#&gt; Test loss: -1.631932 </span></span>
+<span><span class="co">#&gt; Test loss: -2.039332 </span></span>
 <span><span class="co">#&gt; = Starting epoch 85 </span></span>
-<span><span class="co">#&gt; Test loss: -1.950351 </span></span>
+<span><span class="co">#&gt; Test loss: -2.073748 </span></span>
 <span><span class="co">#&gt; = Starting epoch 86 </span></span>
-<span><span class="co">#&gt; Test loss: -1.868943 </span></span>
+<span><span class="co">#&gt; Test loss: -2.110067 </span></span>
 <span><span class="co">#&gt; = Starting epoch 87 </span></span>
-<span><span class="co">#&gt; Test loss: -1.900771 </span></span>
+<span><span class="co">#&gt; Test loss: -2.124848 </span></span>
 <span><span class="co">#&gt; = Starting epoch 88 </span></span>
-<span><span class="co">#&gt; Test loss: -1.973476 </span></span>
+<span><span class="co">#&gt; Test loss: -2.112715 </span></span>
 <span><span class="co">#&gt; = Starting epoch 89 </span></span>
-<span><span class="co">#&gt; Test loss: -1.94777 </span></span>
+<span><span class="co">#&gt; Test loss: -2.072651 </span></span>
 <span><span class="co">#&gt; = Starting epoch 90 </span></span>
-<span><span class="co">#&gt; Test loss: -2.009283 </span></span>
+<span><span class="co">#&gt; Test loss: -2.087362 </span></span>
 <span><span class="co">#&gt; = Starting epoch 91 </span></span>
-<span><span class="co">#&gt; Test loss: -1.909147 </span></span>
+<span><span class="co">#&gt; Test loss: -2.11249 </span></span>
 <span><span class="co">#&gt; = Starting epoch 92 </span></span>
-<span><span class="co">#&gt; Test loss: -2.03992 </span></span>
+<span><span class="co">#&gt; Test loss: -2.13339 </span></span>
 <span><span class="co">#&gt; = Starting epoch 93 </span></span>
-<span><span class="co">#&gt; Test loss: -2.009765 </span></span>
+<span><span class="co">#&gt; Test loss: -2.153048 </span></span>
 <span><span class="co">#&gt; = Starting epoch 94 </span></span>
-<span><span class="co">#&gt; Test loss: -2.043911 </span></span>
+<span><span class="co">#&gt; Test loss: -2.112365 </span></span>
 <span><span class="co">#&gt; = Starting epoch 95 </span></span>
-<span><span class="co">#&gt; Test loss: -2.048659 </span></span>
+<span><span class="co">#&gt; Test loss: -2.186121 </span></span>
 <span><span class="co">#&gt; = Starting epoch 96 </span></span>
-<span><span class="co">#&gt; Test loss: -2.05707 </span></span>
+<span><span class="co">#&gt; Test loss: -2.123559 </span></span>
 <span><span class="co">#&gt; = Starting epoch 97 </span></span>
-<span><span class="co">#&gt; Test loss: -2.089322 </span></span>
+<span><span class="co">#&gt; Test loss: -2.178511 </span></span>
 <span><span class="co">#&gt; = Starting epoch 98 </span></span>
-<span><span class="co">#&gt; Test loss: -2.109569 </span></span>
+<span><span class="co">#&gt; Test loss: -2.207041 </span></span>
 <span><span class="co">#&gt; = Starting epoch 99 </span></span>
-<span><span class="co">#&gt; Test loss: -2.118278 </span></span>
+<span><span class="co">#&gt; Test loss: -2.223139 </span></span>
 <span><span class="co">#&gt; = Starting epoch 100 </span></span>
-<span><span class="co">#&gt; Test loss: -2.130466 </span></span>
+<span><span class="co">#&gt; Test loss: -2.165985 </span></span>
 <span><span class="co">#&gt; = Starting epoch 101 </span></span>
-<span><span class="co">#&gt; Test loss: -2.132201 </span></span>
+<span><span class="co">#&gt; Test loss: -2.133902 </span></span>
 <span><span class="co">#&gt; = Starting epoch 102 </span></span>
-<span><span class="co">#&gt; Test loss: -2.12488 </span></span>
+<span><span class="co">#&gt; Test loss: -2.044831 </span></span>
 <span><span class="co">#&gt; = Starting epoch 103 </span></span>
-<span><span class="co">#&gt; Test loss: -2.081209 </span></span>
+<span><span class="co">#&gt; Test loss: -2.038349 </span></span>
 <span><span class="co">#&gt; = Starting epoch 104 </span></span>
-<span><span class="co">#&gt; Test loss: -2.126183 </span></span>
+<span><span class="co">#&gt; Test loss: -2.16 </span></span>
 <span><span class="co">#&gt; = Starting epoch 105 </span></span>
-<span><span class="co">#&gt; Test loss: -2.123863 </span></span>
+<span><span class="co">#&gt; Test loss: -2.249005 </span></span>
 <span><span class="co">#&gt; = Starting epoch 106 </span></span>
-<span><span class="co">#&gt; Test loss: -2.030184 </span></span>
+<span><span class="co">#&gt; Test loss: -2.124453 </span></span>
 <span><span class="co">#&gt; = Starting epoch 107 </span></span>
-<span><span class="co">#&gt; Test loss: -1.92316 </span></span>
+<span><span class="co">#&gt; Test loss: -2.150304 </span></span>
 <span><span class="co">#&gt; = Starting epoch 108 </span></span>
-<span><span class="co">#&gt; Test loss: -2.085169 </span></span>
+<span><span class="co">#&gt; Test loss: -2.262424 </span></span>
 <span><span class="co">#&gt; = Starting epoch 109 </span></span>
-<span><span class="co">#&gt; Test loss: -2.146948 </span></span>
+<span><span class="co">#&gt; Test loss: -2.173388 </span></span>
 <span><span class="co">#&gt; = Starting epoch 110 </span></span>
-<span><span class="co">#&gt; Test loss: -2.112332 </span></span>
+<span><span class="co">#&gt; Test loss: -2.105469 </span></span>
 <span><span class="co">#&gt; = Starting epoch 111 </span></span>
-<span><span class="co">#&gt; Test loss: -2.097632 </span></span>
+<span><span class="co">#&gt; Test loss: -2.172702 </span></span>
 <span><span class="co">#&gt; = Starting epoch 112 </span></span>
-<span><span class="co">#&gt; Test loss: -2.124208 </span></span>
+<span><span class="co">#&gt; Test loss: -2.294052 </span></span>
 <span><span class="co">#&gt; = Starting epoch 113 </span></span>
-<span><span class="co">#&gt; Test loss: -2.170882 </span></span>
+<span><span class="co">#&gt; Test loss: -2.103846 </span></span>
 <span><span class="co">#&gt; = Starting epoch 114 </span></span>
-<span><span class="co">#&gt; Test loss: -2.127014 </span></span>
+<span><span class="co">#&gt; Test loss: -2.17493 </span></span>
 <span><span class="co">#&gt; = Starting epoch 115 </span></span>
-<span><span class="co">#&gt; Test loss: -2.171567 </span></span>
+<span><span class="co">#&gt; Test loss: -2.276436 </span></span>
 <span><span class="co">#&gt; = Starting epoch 116 </span></span>
-<span><span class="co">#&gt; Test loss: -2.18538 </span></span>
+<span><span class="co">#&gt; Test loss: -2.145731 </span></span>
 <span><span class="co">#&gt; = Starting epoch 117 </span></span>
-<span><span class="co">#&gt; Test loss: -2.098421 </span></span>
+<span><span class="co">#&gt; Test loss: -2.167519 </span></span>
 <span><span class="co">#&gt; = Starting epoch 118 </span></span>
-<span><span class="co">#&gt; Test loss: -2.157994 </span></span>
+<span><span class="co">#&gt; Test loss: -2.305938 </span></span>
 <span><span class="co">#&gt; = Starting epoch 119 </span></span>
-<span><span class="co">#&gt; Test loss: -2.208174 </span></span>
+<span><span class="co">#&gt; Test loss: -2.226234 </span></span>
 <span><span class="co">#&gt; = Starting epoch 120 </span></span>
-<span><span class="co">#&gt; Test loss: -2.100451 </span></span>
+<span><span class="co">#&gt; Test loss: -2.215477 </span></span>
 <span><span class="co">#&gt; = Starting epoch 121 </span></span>
-<span><span class="co">#&gt; Test loss: -2.182833 </span></span>
+<span><span class="co">#&gt; Test loss: -2.325306 </span></span>
 <span><span class="co">#&gt; = Starting epoch 122 </span></span>
-<span><span class="co">#&gt; Test loss: -2.215508 </span></span>
+<span><span class="co">#&gt; Test loss: -2.25207 </span></span>
 <span><span class="co">#&gt; = Starting epoch 123 </span></span>
-<span><span class="co">#&gt; Test loss: -1.994959 </span></span>
+<span><span class="co">#&gt; Test loss: -2.238623 </span></span>
 <span><span class="co">#&gt; = Starting epoch 124 </span></span>
-<span><span class="co">#&gt; Test loss: -1.889319 </span></span>
+<span><span class="co">#&gt; Test loss: -2.329338 </span></span>
 <span><span class="co">#&gt; = Starting epoch 125 </span></span>
-<span><span class="co">#&gt; Test loss: -2.234799 </span></span>
+<span><span class="co">#&gt; Test loss: -2.240293 </span></span>
 <span><span class="co">#&gt; = Starting epoch 126 </span></span>
-<span><span class="co">#&gt; Test loss: -1.6879 </span></span>
+<span><span class="co">#&gt; Test loss: -2.20107 </span></span>
 <span><span class="co">#&gt; = Starting epoch 127 </span></span>
-<span><span class="co">#&gt; Test loss: -1.675952 </span></span>
+<span><span class="co">#&gt; Test loss: -2.339725 </span></span>
 <span><span class="co">#&gt; = Starting epoch 128 </span></span>
-<span><span class="co">#&gt; Test loss: -1.865837</span></span></code></pre></div>
+<span><span class="co">#&gt; Test loss: -2.307074</span></span></code></pre></div>
 <p>We can now generate samples from the trained model:</p>
 <div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">test_samples</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/torch/man/as_array.html" class="external-link">as_array</a></span><span class="op">(</span><span class="fu"><a href="../reference/generate_from_conditional_flow.html">generate_from_conditional_flow</a></span><span class="op">(</span><span class="va">conditioning_flow</span>, <span class="fl">1024</span>, <span class="va">test_set</span><span class="op">$</span><span class="va">conditioning</span><span class="op">[</span><span class="fl">1</span> <span class="op">:</span> <span class="fl">4</span>, , , drop <span class="op">=</span> <span class="cn">FALSE</span><span class="op">]</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">test_samples</span><span class="op">)</span></span>
-<span><span class="co">#&gt;  num [1:1024, 1:4, 1:2] 0.1983 0.3447 -0.2101 0.337 -0.0428 ...</span></span>
+<span><span class="co">#&gt;  num [1:1024, 1:4, 1:2] -0.0773 -0.7046 -0.1275 -0.7612 0.4757 ...</span></span>
 <span></span>
 <span><span class="va">test_target</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/torch/man/as_array.html" class="external-link">as_array</a></span><span class="op">(</span><span class="va">test_set</span><span class="op">$</span><span class="va">target</span><span class="op">)</span></span>
 <span></span>
