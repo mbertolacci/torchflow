@@ -8,6 +8,13 @@
 \description{
 A package to fit conditional normalizing flows.
 }
+\seealso{
+Useful links:
+\itemize{
+  \item \url{https://mbertolacci.github.io/torchflow/}
+}
+
+}
 \author{
 \strong{Maintainer}: Michael Bertolacci \email{m.bertolacci@gmail.com} (\href{https://orcid.org/YOUR-ORCID-ID}{ORCID})
 
