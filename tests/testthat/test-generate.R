@@ -20,7 +20,20 @@ test_that('generate_from_conditional_flow generates correct number of samples wi
   expect_equal(samples$size(), c(n_samples, simple_model_no_conditioning$dimension()))
 })
 
-test_that('generate_from_conditional_flow generates correct number of samples with conditioning', {
+test_that('generate_from_conditional_flow handles conditioning', {
+  n_samples <- 100
+  conditioning <- torch_randn(3)
+  samples <- generate_from_conditional_flow(
+    model = simple_model_with_conditioning,
+    n_samples_per_batch = n_samples,
+    conditioning = conditioning
+  )
+  
+  expected_size <- c(n_samples, simple_model_with_conditioning$dimension())
+  expect_equal(samples$size(), expected_size)
+})
+
+test_that('generate_from_conditional_flow generates correct number of samples with batch conditioning', {
   n_samples <- 100
   conditioning <- torch_randn(10, 3)
   samples <- generate_from_conditional_flow(
