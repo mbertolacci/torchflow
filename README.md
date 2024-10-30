@@ -2,6 +2,7 @@
 
 <!-- badges: start -->
 [![R-CMD-check](https://github.com/mbertolacci/torchflow/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/mbertolacci/torchflow/actions/workflows/R-CMD-check.yaml)
+[![codecov](https://codecov.io/github/mbertolacci/torchflow/graph/badge.svg?token=jdxZC03HWG)](https://codecov.io/github/mbertolacci/torchflow)
 <!-- badges: end -->
 
 Normalizing flows in R using the [torch](https://torch.mlverse.org/) package.
