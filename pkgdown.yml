@@ -1,0 +1,9 @@
+pandoc: 3.1.11
+pkgdown: 2.1.1
+pkgdown_sha: ~
+articles:
+  torchflow: torchflow.html
+last_built: 2024-10-30T07:12Z
+urls:
+  reference: https://mbertolacci.github.io/torchflow/reference
+  article: https://mbertolacci.github.io/torchflow/articles

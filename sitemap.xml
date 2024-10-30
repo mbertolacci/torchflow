@@ -1,0 +1,22 @@
+<urlset xmlns = 'http://www.sitemaps.org/schemas/sitemap/0.9'>
+<url><loc>https://mbertolacci.github.io/torchflow/404.html</loc></url>
+<url><loc>https://mbertolacci.github.io/torchflow/LICENSE-text.html</loc></url>
+<url><loc>https://mbertolacci.github.io/torchflow/LICENSE.html</loc></url>
+<url><loc>https://mbertolacci.github.io/torchflow/articles/index.html</loc></url>
+<url><loc>https://mbertolacci.github.io/torchflow/articles/torchflow.html</loc></url>
+<url><loc>https://mbertolacci.github.io/torchflow/authors.html</loc></url>
+<url><loc>https://mbertolacci.github.io/torchflow/index.html</loc></url>
+<url><loc>https://mbertolacci.github.io/torchflow/reference/forward_kl_loss.html</loc></url>
+<url><loc>https://mbertolacci.github.io/torchflow/reference/generate_from_conditional_flow.html</loc></url>
+<url><loc>https://mbertolacci.github.io/torchflow/reference/index.html</loc></url>
+<url><loc>https://mbertolacci.github.io/torchflow/reference/nn_affine_coupling_block.html</loc></url>
+<url><loc>https://mbertolacci.github.io/torchflow/reference/nn_conditional.html</loc></url>
+<url><loc>https://mbertolacci.github.io/torchflow/reference/nn_conditional_flow.html</loc></url>
+<url><loc>https://mbertolacci.github.io/torchflow/reference/nn_conditional_mlp.html</loc></url>
+<url><loc>https://mbertolacci.github.io/torchflow/reference/nn_permutation_flow.html</loc></url>
+<url><loc>https://mbertolacci.github.io/torchflow/reference/nn_sequential_conditional_flow.html</loc></url>
+<url><loc>https://mbertolacci.github.io/torchflow/reference/nn_summarizing_conditional_flow.html</loc></url>
+<url><loc>https://mbertolacci.github.io/torchflow/reference/torchflow-package.html</loc></url>
+<url><loc>https://mbertolacci.github.io/torchflow/reference/train_conditional_flow.html</loc></url>
+</urlset>
+
