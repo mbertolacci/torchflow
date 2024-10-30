@@ -337,7 +337,7 @@ x_y_grid <- as.matrix(expand.grid(
   x = seq(0, 1, length.out = n_grid),
   y = seq(0, 1, length.out = n_grid)
 ))
-distances <- torch_tensor(fields::rdist(x_y_grid))
+distances <- torch_tensor(as.matrix(dist(x_y_grid)))
 
 generate_conditional_samples <- function(...) {
   n_samples <- 1024
