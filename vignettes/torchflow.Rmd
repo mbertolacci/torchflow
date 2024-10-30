@@ -1,5 +1,5 @@
 ---
-title: "torchflow: Normalizing Flows using R torch"
+title: "torchflow"
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{torchflow}
