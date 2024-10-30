@@ -1,0 +1,20 @@
+Package: torchflow
+Title: Conditional Normalizing Flows
+Version: 0.0.1
+Authors@R: 
+    person("Michael", "Bertolacci", , "m.bertolacci@gmail.com", role = c("aut", "cre"),
+           comment = c(ORCID = "YOUR-ORCID-ID"))
+Description: A package to fit conditional normalizing flows.
+License: MIT + file LICENSE
+Encoding: UTF-8
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.3.1
+Imports:
+    torch,
+    progress
+Suggests: 
+    knitr,
+    rmarkdown,
+    testthat (>= 3.0.0)
+Config/testthat/edition: 3
+VignetteBuilder: knitr

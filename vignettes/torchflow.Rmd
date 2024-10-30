@@ -1,0 +1,442 @@
+---
+title: "torchflow: Normalizing Flows using R torch"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{torchflow}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  fig.width = 8,
+  fig.height = 6
+)
+```
+
+```{r setup}
+library(torch)
+library(torchflow)
+```
+
+# Introduction
+
+**Give mathematical details**
+
+# Creating and sampling from a flow
+
+A simple two parameter normalising flow can be created as follows:
+
+```{r}
+flow_model <- nn_sequential_conditional_flow(
+  nn_affine_coupling_block(2),
+  nn_permutation_flow(2),
+  nn_affine_coupling_block(2),
+  nn_permutation_flow(2),
+  nn_affine_coupling_block(2)
+)
+```
+
+This flow has five layers, which alternate between affine coupling blocks and
+permutation flows. The flow is just a standard torch `nn_module` and can be used
+in the usual way:
+
+```{r}
+x <- torch_randn(5, 2)
+flow_model(x)
+```
+
+The first dimension of the input acts as a batch dimension, so the flow can be
+used to generate multiple samples at once. The above code actually implements
+sampling from the distribution represented by the flow. This can also be done
+directly using the `generate_from_conditional_flow` function:
+
+```{r}
+generate_from_conditional_flow(flow_model, 5)
+```
+
+# Conditional flow
+
+A conditional flow takes an additional input, the conditioning variable, which
+can be used to condition the samples on some additional information. The flow
+therefore encodes a conditional distribution. The following code creates a
+conditional flow with the same architecture as the unconditional flow defined
+above but with an additional conditioning variable of dimension 3:
+
+```{r}
+conditioned_flow_model <- nn_sequential_conditional_flow(
+  nn_affine_coupling_block(2, 3),
+  nn_permutation_flow(2),
+  nn_affine_coupling_block(2, 3)
+)
+```
+
+We can sample from the flow for a given conditioning variable as follows:
+
+```{r}
+conditioning <- torch_randn(3)
+generate_from_conditional_flow(conditioned_flow_model, 5, conditioning)
+```
+
+We can also do this for a batch of conditioning variables:
+
+```{r}
+conditioning <- torch_randn(8, 3)
+generate_from_conditional_flow(conditioned_flow_model, 5, conditioning)
+```
+
+# Training an unconditional flow
+
+The above flows are randomly initialised, so samples from them do not follow
+any interesting distribution. We can instead train a flow to follow a given
+distribution using samples from that distribution.
+
+Let us train a flow to match the following distribution $\sigma \sim N^+(0, 1)$,
+$\mu \sim N(0, \sigma^2)$, where $N^+(0, 1)$ is the half normal distribution
+with mean 0 and standard deviation 1. We can generate samples from this
+distribution as follows:
+
+```{r}
+generate_samples <- function(...) {
+  n_samples <- 1024
+  sigma <- torch_abs(torch_randn(n_samples))
+  mu <- torch_randn(n_samples) * sigma
+  list(target = torch_stack(list(mu, sigma), 2))
+}
+
+generate_samples()
+```
+
+This function can be used to train the flow to match the distribution using the
+`train_conditional_flow` function:
+
+```{r}
+test_set <- generate_samples()
+train_conditional_flow(
+  flow_model,
+  generate_samples,
+  n_epochs = 32,
+  batch_size = 256,
+  after_epoch = function(...) {
+    test_loss <- as_array(forward_kl_loss(flow_model(test_set$target)))
+    cat('Test loss:', test_loss, '\n')
+  }
+)
+```
+
+It looks as though the test loss has converged. We can sample from the trained
+flow as follows and compare the samples to the test set:
+
+```{r}
+test_samples <- generate_from_conditional_flow(flow_model, 1024)
+plot(as_array(test_set$target), xlab = 'mu', ylab = 'sigma')
+points(as_array(test_samples), col = 'red')
+```
+
+This looks like a reasonable approximation to the target distribution. We can also look at marginal histograms:
+
+```{r}
+par(mfrow = c(2, 2))
+hist(as_array(test_set$target[, 1]), main = 'Target', xlab = 'mu', freq = FALSE, breaks = 32)
+hist(as_array(test_samples[, 1]), main = 'Samples', xlab = 'mu', freq = FALSE, breaks = 32)
+hist(as_array(test_set$target[, 2]), main = 'Target', xlab = 'sigma', freq = FALSE, breaks = 32)
+hist(as_array(test_samples[, 2]), main = 'Samples', xlab = 'sigma', freq = FALSE, breaks = 32)
+```
+
+These look okay.
+
+# Training a conditional flow
+
+The process for training a conditional flow is the same as for an unconditional
+flow, except that the `generate` function now also returns the conditioning
+variable. Let's add a conditioning variable, $y \sim N(\mu, \sigma^2)$, with
+four replicates:
+
+```{r}
+generate_conditional_samples <- function(...) {
+  n_samples <- 1024
+  sigma <- torch_abs(torch_randn(n_samples))
+  mu <- torch_randn(n_samples) * sigma
+  y <- torch_unsqueeze(mu, 2) + torch_randn(n_samples, 4) * torch_unsqueeze(sigma, 2)
+  list(
+    target = torch_stack(list(mu, sigma), 2),
+    conditioning = y
+  )
+}
+
+conditioning_flow <- nn_sequential_conditional_flow(
+  nn_affine_coupling_block(2, 4),
+  nn_permutation_flow(2),
+  nn_affine_coupling_block(2, 4),
+  nn_permutation_flow(2),
+  nn_affine_coupling_block(2, 4)
+)
+
+test_set <- generate_conditional_samples()
+str(test_set)
+train_conditional_flow(
+  conditioning_flow,
+  generate_conditional_samples,
+  n_epochs = 128,
+  batch_size = 256,
+  after_epoch = function(...) {
+    test_loss <- as_array(forward_kl_loss(conditioning_flow(test_set$target, test_set$conditioning)))
+    cat('Test loss:', test_loss, '\n')
+  }
+)
+```
+
+We can generate samples from the trained flow as follows, where now the samples
+are conditioned on the values of $y$:
+
+```{r, fig.height = 12}
+# Generate 1024 samples for each of the first 4 conditioning variables in the test set
+test_samples <- as_array(generate_from_conditional_flow(conditioning_flow, 1024, test_set$conditioning[1 : 4, ]))
+
+par(mfrow = c(4, 2))
+for (i in 1 : 4) {
+  hist(test_samples[, i, 1], main = '', xlab = 'mu', freq = FALSE, breaks = 32, xlim = c(-3, 3))
+  abline(v = as_array(test_set$conditioning[i, ]), col = 'blue')
+  abline(v = as_array(test_set$target[i, 1]), col = 'red')
+  hist(test_samples[, i, 2], main = '', xlab = 'sigma', freq = FALSE, breaks = 32, xlim = c(0, 3))
+  abline(v = as_array(test_set$target[i, 2]), col = 'red')
+}
+```
+
+We can also plot the samples on a scatter plot:
+
+```{r}
+par(mfrow = c(2, 2))
+for (i in 1 : 4) {
+  plot(test_samples[, i, 1], test_samples[, i, 2], main = '', xlab = 'mu', ylab = 'sigma', xlim = c(-3, 3), ylim = c(0, 3))
+  abline(v = as_array(test_set$target[i, 1]), col = 'red')
+  abline(h = as_array(test_set$target[i, 2]), col = 'red')
+}
+```
+
+**Compare these to MCMC**
+
+# Using a summarizing network
+
+In the above example, the conditioning variable `y` contains four replicates of
+the conditioning variable. We ignored the fact that these are replicates, and the
+trained the flow as though they could be dependent. We can instead use a
+summarizing network that individually processes each individual replicate
+into a set of summary statistics, and then combine the summary statistics in a
+permutation invariant way to form the conditioning variable. Here is an example
+summarizing network:
+
+```{r}
+summarizing_network <- nn_module(
+  initialize = function() {
+    self$summary_head <- nn_sequential(
+      nn_linear(1, 32),
+      nn_relu(),
+      nn_linear(32, 32),
+      nn_relu(),
+      nn_linear(32, 8),
+    )
+  },
+  forward = function(y) {
+    summaries <- self$summary_head(torch_unsqueeze(y, -1))
+    torch_sum(summaries, -2)
+  }
+)
+
+summary_model <- summarizing_network()
+summary_model(torch_randn(5, 4))
+```
+
+We can combine the summarizing network with the flow in a `nn_summarizing_conditional_flow` object:
+
+```{r}
+flow_model <- nn_sequential_conditional_flow(
+  nn_affine_coupling_block(2, 8),
+  nn_permutation_flow(2),
+  nn_affine_coupling_block(2, 8),
+  nn_permutation_flow(2),
+  nn_affine_coupling_block(2, 8)
+)
+conditioning_flow <- nn_summarizing_conditional_flow(summary_model, flow_model)
+```
+
+Let's also expand the number of replicated observations to 32:
+
+```{r}
+generate_conditional_samples <- function(...) {
+  n_samples <- 1024
+  sigma <- torch_abs(torch_randn(n_samples))
+  mu <- torch_randn(n_samples) * sigma
+  y <- torch_unsqueeze(mu, 2) + torch_randn(n_samples, 32) * torch_unsqueeze(sigma, 2)
+  list(
+    target = torch_stack(list(mu, sigma), 2),
+    conditioning = y
+  )
+}
+```
+
+Let's train the model:
+
+```{r}
+test_set <- generate_conditional_samples()
+str(test_set)
+train_conditional_flow(
+  conditioning_flow,
+  generate_conditional_samples,
+  n_epochs = 128,
+  batch_size = 256,
+  after_epoch = function(...) {
+    test_loss <- as_array(forward_kl_loss(conditioning_flow(test_set$target, test_set$conditioning)))
+    cat('Test loss:', test_loss, '\n')
+  }
+)
+```
+
+We can generate samples from the trained model as before:
+
+```{r}
+# Generate 1024 samples for each of the first 4 conditioning variables in the test set
+test_samples <- as_array(generate_from_conditional_flow(conditioning_flow, 1024, test_set$conditioning[1 : 4, ]))
+
+par(mfrow = c(4, 2))
+for (i in 1 : 4) {
+  hist(test_samples[, i, 1], main = '', xlab = 'mu', freq = FALSE, breaks = 32, xlim = c(-3, 3))
+  abline(v = as_array(test_set$target[i, 1]), col = 'red')
+  hist(test_samples[, i, 2], main = '', xlab = 'sigma', freq = FALSE, breaks = 32, xlim = c(0, 3))
+  abline(v = as_array(test_set$target[i, 2]), col = 'red')
+}
+```
+
+We can also plot the samples on a scatter plot:
+
+```{r}
+par(mfrow = c(2, 2))
+for (i in 1 : 4) {
+  plot(test_samples[, i, 1], test_samples[, i, 2], main = '', xlab = 'mu', ylab = 'sigma', xlim = c(-3, 3), ylim = c(0, 3))
+  abline(v = as_array(test_set$target[i, 1]), col = 'red')
+  abline(h = as_array(test_set$target[i, 2]), col = 'red')
+}
+```
+
+# More complex conditioning variables
+
+The summarizing network is the key to using more complex conditioning variables.
+For example, we can use a 2D grid of points as the conditioning variable, which
+is processed by the summarizing network into a set of summary statistics which
+are then used as the conditioning variable for the flow. For the 2-D grid, a
+convolutional network is a conventional choice that often works well in practice.
+
+The following example generates data using an exponential covariance with unknown
+variance and length scale over a 16x16 2-D grid:
+
+```{r}
+n_grid <- 16
+x_y_grid <- as.matrix(expand.grid(
+  x = seq(0, 1, length.out = n_grid),
+  y = seq(0, 1, length.out = n_grid)
+))
+distances <- torch_tensor(fields::rdist(x_y_grid))
+
+generate_conditional_samples <- function(...) {
+  n_samples <- 1024
+  ell <- 0.1 + 1.9 * torch_rand(n_samples)
+  sigma <- torch_abs(torch_randn(n_samples))
+
+  Sigma <- torch_square(sigma)$unsqueeze(-1)$unsqueeze(-1) * torch_exp(-torch_unsqueeze(distances, 1) / ell$unsqueeze(-1)$unsqueeze(-1))
+  L <- linalg_cholesky(Sigma)
+  y_flat <- torch_matmul(L, torch_randn(n_samples, 256, 1))
+  # The extra 1 here is interpreted as a single channel
+  y <- torch_reshape(y_flat, c(n_samples, 1, n_grid, n_grid))
+
+  list(
+    # We log the parameters to ensure they have real support;
+    # this is not strictly necessary for the flow to work, but it
+    # does make it easier to match the distribution
+    target = torch_log(torch_stack(list(ell, sigma), 2)),
+    conditioning = y
+  )
+}
+
+test_set <- generate_conditional_samples()
+par(mfrow = c(2, 2))
+for (i in 1 : 4) {
+  image(as_array(test_set$conditioning[i, 1, , ]), main = '', xlab = 'x', ylab = 'y')
+}
+```
+
+We can now create a summarizing network for this conditioning variable. A
+convolutional network is a conventional choice for this type of data. The network
+alternates between convolution, ReLU and max pooling layers, with a final
+adaptive average pooling layer to reduce the summary statistics to a fixed
+size vector of dimension 32 (the number of summary statistics used by the flow):
+
+```{r}
+summary_model <- nn_sequential(
+  nn_conv2d(1, 16, 3, padding = 1),
+  nn_relu(),
+  nn_max_pool2d(2),
+  nn_conv2d(16, 32, 3, padding = 1),
+  nn_relu(),
+  nn_adaptive_avg_pool2d(1),
+  nn_flatten()
+)
+
+str(summary_model(test_set$conditioning[1 : 10, , , drop = FALSE]))
+```
+
+We can now create a conditional flow with this summarizing network:
+
+```{r}
+flow_model <- nn_sequential_conditional_flow(
+  nn_affine_coupling_block(2, 32),
+  nn_permutation_flow(2),
+  nn_affine_coupling_block(2, 32),
+  nn_permutation_flow(2),
+  nn_affine_coupling_block(2, 32)
+)
+conditioning_flow <- nn_summarizing_conditional_flow(summary_model, flow_model)
+```
+
+We can now train the model as before:
+
+```{r}
+train_conditional_flow(
+  conditioning_flow,
+  generate_conditional_samples,
+  n_epochs = 128,
+  batch_size = 1024,
+  after_epoch = function(...) {
+    test_loss <- as_array(forward_kl_loss(conditioning_flow(test_set$target, test_set$conditioning)))
+    cat('Test loss:', test_loss, '\n')
+  }
+)
+```
+
+We can now generate samples from the trained model:
+
+```{r, fig.height = 8}
+test_samples <- as_array(generate_from_conditional_flow(conditioning_flow, 1024, test_set$conditioning[1 : 4, , , drop = FALSE]))
+str(test_samples)
+
+test_target <- as_array(test_set$target)
+
+par(mfrow = c(4, 2))
+for (i in 1 : 4) {
+  hist(exp(test_samples[, i, 1]), main = '', xlab = 'ell', freq = FALSE, breaks = 32, xlim = c(0, 2))
+  abline(v = exp(test_target[i, 1]), col = 'red')
+  hist(exp(test_samples[, i, 2]), main = '', xlab = 'sigma', freq = FALSE, breaks = 32, xlim = c(0, 3))
+  abline(v = exp(test_target[i, 2]), col = 'red')
+}
+```
+
+We can also plot the samples on a scatter plot:
+```{r}
+par(mfrow = c(2, 2))
+for (i in 1 : 4) {
+  plot(exp(test_samples[, i, 1]), exp(test_samples[, i, 2]), main = '', xlab = 'ell', ylab = 'sigma', xlim = c(0, 2), ylim = c(0, 3))
+  abline(v = exp(test_target[i, 1]), col = 'red')
+  abline(h = exp(test_target[i, 2]), col = 'red')
+}
+```
