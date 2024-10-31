@@ -3,7 +3,7 @@ pkgdown: 2.1.1
 pkgdown_sha: ~
 articles:
   torchflow: torchflow.html
-last_built: 2024-10-30T09:14Z
+last_built: 2024-10-31T02:08Z
 urls:
   reference: https://mbertolacci.github.io/torchflow/reference
   article: https://mbertolacci.github.io/torchflow/articles
