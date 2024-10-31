@@ -23,7 +23,9 @@ library(torchflow)
 
 # Introduction
 
-**Give mathematical details**
+_This vignette is still under construction_
+
+**Give mathematical details of normalizing flows**
 
 # Creating and sampling from a flow
 
@@ -66,7 +68,9 @@ conditional flow with the same architecture as the unconditional flow defined
 above but with an additional conditioning variable of dimension 3:
 
 ```{r}
-conditioned_flow_model <- nn_sequential_conditional_flow(
+flow_model <- nn_sequential_conditional_flow(
+  nn_affine_coupling_block(2, 3),
+  nn_permutation_flow(2),
   nn_affine_coupling_block(2, 3),
   nn_permutation_flow(2),
   nn_affine_coupling_block(2, 3)
@@ -77,14 +81,14 @@ We can sample from the flow for a given conditioning variable as follows:
 
 ```{r}
 conditioning <- torch_randn(3)
-generate_from_conditional_flow(conditioned_flow_model, 5, conditioning)
+generate_from_conditional_flow(flow_model, 5, conditioning)
 ```
 
 We can also do this for a batch of conditioning variables:
 
 ```{r}
 conditioning <- torch_randn(8, 3)
-generate_from_conditional_flow(conditioned_flow_model, 5, conditioning)
+generate_from_conditional_flow(flow_model, 5, conditioning)
 ```
 
 # Training an unconditional flow
@@ -96,14 +100,16 @@ distribution using samples from that distribution.
 Let us train a flow to match the following distribution $\sigma \sim N^+(0, 1)$,
 $\mu \sim N(0, \sigma^2)$, where $N^+(0, 1)$ is the half normal distribution
 with mean 0 and standard deviation 1. We can generate samples from this
-distribution as follows:
+distribution as follows. Note that we take the logarithm of the $\sigma$
+parameter to ensure that it has real support; the flow targets this transformed
+distribution.
 
 ```{r}
 generate_samples <- function(...) {
   n_samples <- 1024
   sigma <- torch_abs(torch_randn(n_samples))
   mu <- torch_randn(n_samples) * sigma
-  list(target = torch_stack(list(mu, sigma), 2))
+  list(target = torch_stack(list(mu, torch_log(sigma)), 2))
 }
 
 generate_samples()
@@ -113,12 +119,24 @@ This function can be used to train the flow to match the distribution using the
 `train_conditional_flow` function:
 
 ```{r}
+# Make an unconditional flow
+flow_model <- nn_sequential_conditional_flow(
+  nn_affine_coupling_block(2),
+  nn_permutation_flow(2),
+  nn_affine_coupling_block(2),
+  nn_permutation_flow(2),
+  nn_affine_coupling_block(2)
+)
+
+# Generate a test set
 test_set <- generate_samples()
+
+# Train the flow
 train_conditional_flow(
   flow_model,
   generate_samples,
-  n_epochs = 32,
-  batch_size = 256,
+  n_epochs = 128,
+  batch_size = 1024,
   after_epoch = function(...) {
     test_loss <- as_array(forward_kl_loss(flow_model(test_set$target)))
     cat('Test loss:', test_loss, '\n')
@@ -130,19 +148,20 @@ It looks as though the test loss has converged. We can sample from the trained
 flow as follows and compare the samples to the test set:
 
 ```{r}
-test_samples <- generate_from_conditional_flow(flow_model, 1024)
-plot(as_array(test_set$target), xlab = 'mu', ylab = 'sigma')
-points(as_array(test_samples), col = 'red')
+test_samples <- as_array(generate_from_conditional_flow(flow_model, 1024))
+test_target <- as_array(test_set$target)
+plot(test_target, xlab = 'mu', ylab = 'log(sigma)')
+points(test_samples, col = 'red')
 ```
 
 This looks like a reasonable approximation to the target distribution. We can also look at marginal histograms:
 
 ```{r}
 par(mfrow = c(2, 2))
-hist(as_array(test_set$target[, 1]), main = 'Target', xlab = 'mu', freq = FALSE, breaks = 32)
-hist(as_array(test_samples[, 1]), main = 'Samples', xlab = 'mu', freq = FALSE, breaks = 32)
-hist(as_array(test_set$target[, 2]), main = 'Target', xlab = 'sigma', freq = FALSE, breaks = 32)
-hist(as_array(test_samples[, 2]), main = 'Samples', xlab = 'sigma', freq = FALSE, breaks = 32)
+hist(test_target[, 1], main = 'Target', xlab = 'mu', freq = FALSE, breaks = 32)
+hist(test_samples[, 1], main = 'Samples', xlab = 'mu', freq = FALSE, breaks = 32)
+hist(test_target[, 2], main = 'Target', xlab = 'log(sigma)', freq = FALSE, breaks = 32)
+hist(test_samples[, 2], main = 'Samples', xlab = 'log(sigma)', freq = FALSE, breaks = 32)
 ```
 
 These look okay.
@@ -161,12 +180,13 @@ generate_conditional_samples <- function(...) {
   mu <- torch_randn(n_samples) * sigma
   y <- torch_unsqueeze(mu, 2) + torch_randn(n_samples, 4) * torch_unsqueeze(sigma, 2)
   list(
-    target = torch_stack(list(mu, sigma), 2),
+    target = torch_stack(list(mu, torch_log(sigma)), 2),
     conditioning = y
   )
 }
 
-conditioning_flow <- nn_sequential_conditional_flow(
+# Make a conditional flow
+flow_model <- nn_sequential_conditional_flow(
   nn_affine_coupling_block(2, 4),
   nn_permutation_flow(2),
   nn_affine_coupling_block(2, 4),
@@ -174,15 +194,18 @@ conditioning_flow <- nn_sequential_conditional_flow(
   nn_affine_coupling_block(2, 4)
 )
 
+# Generate a test set
 test_set <- generate_conditional_samples()
 str(test_set)
+
+# Train the flow
 train_conditional_flow(
-  conditioning_flow,
+  flow_model,
   generate_conditional_samples,
-  n_epochs = 128,
-  batch_size = 256,
+  n_epochs = 256,
+  batch_size = 1024,
   after_epoch = function(...) {
-    test_loss <- as_array(forward_kl_loss(conditioning_flow(test_set$target, test_set$conditioning)))
+    test_loss <- as_array(forward_kl_loss(flow_model(test_set$target, test_set$conditioning)))
     cat('Test loss:', test_loss, '\n')
   }
 )
@@ -193,15 +216,16 @@ are conditioned on the values of $y$:
 
 ```{r, fig.height = 12}
 # Generate 1024 samples for each of the first 4 conditioning variables in the test set
-test_samples <- as_array(generate_from_conditional_flow(conditioning_flow, 1024, test_set$conditioning[1 : 4, ]))
+test_samples <- as_array(generate_from_conditional_flow(flow_model, 1024, test_set$conditioning[1 : 4, ]))
+test_target <- as_array(test_set$target)
 
 par(mfrow = c(4, 2))
 for (i in 1 : 4) {
   hist(test_samples[, i, 1], main = '', xlab = 'mu', freq = FALSE, breaks = 32, xlim = c(-3, 3))
   abline(v = as_array(test_set$conditioning[i, ]), col = 'blue')
-  abline(v = as_array(test_set$target[i, 1]), col = 'red')
-  hist(test_samples[, i, 2], main = '', xlab = 'sigma', freq = FALSE, breaks = 32, xlim = c(0, 3))
-  abline(v = as_array(test_set$target[i, 2]), col = 'red')
+  abline(v = test_target[i, 1], col = 'red')
+  hist(test_samples[, i, 2], main = '', xlab = 'log(sigma)', freq = FALSE, breaks = 32, xlim = c(-8, 8))
+  abline(v = test_target[i, 2], col = 'red')
 }
 ```
 
@@ -210,9 +234,12 @@ We can also plot the samples on a scatter plot:
 ```{r}
 par(mfrow = c(2, 2))
 for (i in 1 : 4) {
-  plot(test_samples[, i, 1], test_samples[, i, 2], main = '', xlab = 'mu', ylab = 'sigma', xlim = c(-3, 3), ylim = c(0, 3))
-  abline(v = as_array(test_set$target[i, 1]), col = 'red')
-  abline(h = as_array(test_set$target[i, 2]), col = 'red')
+  plot(
+    test_samples[, i, 1], test_samples[, i, 2], main = '',
+    xlab = 'mu', ylab = 'log(sigma)', xlim = c(-3, 3), ylim = c(-8, 8)
+  )
+  abline(v = test_target[i, 1], col = 'red')
+  abline(h = test_target[i, 2], col = 'red')
 }
 ```
 
@@ -229,24 +256,39 @@ permutation invariant way to form the conditioning variable. Here is an example
 summarizing network:
 
 ```{r}
-summarizing_network <- nn_module(
-  initialize = function() {
-    self$summary_head <- nn_sequential(
-      nn_linear(1, 32),
-      nn_relu(),
-      nn_linear(32, 32),
-      nn_relu(),
-      nn_linear(32, 8),
-    )
+# Helper modules
+nn_sum <- nn_module(
+  initialize = function(dimension) {
+    self$dimension <- dimension
   },
-  forward = function(y) {
-    summaries <- self$summary_head(torch_unsqueeze(y, -1))
-    torch_sum(summaries, -2)
+  forward = function(x) {
+    torch_sum(x, self$dimension)
   }
 )
 
-summary_model <- summarizing_network()
-summary_model(torch_randn(5, 4))
+nn_unsqueeze <- nn_module(
+  initialize = function(dimension) {
+    self$dimension <- dimension
+  },
+  forward = function(x) {
+    torch_unsqueeze(x, self$dimension)
+  }
+)
+
+summary_model <- nn_sequential(
+  # Add an extra unit dimension for the replicate dimension
+  nn_unsqueeze(-1),
+  # Compute the summary statistics for each replicate
+  nn_linear(1, 32),
+  nn_relu(),
+  nn_linear(32, 32),
+  nn_relu(),
+  nn_linear(32, 8),
+  # Sum the summary statistics across the replicates
+  nn_sum(-2)
+)
+
+summary_model(test_set$conditioning[1 : 10, , drop = FALSE])
 ```
 
 We can combine the summarizing network with the flow in a `nn_summarizing_conditional_flow` object:
@@ -259,7 +301,7 @@ flow_model <- nn_sequential_conditional_flow(
   nn_permutation_flow(2),
   nn_affine_coupling_block(2, 8)
 )
-conditioning_flow <- nn_summarizing_conditional_flow(summary_model, flow_model)
+summarizing_flow_model <- nn_summarizing_conditional_flow(summary_model, flow_model)
 ```
 
 Let's also expand the number of replicated observations to 32:
@@ -271,7 +313,7 @@ generate_conditional_samples <- function(...) {
   mu <- torch_randn(n_samples) * sigma
   y <- torch_unsqueeze(mu, 2) + torch_randn(n_samples, 32) * torch_unsqueeze(sigma, 2)
   list(
-    target = torch_stack(list(mu, sigma), 2),
+    target = torch_stack(list(mu, torch_log(sigma)), 2),
     conditioning = y
   )
 }
@@ -283,12 +325,12 @@ Let's train the model:
 test_set <- generate_conditional_samples()
 str(test_set)
 train_conditional_flow(
-  conditioning_flow,
+  summarizing_flow_model,
   generate_conditional_samples,
-  n_epochs = 128,
-  batch_size = 256,
+  n_epochs = 256,
+  batch_size = 1024,
   after_epoch = function(...) {
-    test_loss <- as_array(forward_kl_loss(conditioning_flow(test_set$target, test_set$conditioning)))
+    test_loss <- as_array(forward_kl_loss(summarizing_flow_model(test_set$target, test_set$conditioning)))
     cat('Test loss:', test_loss, '\n')
   }
 )
@@ -298,14 +340,19 @@ We can generate samples from the trained model as before:
 
 ```{r}
 # Generate 1024 samples for each of the first 4 conditioning variables in the test set
-test_samples <- as_array(generate_from_conditional_flow(conditioning_flow, 1024, test_set$conditioning[1 : 4, ]))
+test_samples <- as_array(generate_from_conditional_flow(
+  summarizing_flow_model,
+  1024,
+  test_set$conditioning[1 : 4, ]
+))
+test_target <- as_array(test_set$target)
 
 par(mfrow = c(4, 2))
 for (i in 1 : 4) {
-  hist(test_samples[, i, 1], main = '', xlab = 'mu', freq = FALSE, breaks = 32, xlim = c(-3, 3))
-  abline(v = as_array(test_set$target[i, 1]), col = 'red')
-  hist(test_samples[, i, 2], main = '', xlab = 'sigma', freq = FALSE, breaks = 32, xlim = c(0, 3))
-  abline(v = as_array(test_set$target[i, 2]), col = 'red')
+  hist(test_samples[, i, 1], main = '', xlab = 'mu', freq = FALSE, breaks = 32, xlim = c(-5, 5))
+  abline(v = test_target[i, 1], col = 'red')
+  hist(test_samples[, i, 2], main = '', xlab = 'log(sigma)', freq = FALSE, breaks = 32, xlim = c(-3, 3))
+  abline(v = test_target[i, 2], col = 'red')
 }
 ```
 
@@ -314,9 +361,12 @@ We can also plot the samples on a scatter plot:
 ```{r}
 par(mfrow = c(2, 2))
 for (i in 1 : 4) {
-  plot(test_samples[, i, 1], test_samples[, i, 2], main = '', xlab = 'mu', ylab = 'sigma', xlim = c(-3, 3), ylim = c(0, 3))
-  abline(v = as_array(test_set$target[i, 1]), col = 'red')
-  abline(h = as_array(test_set$target[i, 2]), col = 'red')
+  plot(
+    test_samples[, i, 1], test_samples[, i, 2], main = '',
+    xlab = 'mu', ylab = 'log(sigma)', xlim = c(-5, 5), ylim = c(-3, 3)
+  )
+  abline(v = test_target[i, 1], col = 'red')
+  abline(h = test_target[i, 2], col = 'red')
 }
 ```
 
@@ -344,25 +394,27 @@ generate_conditional_samples <- function(...) {
   ell <- 0.1 + 1.9 * torch_rand(n_samples)
   sigma <- torch_abs(torch_randn(n_samples))
 
-  Sigma <- torch_square(sigma)$unsqueeze(-1)$unsqueeze(-1) * torch_exp(-torch_unsqueeze(distances, 1) / ell$unsqueeze(-1)$unsqueeze(-1))
+  # Generate the conditioning variable
+  Sigma <- (
+    torch_square(sigma)$unsqueeze(-1)$unsqueeze(-1) * torch_exp(
+      -torch_unsqueeze(distances, 1) / ell$unsqueeze(-1)$unsqueeze(-1)
+    )
+  )
   L <- linalg_cholesky(Sigma)
   y_flat <- torch_matmul(L, torch_randn(n_samples, 256, 1))
-  # The extra 1 here is interpreted as a single channel
-  y <- torch_reshape(y_flat, c(n_samples, 1, n_grid, n_grid))
+  y <- torch_reshape(y_flat, c(n_samples, n_grid, n_grid))
 
   list(
-    # We log the parameters to ensure they have real support;
-    # this is not strictly necessary for the flow to work, but it
-    # does make it easier to match the distribution
     target = torch_log(torch_stack(list(ell, sigma), 2)),
     conditioning = y
   )
 }
 
 test_set <- generate_conditional_samples()
+str(test_set)
 par(mfrow = c(2, 2))
 for (i in 1 : 4) {
-  image(as_array(test_set$conditioning[i, 1, , ]), main = '', xlab = 'x', ylab = 'y')
+  image(as_array(test_set$conditioning[i, , ]), main = '', xlab = 'x', ylab = 'y', asp = 1)
 }
 ```
 
@@ -374,16 +426,19 @@ size vector of dimension 32 (the number of summary statistics used by the flow):
 
 ```{r}
 summary_model <- nn_sequential(
+  # Adds a unit dimension for the channel
+  nn_unflatten(2, c(1, n_grid)),
   nn_conv2d(1, 16, 3, padding = 1),
   nn_relu(),
   nn_max_pool2d(2),
   nn_conv2d(16, 32, 3, padding = 1),
   nn_relu(),
+  # This averages over the grid to produce a vector of summary statistics
   nn_adaptive_avg_pool2d(1),
   nn_flatten()
 )
 
-str(summary_model(test_set$conditioning[1 : 10, , , drop = FALSE]))
+str(summary_model(test_set$conditioning[1 : 10, ]))
 ```
 
 We can now create a conditional flow with this summarizing network:
@@ -396,19 +451,19 @@ flow_model <- nn_sequential_conditional_flow(
   nn_permutation_flow(2),
   nn_affine_coupling_block(2, 32)
 )
-conditioning_flow <- nn_summarizing_conditional_flow(summary_model, flow_model)
+summarizing_flow_model <- nn_summarizing_conditional_flow(summary_model, flow_model)
 ```
 
 We can now train the model as before:
 
 ```{r}
 train_conditional_flow(
-  conditioning_flow,
+  summarizing_flow_model,
   generate_conditional_samples,
   n_epochs = 128,
   batch_size = 1024,
   after_epoch = function(...) {
-    test_loss <- as_array(forward_kl_loss(conditioning_flow(test_set$target, test_set$conditioning)))
+    test_loss <- as_array(forward_kl_loss(summarizing_flow_model(test_set$target, test_set$conditioning)))
     cat('Test loss:', test_loss, '\n')
   }
 )
@@ -417,7 +472,7 @@ train_conditional_flow(
 We can now generate samples from the trained model:
 
 ```{r, fig.height = 8}
-test_samples <- as_array(generate_from_conditional_flow(conditioning_flow, 1024, test_set$conditioning[1 : 4, , , drop = FALSE]))
+test_samples <- as_array(generate_from_conditional_flow(summarizing_flow_model, 1024, test_set$conditioning[1 : 4, , , drop = FALSE]))
 str(test_samples)
 
 test_target <- as_array(test_set$target)
