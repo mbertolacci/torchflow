@@ -89,7 +89,7 @@ train_conditional_flow <- function(
         pb$tick()
       }
       batch_indices <- ((batch - 1L) * batch_size + 1L) : (batch * batch_size)
-      batch_indices <- batch_indices[batch_indices <= n_size]
+      batch_indices <- torch_tensor(batch_indices[batch_indices <= n_size], device = model_device)
       batch_target <- torch_index_select(samples_epoch$target, 1, batch_indices)
       if (!is.null(samples_epoch$conditioning)) {
         batch_conditioning <- torch_index_select(samples_epoch$conditioning, 1, batch_indices)
