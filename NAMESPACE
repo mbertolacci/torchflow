@@ -11,3 +11,5 @@ export(nn_sequential_conditional_flow)
 export(nn_summarizing_conditional_flow)
 export(train_conditional_flow)
 import(torch)
+
+export(nn_spline_coupling_block)
