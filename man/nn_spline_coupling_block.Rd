@@ -7,7 +7,7 @@
 nn_spline_coupling_block(
   input_size,
   conditioning_size = 0,
-  left_size = as.integer(input_size%/%2),
+  left_size = floor(input_size / 2),
   num_bins = 8,
   f_params,
   g_params,

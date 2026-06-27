@@ -1,5 +1,5 @@
 .torch_select_last <- function(x, indices) {
-  torch_index_select(x, -1, torch_tensor(indices, device = x$device))
+  torch_index_select(x, -1, torch_tensor(indices, dtype = torch_long(), device = x$device))
 }
 
 .torch_expand_last <- function(x, n) {
@@ -88,6 +88,7 @@
 
   bin_locations <- if (inverse) params$cumheights else params$cumwidths
   bin_idx <- torch_sum(.torch_expand_last(inputs, num_bins) >= .torch_select_last(bin_locations, 2:(num_bins + 1)), dim = -1, keepdim = TRUE) + 1L
+  bin_idx <- torch_clamp(bin_idx, min = 1, max = num_bins)
 
   input_cumwidths <- .torch_gather_last(params$cumwidths, bin_idx)
   input_bin_widths <- .torch_gather_last(params$widths, bin_idx)
@@ -186,7 +187,7 @@ nn_spline_coupling_block <- nn_module(
   initialize = function(
     input_size,
     conditioning_size = 0,
-    left_size = as.integer(input_size %/% 2),
+    left_size = floor(input_size / 2),
     num_bins = 8,
     f_params,
     g_params,
