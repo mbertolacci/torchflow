@@ -4,6 +4,7 @@
 #' [nn_conditional_flow()] that permutes the input dimensions. The permutation is
 #' fixed to a random permutation at initialization and does not change. It's
 #' log Jacobian is zero since it is a simple reordering of the input dimensions.
+#' When `input_size = 1`, the permutation is a no-op and a warning is issued.
 #'
 #' @param input_size The size of the input to the flow.
 #'
@@ -25,6 +26,13 @@ nn_permutation_flow <- nn_module(
   inherit = nn_conditional_flow,
   initialize = function(input_size) {
     self$input_size <- as.integer(input_size)
+    if (self$input_size == 1L) {
+      warning(
+        "`nn_permutation_flow()` with `input_size = 1` is a no-op.",
+        call. = FALSE
+      )
+    }
+
     self$permutation <- torch_randperm(input_size) + 1L
     self$reverse_permutation <- torch_argsort(self$permutation)
 

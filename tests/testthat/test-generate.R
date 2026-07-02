@@ -45,3 +45,35 @@ test_that('generate_from_conditional_flow generates correct number of samples wi
   expected_size <- c(n_samples, 10, simple_model_with_conditioning$dimension())
   expect_equal(samples$size(), expected_size)
 })
+
+test_that('generate_from_conditional_flow handles univariate flows without conditioning', {
+  flow_model <- suppressWarnings(nn_sequential_conditional_flow(
+    nn_affine_coupling_block(input_size = 1),
+    nn_permutation_flow(input_size = 1),
+    nn_affine_coupling_block(input_size = 1)
+  ))
+
+  samples <- generate_from_conditional_flow(
+    model = flow_model,
+    n_samples_per_batch = 100
+  )
+
+  expect_equal(samples$size(), c(100, 1))
+})
+
+test_that('generate_from_conditional_flow handles univariate flows with conditioning', {
+  flow_model <- suppressWarnings(nn_sequential_conditional_flow(
+    nn_affine_coupling_block(input_size = 1, conditioning_size = 3),
+    nn_permutation_flow(input_size = 1),
+    nn_affine_coupling_block(input_size = 1, conditioning_size = 3)
+  ))
+
+  conditioning <- torch_randn(10, 3)
+  samples <- generate_from_conditional_flow(
+    model = flow_model,
+    n_samples_per_batch = 100,
+    conditioning = conditioning
+  )
+
+  expect_equal(samples$size(), c(100, 10, 1))
+})

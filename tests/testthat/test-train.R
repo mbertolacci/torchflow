@@ -151,3 +151,25 @@ test_that('train_conditional_flow handles large batch size', {
     )
   )
 })
+
+test_that('train_conditional_flow handles univariate affine flows', {
+  flow_model <- suppressWarnings(nn_sequential_conditional_flow(
+    nn_affine_coupling_block(input_size = 1),
+    nn_permutation_flow(input_size = 1),
+    nn_affine_coupling_block(input_size = 1)
+  ))
+
+  generate_univariate_samples <- function(epoch) {
+    list(target = 2 + torch_randn(64, 1))
+  }
+
+  expect_silent(
+    train_conditional_flow(
+      model = flow_model,
+      generate = generate_univariate_samples,
+      n_epochs = 1,
+      batch_size = 16,
+      verbose = FALSE
+    )
+  )
+})

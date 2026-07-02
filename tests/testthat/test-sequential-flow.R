@@ -113,3 +113,19 @@ test_that('nn_sequential_conditional_flow propagates log_jacobian correctly', {
   
   expect_equal(as_array(attr(output, 'log_jacobian')), as_array(expected_log_jacobian))
 })
+
+test_that('nn_sequential_conditional_flow handles univariate affine flows', {
+  flow_model <- suppressWarnings(nn_sequential_conditional_flow(
+    nn_affine_coupling_block(1),
+    nn_permutation_flow(1),
+    nn_affine_coupling_block(1)
+  ))
+
+  input <- torch_randn(10, 1)
+  output <- flow_model(input)
+  restored_input <- flow_model$reverse(output)
+
+  expect_equal(output$size(), input$size())
+  expect_equal(attr(output, 'log_jacobian')$size(), c(10, 1))
+  expect_equal(as_array(restored_input), as_array(input), tolerance = 1e-5)
+})

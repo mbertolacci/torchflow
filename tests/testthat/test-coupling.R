@@ -124,6 +124,38 @@ test_that('nn_single_coupling_block can transform the right part', {
   expect_true(!is.null(attr(output, 'log_jacobian')))
 })
 
+test_that('nn_single_coupling_block handles univariate input without conditioning', {
+  coupling_block <- nn_single_coupling_block(
+    input_size = 1
+  )
+
+  input <- torch_randn(10, 1)
+  output <- coupling_block(input)
+  restored_input <- coupling_block$reverse(output)
+
+  expect_equal(output$size(), input$size())
+  expect_equal(attr(output, 'log_jacobian')$size(), c(10, 1))
+  expect_equal(as_array(output), as_array(input), tolerance = 1e-6)
+  expect_equal(as_array(restored_input), as_array(input), tolerance = 1e-6)
+})
+
+test_that('nn_single_coupling_block handles univariate input with conditioning', {
+  coupling_block <- nn_single_coupling_block(
+    input_size = 1,
+    conditioning_size = 2
+  )
+
+  input <- torch_randn(10, 1)
+  conditioning <- torch_randn(10, 2)
+  output <- coupling_block(input, conditioning)
+  restored_input <- coupling_block$reverse(output, conditioning)
+
+  expect_equal(output$size(), input$size())
+  expect_equal(attr(output, 'log_jacobian')$size(), c(10, 1))
+  expect_equal(as_array(output), as_array(input), tolerance = 1e-6)
+  expect_equal(as_array(restored_input), as_array(input), tolerance = 1e-6)
+})
+
 test_that('nn_dual_coupling_block transforms and reverses input', {
   input_size <- 4
   conditioning_size <- 2
@@ -153,6 +185,14 @@ test_that('nn_dual_coupling_block defaults to identity for affine transform', {
     as_array(attr(output, 'log_jacobian')),
     array(0, dim = c(10, 1)),
     tolerance = 1e-6
+  )
+})
+
+test_that('nn_dual_coupling_block errors for univariate input', {
+  expect_error(
+    nn_dual_coupling_block(1),
+    "`nn_dual_coupling_block()` requires `input_size` greater than 1.",
+    fixed = TRUE
   )
 })
 
@@ -220,6 +260,46 @@ test_that('nn_affine_coupling_block accepts custom f_params and g_params', {
 
   expect_equal(output$size(), input$size())
   expect_equal(as_array(restored_input), as_array(input), tolerance = 1e-5)
+})
+
+test_that('nn_affine_coupling_block warns and works for univariate input', {
+  expect_warning(
+    nn_affine_coupling_block(1),
+    "composing affine blocks is no better than a single affine block"
+  )
+  coupling_block <- suppressWarnings(nn_affine_coupling_block(1))
+
+  input <- torch_randn(10, 1)
+  output <- coupling_block(input)
+  restored_input <- coupling_block$reverse(output)
+
+  expect_equal(output$size(), input$size())
+  expect_equal(attr(output, 'log_jacobian')$size(), c(10, 1))
+  expect_equal(as_array(output), as_array(input), tolerance = 1e-6)
+  expect_equal(as_array(restored_input), as_array(input), tolerance = 1e-6)
+})
+
+test_that('nn_affine_coupling_block has trainable raw parameters for univariate input without conditioning', {
+  coupling_block <- suppressWarnings(nn_affine_coupling_block(1))
+
+  expect_true(length(coupling_block$parameters) > 0)
+
+  input <- torch_randn(10, 1)
+  output <- coupling_block(input)
+
+  expect_equal(as_array(output), as_array(input), tolerance = 1e-6)
+  expect_equal(
+    as_array(attr(output, 'log_jacobian')),
+    array(0, dim = c(10, 1)),
+    tolerance = 1e-6
+  )
+})
+
+test_that('nn_affine_coupling_block does not warn for multivariate input', {
+  expect_warning(
+    nn_affine_coupling_block(2),
+    NA
+  )
 })
 
 test_that('unknown coupling transform errors clearly', {

@@ -14,6 +14,7 @@ A permutation flow is a conditional flow inheriting from
 \code{\link[=nn_conditional_flow]{nn_conditional_flow()}} that permutes the input dimensions. The permutation is
 fixed to a random permutation at initialization and does not change. It's
 log Jacobian is zero since it is a simple reordering of the input dimensions.
+When \code{input_size = 1}, the permutation is a no-op and a warning is issued.
 }
 \examples{
 library(torch)

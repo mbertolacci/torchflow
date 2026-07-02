@@ -7,7 +7,7 @@
 nn_single_coupling_block(
   input_size,
   conditioning_size = 0,
-  left_size = as.integer(input_size\%/\%2),
+  left_size = if (input_size == 1L) 1L else as.integer(input_size\%/\%2),
   transform = "affine",
   params,
   transform_left = TRUE,

@@ -35,7 +35,8 @@ the right part from the transformed left part.}
 \description{
 A dual coupling block applies two single coupling transformations in
 sequence: first transforming the left part from the right part, then
-transforming the right part from the transformed left part.
+transforming the right part from the transformed left part. It requires
+\code{input_size} greater than one.
 }
 \examples{
 library(torch)

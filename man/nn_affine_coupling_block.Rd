@@ -7,7 +7,7 @@
 nn_affine_coupling_block(
   input_size,
   conditioning_size = 0,
-  left_size = as.integer(input_size\%/\%2),
+  left_size = if (input_size == 1L) 1L else as.integer(input_size\%/\%2),
   clamp = TRUE,
   ...
 )
@@ -26,13 +26,16 @@ the same batch dimensions as the input.}
 \item{clamp}{Whether to apply \code{asinh()} to the raw scale before the shifted
 softplus constraint.}
 
-\item{...}{Additional arguments passed to \code{\link[=nn_dual_coupling_block]{nn_dual_coupling_block()}}, such as
-\code{f_params} and \code{g_params}.}
+\item{...}{Additional arguments passed to the selected coupling block, such as
+\code{params} for univariate inputs or \code{f_params} and \code{g_params} for
+multivariate inputs.}
 }
 \description{
-\code{nn_affine_coupling_block()} is a convenience constructor for a dual affine
-coupling block. Use \code{\link[=nn_dual_coupling_block]{nn_dual_coupling_block()}} directly to choose a different
-transform.
+\code{nn_affine_coupling_block()} is a convenience constructor for an affine
+coupling block. It constructs a dual coupling block when \code{input_size > 1}
+and a single coupling block when \code{input_size = 1}. Use
+\code{\link[=nn_dual_coupling_block]{nn_dual_coupling_block()}} or \code{\link[=nn_single_coupling_block]{nn_single_coupling_block()}} directly to choose
+a different transform.
 }
 \details{
 An affine coupling block is a conditional flow inheriting from
@@ -54,6 +57,9 @@ By performing multiple such transformations in sequence, we can construct a
 complex normalizing flow capable of modeling complicated conditional
 distributions. Between each pair of such transformations, the dimensions of
 the input should be permuted using a \code{\link[=nn_permutation_flow]{nn_permutation_flow()}}.
+
+When \code{input_size = 1}, this constructor warns because repeated univariate
+affine coupling blocks compose to a single affine transformation.
 }
 \examples{
 library(torch)

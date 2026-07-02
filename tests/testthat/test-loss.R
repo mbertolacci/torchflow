@@ -16,3 +16,17 @@ test_that('forward_kl_loss subtracts log_jacobian correctly', {
   expected_loss <- -torch_mean(log_jacobian)
   expect_equal(as_array(loss), as_array(expected_loss))
 })
+
+test_that('forward_kl_loss handles univariate flow output', {
+  flow_model <- suppressWarnings(nn_sequential_conditional_flow(
+    nn_affine_coupling_block(1),
+    nn_permutation_flow(1),
+    nn_affine_coupling_block(1)
+  ))
+
+  input <- torch_randn(10, 1)
+  output <- flow_model(input)
+  loss <- forward_kl_loss(output)
+
+  expect_true(is.finite(as_array(loss)))
+})

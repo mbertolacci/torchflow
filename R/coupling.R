@@ -1,4 +1,10 @@
 .torch_head <- function(x, n) {
+  if (n == 0L) {
+    output_size <- x$size()
+    output_size[length(output_size)] <- 0L
+    return(torch_empty(output_size, device = x$device, dtype = x$dtype))
+  }
+
   torch_index_select(
     x,
     -1,
@@ -7,12 +13,34 @@
 }
 
 .torch_tail <- function(x, n) {
+  if (n == 0L) {
+    output_size <- x$size()
+    output_size[length(output_size)] <- 0L
+    return(torch_empty(output_size, device = x$device, dtype = x$dtype))
+  }
+
   torch_index_select(
     x,
     -1,
     torch_tensor((x$size(-1) - n + 1L) : x$size(-1), device = x$device)
   )
 }
+
+.nn_raw_coupling_params <- nn_module(
+  inherit = nn_conditional,
+  initialize = function(output_size) {
+    self$output_size <- as.integer(output_size)
+    self$raw_parameters <- nn_parameter(torch_zeros(self$output_size))
+  },
+  forward = function(input, conditioning) {
+    input_size <- input$size()
+    output_size <- c(
+      input_size[-length(input_size)],
+      self$output_size
+    )
+    self$raw_parameters$expand(output_size)
+  }
+)
 
 .nn_coupling_params <- nn_module(
   inherit = nn_conditional,
@@ -81,7 +109,7 @@ nn_single_coupling_block <- nn_module(
   initialize = function(
     input_size,
     conditioning_size = 0,
-    left_size = as.integer(input_size %/% 2),
+    left_size = if (input_size == 1L) 1L else as.integer(input_size %/% 2),
     transform = "affine",
     params,
     transform_left = TRUE,
@@ -101,7 +129,11 @@ nn_single_coupling_block <- nn_module(
       params_output_size <- self$right_size
     }
 
-    self$params <- if (missing(params)) {
+    self$params <- if (missing(params) && params_input_size == 0L && conditioning_size == 0L) {
+      .nn_raw_coupling_params(
+        self$transform$params_per_dim() * params_output_size
+      )
+    } else if (missing(params)) {
       .nn_coupling_params(
         params_input_size,
         conditioning_size,
@@ -154,7 +186,8 @@ nn_single_coupling_block <- nn_module(
 #'
 #' A dual coupling block applies two single coupling transformations in
 #' sequence: first transforming the left part from the right part, then
-#' transforming the right part from the transformed left part.
+#' transforming the right part from the transformed left part. It requires
+#' `input_size` greater than one.
 #'
 #' @param input_size The dimension of the input.
 #' @param conditioning_size The dimension of the conditioning input.
@@ -186,6 +219,13 @@ nn_dual_coupling_block <- nn_module(
     g_params,
     ...
   ) {
+    if (input_size == 1L) {
+      stop(
+        "`nn_dual_coupling_block()` requires `input_size` greater than 1.",
+        call. = FALSE
+      )
+    }
+
     self$input_size <- input_size
     self$left_size <- left_size
 
@@ -251,9 +291,11 @@ nn_dual_coupling_block <- nn_module(
 
 #' Affine Coupling Block
 #'
-#' `nn_affine_coupling_block()` is a convenience constructor for a dual affine
-#' coupling block. Use [nn_dual_coupling_block()] directly to choose a different
-#' transform.
+#' `nn_affine_coupling_block()` is a convenience constructor for an affine
+#' coupling block. It constructs a dual coupling block when `input_size > 1`
+#' and a single coupling block when `input_size = 1`. Use
+#' [nn_dual_coupling_block()] or [nn_single_coupling_block()] directly to choose
+#' a different transform.
 #'
 #' An affine coupling block is a conditional flow inheriting from
 #' [nn_conditional_flow()] that applies the following transformation to the
@@ -275,6 +317,9 @@ nn_dual_coupling_block <- nn_module(
 #' distributions. Between each pair of such transformations, the dimensions of
 #' the input should be permuted using a [nn_permutation_flow()].
 #'
+#' When `input_size = 1`, this constructor warns because repeated univariate
+#' affine coupling blocks compose to a single affine transformation.
+#'
 #' @param input_size The dimension of the input. The input itself is a tensor
 #' with dimensions `[batch_size, input_size]`, or just `[input_size]` if there
 #' is no batch dimension.
@@ -284,8 +329,9 @@ nn_dual_coupling_block <- nn_module(
 #'   \eqn{x_1} in the equations above).
 #' @param clamp Whether to apply `asinh()` to the raw scale before the shifted
 #'   softplus constraint.
-#' @param ... Additional arguments passed to [nn_dual_coupling_block()], such as
-#'   `f_params` and `g_params`.
+#' @param ... Additional arguments passed to the selected coupling block, such as
+#'   `params` for univariate inputs or `f_params` and `g_params` for
+#'   multivariate inputs.
 #'
 #' @examples
 #' library(torch)
@@ -319,7 +365,7 @@ nn_affine_coupling_block <- nn_module(
   initialize = function(
     input_size,
     conditioning_size = 0,
-    left_size = as.integer(input_size %/% 2),
+    left_size = if (input_size == 1L) 1L else as.integer(input_size %/% 2),
     clamp = TRUE,
     ...
   ) {
@@ -331,8 +377,22 @@ nn_affine_coupling_block <- nn_module(
       )
     }
 
+    if (input_size == 1L) {
+      warning(
+        "`nn_affine_coupling_block()` with `input_size = 1` uses a single affine ",
+        "coupling; composing affine blocks is no better than a single affine block.",
+        call. = FALSE
+      )
+    }
+
+    coupling_block <- if (input_size == 1L) {
+      nn_single_coupling_block
+    } else {
+      nn_dual_coupling_block
+    }
+
     self$block <- do.call(
-      nn_dual_coupling_block,
+      coupling_block,
       c(
         list(
           input_size = input_size,
