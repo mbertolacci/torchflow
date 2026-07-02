@@ -21,8 +21,9 @@ nn_single_coupling_block(
 
 \item{left_size}{The dimension of the left part of the input.}
 
-\item{transform}{The transform to apply. Currently \code{"affine"} is supported.
-A transform constructor or transform module can also be supplied.}
+\item{transform}{The transform to apply. Currently \code{"affine"} and
+\code{"spline"} are supported. A transform constructor or transform module can
+also be supplied.}
 
 \item{params}{A conditional network returning the raw transform parameters.}
 

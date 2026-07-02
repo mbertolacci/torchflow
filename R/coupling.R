@@ -88,8 +88,9 @@
 #' @param input_size The dimension of the input.
 #' @param conditioning_size The dimension of the conditioning input.
 #' @param left_size The dimension of the left part of the input.
-#' @param transform The transform to apply. Currently `"affine"` is supported.
-#'   A transform constructor or transform module can also be supplied.
+#' @param transform The transform to apply. Currently `"affine"` and
+#'   `"spline"` are supported. A transform constructor or transform module can
+#'   also be supplied.
 #' @param params A conditional network returning the raw transform parameters.
 #' @param transform_left Whether to transform the left part using parameters
 #'   computed from the right part. If `FALSE`, the right part is transformed
@@ -192,8 +193,9 @@ nn_single_coupling_block <- nn_module(
 #' @param input_size The dimension of the input.
 #' @param conditioning_size The dimension of the conditioning input.
 #' @param left_size The dimension of the left part of the input.
-#' @param transform The transform to apply. Currently `"affine"` is supported.
-#'   A transform constructor or transform module can also be supplied.
+#' @param transform The transform to apply. Currently `"affine"` and
+#'   `"spline"` are supported. A transform constructor or transform module can
+#'   also be supplied.
 #' @param f_params A conditional network returning parameters for transforming
 #'   the left part from the right part.
 #' @param g_params A conditional network returning parameters for transforming
@@ -206,6 +208,8 @@ nn_single_coupling_block <- nn_module(
 #' x <- torch_randn(10, 4)
 #' y <- coupling(x)
 #' x_recovered <- coupling$reverse(y)
+#'
+#' spline_coupling <- nn_dual_coupling_block(4, transform = "spline")
 #'
 #' @export
 nn_dual_coupling_block <- nn_module(
@@ -400,6 +404,78 @@ nn_affine_coupling_block <- nn_module(
           left_size = left_size,
           clamp = clamp,
           transform = "affine"
+        ),
+        dots
+      )
+    )
+  },
+  forward = function(input, conditioning) {
+    self$block(input, conditioning)
+  },
+  reverse = function(input, conditioning) {
+    self$block$reverse(input, conditioning)
+  },
+  dimension = function() {
+    self$block$dimension()
+  }
+)
+
+#' Spline Coupling Block
+#'
+#' `nn_spline_coupling_block()` is a convenience constructor for a
+#' rational-quadratic spline coupling block. It constructs a dual coupling block
+#' when `input_size > 1` and a single coupling block when `input_size = 1`.
+#' Use [nn_dual_coupling_block()] or [nn_single_coupling_block()] directly to
+#' choose a different transform.
+#'
+#' @param input_size The dimension of the input. The input itself is a tensor
+#' with dimensions `[batch_size, input_size]`, or just `[input_size]` if there
+#' is no batch dimension.
+#' @param conditioning_size The dimension of the conditioning input, which has
+#' the same batch dimensions as the input.
+#' @param left_size The dimension of the left part of the input.
+#' @param ... Additional arguments passed to the selected coupling block and
+#'   spline transform, such as `bins`, `params` for univariate inputs, or
+#'   `f_params` and `g_params` for multivariate inputs.
+#'
+#' @examples
+#' library(torch)
+#' flow_model <- nn_spline_coupling_block(2, bins = 8)
+#' x <- torch_randn(10, 2)
+#' y <- flow_model(x)
+#' x_recovered <- flow_model$reverse(y)
+#'
+#' @export
+nn_spline_coupling_block <- nn_module(
+  inherit = nn_conditional_flow,
+  initialize = function(
+    input_size,
+    conditioning_size = 0,
+    left_size = if (input_size == 1L) 1L else as.integer(input_size %/% 2),
+    ...
+  ) {
+    dots <- list(...)
+    if ("transform" %in% names(dots)) {
+      stop(
+        "`nn_spline_coupling_block()` always uses `transform = \"spline\"`.",
+        call. = FALSE
+      )
+    }
+
+    coupling_block <- if (input_size == 1L) {
+      nn_single_coupling_block
+    } else {
+      nn_dual_coupling_block
+    }
+
+    self$block <- do.call(
+      coupling_block,
+      c(
+        list(
+          input_size = input_size,
+          conditioning_size = conditioning_size,
+          left_size = left_size,
+          transform = "spline"
         ),
         dots
       )

@@ -68,6 +68,67 @@ test_that('nn_affine_coupling_transform maps zero parameters to identity', {
   )
 })
 
+test_that('nn_spline_coupling_transform reports parameter count', {
+  transform <- nn_spline_coupling_transform(bins = 8)
+
+  expect_equal(transform$params_per_dim(), 27L)
+})
+
+test_that('nn_spline_coupling_transform maps zero parameters to identity', {
+  transform <- nn_spline_coupling_transform(bins = 4)
+  input <- torch_tensor(matrix(
+    c(-5, -4, -2, -1, 0, 1, 2, 3, 5, 6),
+    ncol = 2,
+    byrow = TRUE
+  ))
+  parameters <- torch_zeros(5, 2 * transform$params_per_dim())
+
+  output <- transform(input, parameters)
+  restored_input <- transform$reverse(output, parameters)
+
+  expect_equal(as_array(output), as_array(input), tolerance = 1e-6)
+  expect_equal(as_array(restored_input), as_array(input), tolerance = 1e-6)
+  expect_equal(
+    as_array(attr(output, 'log_jacobian')),
+    array(0, dim = c(5, 1)),
+    tolerance = 1e-6
+  )
+})
+
+test_that('nn_spline_coupling_transform reverses random parameters', {
+  torch_manual_seed(1)
+  transform <- nn_spline_coupling_transform(bins = 5)
+  input <- torch_randn(20, 3) * 4
+  parameters <- torch_randn(20, 3 * transform$params_per_dim()) * 0.2
+
+  output <- transform(input, parameters)
+  restored_input <- transform$reverse(output, parameters)
+
+  expect_equal(output$size(), input$size())
+  expect_equal(attr(output, 'log_jacobian')$size(), c(20, 1))
+  expect_true(all(is.finite(as_array(output))))
+  expect_true(all(is.finite(as_array(attr(output, 'log_jacobian')))))
+  expect_equal(as_array(restored_input), as_array(input), tolerance = 1e-5)
+})
+
+test_that('nn_spline_coupling_transform validates arguments', {
+  expect_error(
+    nn_spline_coupling_transform(bins = 0),
+    "`bins` must be strictly positive.",
+    fixed = TRUE
+  )
+  expect_error(
+    nn_spline_coupling_transform(default_domain = c(1, 0, -1, 1)),
+    "`default_domain` must satisfy left < right and bottom < top.",
+    fixed = TRUE
+  )
+  expect_error(
+    nn_spline_coupling_transform(method = "linear"),
+    'Currently, only `method = "rational_quadratic"` is supported.',
+    fixed = TRUE
+  )
+})
+
 test_that('nn_single_coupling_block transforms and reverses input', {
   input_size <- 4
   conditioning_size <- 2
@@ -124,6 +185,24 @@ test_that('nn_single_coupling_block can transform the right part', {
   expect_true(!is.null(attr(output, 'log_jacobian')))
 })
 
+test_that('nn_single_coupling_block supports spline transforms', {
+  coupling_block <- nn_single_coupling_block(
+    input_size = 4,
+    conditioning_size = 2,
+    transform = "spline",
+    bins = 4
+  )
+
+  input <- torch_randn(10, 4)
+  conditioning <- torch_randn(10, 2)
+  output <- coupling_block(input, conditioning)
+  restored_input <- coupling_block$reverse(output, conditioning)
+
+  expect_equal(output$size(), input$size())
+  expect_equal(attr(output, 'log_jacobian')$size(), c(10, 1))
+  expect_equal(as_array(restored_input), as_array(input), tolerance = 1e-5)
+})
+
 test_that('nn_single_coupling_block handles univariate input without conditioning', {
   coupling_block <- nn_single_coupling_block(
     input_size = 1
@@ -143,6 +222,42 @@ test_that('nn_single_coupling_block handles univariate input with conditioning',
   coupling_block <- nn_single_coupling_block(
     input_size = 1,
     conditioning_size = 2
+  )
+
+  input <- torch_randn(10, 1)
+  conditioning <- torch_randn(10, 2)
+  output <- coupling_block(input, conditioning)
+  restored_input <- coupling_block$reverse(output, conditioning)
+
+  expect_equal(output$size(), input$size())
+  expect_equal(attr(output, 'log_jacobian')$size(), c(10, 1))
+  expect_equal(as_array(output), as_array(input), tolerance = 1e-6)
+  expect_equal(as_array(restored_input), as_array(input), tolerance = 1e-6)
+})
+
+test_that('nn_single_coupling_block handles univariate spline input', {
+  coupling_block <- nn_single_coupling_block(
+    input_size = 1,
+    transform = "spline",
+    bins = 4
+  )
+
+  input <- torch_randn(10, 1)
+  output <- coupling_block(input)
+  restored_input <- coupling_block$reverse(output)
+
+  expect_equal(output$size(), input$size())
+  expect_equal(attr(output, 'log_jacobian')$size(), c(10, 1))
+  expect_equal(as_array(output), as_array(input), tolerance = 1e-6)
+  expect_equal(as_array(restored_input), as_array(input), tolerance = 1e-6)
+})
+
+test_that('nn_single_coupling_block handles univariate spline input with conditioning', {
+  coupling_block <- nn_single_coupling_block(
+    input_size = 1,
+    conditioning_size = 2,
+    transform = "spline",
+    bins = 4
   )
 
   input <- torch_randn(10, 1)
@@ -188,6 +303,24 @@ test_that('nn_dual_coupling_block defaults to identity for affine transform', {
   )
 })
 
+test_that('nn_dual_coupling_block supports spline transforms', {
+  coupling_block <- nn_dual_coupling_block(
+    input_size = 4,
+    conditioning_size = 2,
+    transform = "spline",
+    bins = 4
+  )
+
+  input <- torch_randn(10, 4)
+  conditioning <- torch_randn(10, 2)
+  output <- coupling_block(input, conditioning)
+  restored_input <- coupling_block$reverse(output, conditioning)
+
+  expect_equal(output$size(), input$size())
+  expect_equal(attr(output, 'log_jacobian')$size(), c(10, 1))
+  expect_equal(as_array(restored_input), as_array(input), tolerance = 1e-5)
+})
+
 test_that('nn_dual_coupling_block errors for univariate input', {
   expect_error(
     nn_dual_coupling_block(1),
@@ -216,6 +349,111 @@ test_that('nn_dual_coupling_block uses custom f_params and g_params', {
     input_size = input_size,
     conditioning_size = conditioning_size,
     left_size = left_size,
+    f_params = f_params,
+    g_params = g_params
+  )
+
+  input <- torch_randn(10, input_size)
+  conditioning <- torch_randn(10, conditioning_size)
+  output <- coupling_block(input, conditioning)
+  restored_input <- coupling_block$reverse(output, conditioning)
+
+  expect_equal(output$size(), input$size())
+  expect_equal(as_array(restored_input), as_array(input), tolerance = 1e-5)
+})
+
+test_that('nn_dual_coupling_block uses custom spline f_params and g_params', {
+  input_size <- 4
+  conditioning_size <- 2
+  left_size <- 2
+  transform <- nn_spline_coupling_transform(bins = 4)
+
+  f_params <- nn_conditional_mlp(
+    input_size - left_size,
+    conditioning_size,
+    transform$params_per_dim() * left_size
+  )
+  g_params <- nn_conditional_mlp(
+    left_size,
+    conditioning_size,
+    transform$params_per_dim() * (input_size - left_size)
+  )
+
+  coupling_block <- nn_dual_coupling_block(
+    input_size = input_size,
+    conditioning_size = conditioning_size,
+    left_size = left_size,
+    transform = "spline",
+    bins = 4,
+    f_params = f_params,
+    g_params = g_params
+  )
+
+  input <- torch_randn(10, input_size)
+  conditioning <- torch_randn(10, conditioning_size)
+  output <- coupling_block(input, conditioning)
+  restored_input <- coupling_block$reverse(output, conditioning)
+
+  expect_equal(output$size(), input$size())
+  expect_equal(as_array(restored_input), as_array(input), tolerance = 1e-5)
+})
+
+test_that('nn_spline_coupling_block transforms and reverses input', {
+  coupling_block <- nn_spline_coupling_block(
+    input_size = 4,
+    conditioning_size = 2,
+    bins = 4
+  )
+
+  input <- torch_randn(10, 4)
+  conditioning <- torch_randn(10, 2)
+  output <- coupling_block(input, conditioning)
+  restored_input <- coupling_block$reverse(output, conditioning)
+
+  expect_equal(output$size(), input$size())
+  expect_equal(attr(output, 'log_jacobian')$size(), c(10, 1))
+  expect_equal(as_array(restored_input), as_array(input), tolerance = 1e-5)
+})
+
+test_that('nn_spline_coupling_block handles univariate input without warnings', {
+  expect_warning(
+    nn_spline_coupling_block(1, bins = 4),
+    NA
+  )
+
+  coupling_block <- nn_spline_coupling_block(1, bins = 4)
+  input <- torch_randn(10, 1)
+  output <- coupling_block(input)
+  restored_input <- coupling_block$reverse(output)
+
+  expect_equal(output$size(), input$size())
+  expect_equal(attr(output, 'log_jacobian')$size(), c(10, 1))
+  expect_equal(as_array(output), as_array(input), tolerance = 1e-6)
+  expect_equal(as_array(restored_input), as_array(input), tolerance = 1e-6)
+})
+
+test_that('nn_spline_coupling_block accepts custom f_params and g_params', {
+  input_size <- 4
+  conditioning_size <- 2
+  left_size <- 2
+  transform <- nn_spline_coupling_transform(bins = 4)
+
+  f_params <- nn_conditional_mlp(
+    input_size - left_size,
+    conditioning_size,
+    transform$params_per_dim() * left_size
+  )
+  g_params <- nn_conditional_mlp(
+    left_size,
+    conditioning_size,
+    transform$params_per_dim() * (input_size - left_size)
+  )
+
+  coupling_block <- nn_spline_coupling_block(
+    input_size = input_size,
+    conditioning_size = conditioning_size,
+    left_size = left_size,
+    bins = 4,
     f_params = f_params,
     g_params = g_params
   )
@@ -314,6 +552,14 @@ test_that('nn_affine_coupling_block does not allow transform override', {
   expect_error(
     nn_affine_coupling_block(4, transform = 'unknown'),
     '`nn_affine_coupling_block()` always uses `transform = "affine"`.',
+    fixed = TRUE
+  )
+})
+
+test_that('nn_spline_coupling_block does not allow transform override', {
+  expect_error(
+    nn_spline_coupling_block(4, transform = 'unknown'),
+    '`nn_spline_coupling_block()` always uses `transform = "spline"`.',
     fixed = TRUE
   )
 })

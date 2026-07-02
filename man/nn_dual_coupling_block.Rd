@@ -21,8 +21,9 @@ nn_dual_coupling_block(
 
 \item{left_size}{The dimension of the left part of the input.}
 
-\item{transform}{The transform to apply. Currently \code{"affine"} is supported.
-A transform constructor or transform module can also be supplied.}
+\item{transform}{The transform to apply. Currently \code{"affine"} and
+\code{"spline"} are supported. A transform constructor or transform module can
+also be supplied.}
 
 \item{f_params}{A conditional network returning parameters for transforming
 the left part from the right part.}
@@ -44,5 +45,7 @@ coupling <- nn_dual_coupling_block(4, transform = "affine")
 x <- torch_randn(10, 4)
 y <- coupling(x)
 x_recovered <- coupling$reverse(y)
+
+spline_coupling <- nn_dual_coupling_block(4, transform = "spline")
 
 }

@@ -129,3 +129,20 @@ test_that('nn_sequential_conditional_flow handles univariate affine flows', {
   expect_equal(attr(output, 'log_jacobian')$size(), c(10, 1))
   expect_equal(as_array(restored_input), as_array(input), tolerance = 1e-5)
 })
+
+test_that('nn_sequential_conditional_flow handles spline flows', {
+  flow_model <- nn_sequential_conditional_flow(
+    nn_dual_coupling_block(4, 2, transform = "spline", bins = 4),
+    nn_permutation_flow(4),
+    nn_dual_coupling_block(4, 2, transform = "spline", bins = 4)
+  )
+
+  input <- torch_randn(10, 4)
+  conditioning <- torch_randn(10, 2)
+  output <- flow_model(input, conditioning)
+  restored_input <- flow_model$reverse(output, conditioning)
+
+  expect_equal(output$size(), input$size())
+  expect_equal(attr(output, 'log_jacobian')$size(), c(10, 1))
+  expect_equal(as_array(restored_input), as_array(input), tolerance = 1e-5)
+})

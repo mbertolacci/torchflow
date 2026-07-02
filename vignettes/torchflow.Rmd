@@ -59,20 +59,36 @@ directly using the `generate_from_conditional_flow` function:
 generate_from_conditional_flow(flow_model, 5)
 ```
 
+# Spline coupling flows
+
+Coupling blocks can also use rational-quadratic spline transforms:
+
+```{r}
+spline_flow_model <- nn_sequential_conditional_flow(
+  nn_spline_coupling_block(2, bins = 8),
+  nn_permutation_flow(2),
+  nn_spline_coupling_block(2, bins = 8)
+)
+
+x <- torch_randn(5, 2)
+y <- spline_flow_model(x)
+x_recovered <- spline_flow_model$reverse(y)
+
+y
+torch_max(torch_abs(x - x_recovered))
+```
+
 # Univariate flows
 
 The same interface can be used for a univariate target by setting
-`input_size = 1`. In this case, affine coupling blocks use a single affine
-coupling internally. Permutation layers are no-ops, and repeated affine blocks
-compose to a single affine transform, so these constructors warn when used with
-one-dimensional inputs.
+`input_size = 1`. Spline coupling blocks use a single coupling internally, and
+can be composed to build richer univariate flows.
 
 ```{r}
-flow_model <- suppressWarnings(nn_sequential_conditional_flow(
-  nn_affine_coupling_block(1),
-  nn_permutation_flow(1),
-  nn_affine_coupling_block(1)
-))
+flow_model <- nn_sequential_conditional_flow(
+  nn_spline_coupling_block(1),
+  nn_spline_coupling_block(1)
+)
 
 x <- torch_randn(5, 1)
 y <- flow_model(x)

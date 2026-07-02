@@ -77,3 +77,18 @@ test_that('generate_from_conditional_flow handles univariate flows with conditio
 
   expect_equal(samples$size(), c(100, 10, 1))
 })
+
+test_that('generate_from_conditional_flow handles spline flows', {
+  flow_model <- nn_sequential_conditional_flow(
+    nn_dual_coupling_block(input_size = 2, transform = "spline", bins = 4),
+    nn_permutation_flow(input_size = 2),
+    nn_dual_coupling_block(input_size = 2, transform = "spline", bins = 4)
+  )
+
+  samples <- generate_from_conditional_flow(
+    model = flow_model,
+    n_samples_per_batch = 100
+  )
+
+  expect_equal(samples$size(), c(100, 2))
+})
