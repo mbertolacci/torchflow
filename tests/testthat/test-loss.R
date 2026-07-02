@@ -44,3 +44,19 @@ test_that('forward_kl_loss handles spline flow output', {
 
   expect_true(is.finite(as_array(loss)))
 })
+
+test_that('forward_kl_loss handles actnorm flow output', {
+  flow_model <- nn_sequential_conditional_flow(
+    nn_actnorm_block(2),
+    nn_spline_coupling_block(2, bins = 4),
+    nn_permutation_flow(2),
+    nn_actnorm_block(2),
+    nn_spline_coupling_block(2, bins = 4)
+  )
+
+  input <- torch_randn(10, 2)
+  output <- flow_model(input)
+  loss <- forward_kl_loss(output)
+
+  expect_true(is.finite(as_array(loss)))
+})

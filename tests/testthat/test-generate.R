@@ -92,3 +92,20 @@ test_that('generate_from_conditional_flow handles spline flows', {
 
   expect_equal(samples$size(), c(100, 2))
 })
+
+test_that('generate_from_conditional_flow handles actnorm blocks', {
+  flow_model <- nn_sequential_conditional_flow(
+    nn_actnorm_block(input_size = 2),
+    nn_spline_coupling_block(input_size = 2, bins = 4),
+    nn_permutation_flow(input_size = 2),
+    nn_actnorm_block(input_size = 2),
+    nn_spline_coupling_block(input_size = 2, bins = 4)
+  )
+
+  samples <- generate_from_conditional_flow(
+    model = flow_model,
+    n_samples_per_batch = 100
+  )
+
+  expect_equal(samples$size(), c(100, 2))
+})

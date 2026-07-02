@@ -61,12 +61,15 @@ generate_from_conditional_flow(flow_model, 5)
 
 # Spline coupling flows
 
-Coupling blocks can also use rational-quadratic spline transforms:
+Coupling blocks can also use rational-quadratic spline transforms. ActNorm
+blocks can be inserted as standalone layers:
 
 ```{r}
 spline_flow_model <- nn_sequential_conditional_flow(
+  nn_actnorm_block(2),
   nn_spline_coupling_block(2, bins = 8),
   nn_permutation_flow(2),
+  nn_actnorm_block(2),
   nn_spline_coupling_block(2, bins = 8)
 )
 
