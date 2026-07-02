@@ -45,30 +45,195 @@ test_that('nn_affine_coupling_block dimension method returns correct size', {
   expect_equal(coupling_block$dimension(), input_size)
 })
 
-test_that('nn_affine_coupling_block uses custom f_scale, f_shift, g_scale, g_shift', {
+test_that('nn_affine_coupling_transform reports parameter count', {
+  transform <- nn_affine_coupling_transform()
+
+  expect_equal(transform$params_per_dim(), 2L)
+})
+
+test_that('nn_affine_coupling_transform maps zero parameters to identity', {
+  transform <- nn_affine_coupling_transform()
+  input <- torch_randn(10, 4)
+  parameters <- torch_zeros(10, 8)
+
+  output <- transform(input, parameters)
+  restored_input <- transform$reverse(output, parameters)
+
+  expect_equal(as_array(output), as_array(input), tolerance = 1e-6)
+  expect_equal(as_array(restored_input), as_array(input), tolerance = 1e-6)
+  expect_equal(
+    as_array(attr(output, 'log_jacobian')),
+    array(0, dim = c(10, 1)),
+    tolerance = 1e-6
+  )
+})
+
+test_that('nn_single_coupling_block transforms and reverses input', {
+  input_size <- 4
+  conditioning_size <- 2
+  coupling_block <- nn_single_coupling_block(input_size, conditioning_size)
+
+  input <- torch_randn(10, input_size)
+  conditioning <- torch_randn(10, conditioning_size)
+  output <- coupling_block(input, conditioning)
+  restored_input <- coupling_block$reverse(output, conditioning)
+
+  expect_equal(output$size(), input$size())
+  expect_equal(attr(output, 'log_jacobian')$size(), c(10, 1))
+  expect_equal(as_array(restored_input), as_array(input), tolerance = 1e-5)
+})
+
+test_that('nn_single_coupling_block defaults to identity for affine transform', {
+  input_size <- 4
+  conditioning_size <- 2
+  coupling_block <- nn_single_coupling_block(input_size, conditioning_size)
+
+  input <- torch_randn(10, input_size)
+  conditioning <- torch_randn(10, conditioning_size)
+  output <- coupling_block(input, conditioning)
+
+  expect_equal(as_array(output), as_array(input), tolerance = 1e-6)
+  expect_equal(
+    as_array(attr(output, 'log_jacobian')),
+    array(0, dim = c(10, 1)),
+    tolerance = 1e-6
+  )
+})
+
+test_that('nn_single_coupling_block can transform the right part', {
   input_size <- 4
   conditioning_size <- 2
   left_size <- 2
-  
-  f_scale <- nn_conditional_mlp(input_size - left_size, conditioning_size, left_size)
-  f_shift <- nn_conditional_mlp(input_size - left_size, conditioning_size, left_size)
-  g_scale <- nn_conditional_mlp(left_size, conditioning_size, input_size - left_size)
-  g_shift <- nn_conditional_mlp(left_size, conditioning_size, input_size - left_size)
-  
+  coupling_block <- nn_single_coupling_block(
+    input_size,
+    conditioning_size,
+    left_size,
+    transform_left = FALSE
+  )
+
+  input <- torch_randn(10, input_size)
+  conditioning <- torch_randn(10, conditioning_size)
+  output <- coupling_block(input, conditioning)
+
+  index <- torch_tensor(1L:left_size, device = output$device)
+  expect_equal(
+    as_array(torch_index_select(output, -1, index)),
+    as_array(torch_index_select(input, -1, index))
+  )
+  expect_equal(output$size(), input$size())
+  expect_true(!is.null(attr(output, 'log_jacobian')))
+})
+
+test_that('nn_dual_coupling_block transforms and reverses input', {
+  input_size <- 4
+  conditioning_size <- 2
+  coupling_block <- nn_dual_coupling_block(input_size, conditioning_size)
+
+  input <- torch_randn(10, input_size)
+  conditioning <- torch_randn(10, conditioning_size)
+  output <- coupling_block(input, conditioning)
+  restored_input <- coupling_block$reverse(output, conditioning)
+
+  expect_equal(output$size(), input$size())
+  expect_equal(attr(output, 'log_jacobian')$size(), c(10, 1))
+  expect_equal(as_array(restored_input), as_array(input), tolerance = 1e-5)
+})
+
+test_that('nn_dual_coupling_block defaults to identity for affine transform', {
+  input_size <- 4
+  conditioning_size <- 2
+  coupling_block <- nn_dual_coupling_block(input_size, conditioning_size)
+
+  input <- torch_randn(10, input_size)
+  conditioning <- torch_randn(10, conditioning_size)
+  output <- coupling_block(input, conditioning)
+
+  expect_equal(as_array(output), as_array(input), tolerance = 1e-6)
+  expect_equal(
+    as_array(attr(output, 'log_jacobian')),
+    array(0, dim = c(10, 1)),
+    tolerance = 1e-6
+  )
+})
+
+test_that('nn_dual_coupling_block uses custom f_params and g_params', {
+  input_size <- 4
+  conditioning_size <- 2
+  left_size <- 2
+
+  f_params <- nn_conditional_mlp(
+    input_size - left_size,
+    conditioning_size,
+    2 * left_size
+  )
+  g_params <- nn_conditional_mlp(
+    left_size,
+    conditioning_size,
+    2 * (input_size - left_size)
+  )
+
+  coupling_block <- nn_dual_coupling_block(
+    input_size = input_size,
+    conditioning_size = conditioning_size,
+    left_size = left_size,
+    f_params = f_params,
+    g_params = g_params
+  )
+
+  input <- torch_randn(10, input_size)
+  conditioning <- torch_randn(10, conditioning_size)
+  output <- coupling_block(input, conditioning)
+  restored_input <- coupling_block$reverse(output, conditioning)
+
+  expect_equal(output$size(), input$size())
+  expect_equal(as_array(restored_input), as_array(input), tolerance = 1e-5)
+})
+
+test_that('nn_affine_coupling_block accepts custom f_params and g_params', {
+  input_size <- 4
+  conditioning_size <- 2
+  left_size <- 2
+
+  f_params <- nn_conditional_mlp(
+    input_size - left_size,
+    conditioning_size,
+    2 * left_size
+  )
+  g_params <- nn_conditional_mlp(
+    left_size,
+    conditioning_size,
+    2 * (input_size - left_size)
+  )
+
   coupling_block <- nn_affine_coupling_block(
     input_size = input_size,
     conditioning_size = conditioning_size,
     left_size = left_size,
-    f_scale = f_scale,
-    f_shift = f_shift,
-    g_scale = g_scale,
-    g_shift = g_shift
+    f_params = f_params,
+    g_params = g_params
   )
-  
+
   input <- torch_randn(10, input_size)
   conditioning <- torch_randn(10, conditioning_size)
   output <- coupling_block(input, conditioning)
-  
+  restored_input <- coupling_block$reverse(output, conditioning)
+
   expect_equal(output$size(), input$size())
-  expect_true(!is.null(attr(output, 'log_jacobian')))
+  expect_equal(as_array(restored_input), as_array(input), tolerance = 1e-5)
+})
+
+test_that('unknown coupling transform errors clearly', {
+  expect_error(
+    nn_single_coupling_block(4, transform = 'unknown'),
+    "Unknown coupling transform 'unknown'.",
+    fixed = TRUE
+  )
+})
+
+test_that('nn_affine_coupling_block does not allow transform override', {
+  expect_error(
+    nn_affine_coupling_block(4, transform = 'unknown'),
+    '`nn_affine_coupling_block()` always uses `transform = "affine"`.',
+    fixed = TRUE
+  )
 })

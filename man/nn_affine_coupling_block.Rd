@@ -8,11 +8,8 @@ nn_affine_coupling_block(
   input_size,
   conditioning_size = 0,
   left_size = as.integer(input_size\%/\%2),
-  f_scale,
-  f_shift,
-  g_scale,
-  g_shift,
-  soft_clamp = 1.9
+  clamp = TRUE,
+  ...
 )
 }
 \arguments{
@@ -26,49 +23,32 @@ the same batch dimensions as the input.}
 \item{left_size}{The dimension of the left part of the input (the split
 \eqn{x_1} in the equations above).}
 
-\item{f_scale}{The function \eqn{f_\text{scale}} in the equations above. This,
-and the following parameters, default to a conditional multi-layer
-perceptron (MLP); see \code{\link[=nn_conditional_mlp]{nn_conditional_mlp()}}. It must inherit from
-\code{\link[=nn_conditional]{nn_conditional()}}.}
+\item{clamp}{Whether to apply \code{asinh()} to the raw scale before the shifted
+softplus constraint.}
 
-\item{f_shift}{The function \eqn{f_\text{shift}} in the equations above; see
-the above.}
-
-\item{g_scale}{The function \eqn{g_\text{scale}} in the equations above; see
-the above.}
-
-\item{g_shift}{The function \eqn{g_\text{shift}} in the equations above; see
-the above.}
-
-\item{soft_clamp}{The soft clamp value for the scale parameters.}
+\item{...}{Additional arguments passed to \code{\link[=nn_dual_coupling_block]{nn_dual_coupling_block()}}, such as
+\code{f_params} and \code{g_params}.}
 }
 \description{
+\code{nn_affine_coupling_block()} is a convenience constructor for a dual affine
+coupling block. Use \code{\link[=nn_dual_coupling_block]{nn_dual_coupling_block()}} directly to choose a different
+transform.
+}
+\details{
 An affine coupling block is a conditional flow inheriting from
 \code{\link[=nn_conditional_flow]{nn_conditional_flow()}} that applies the following transformation to the
 input.
-}
-\details{
+
 Let \eqn{x = (x_1, x_2)} be a split of the input into two parts, and let
 \eqn{u} be the conditioning input. The forward transformation is given by:
 
 \deqn{
-  y_1 = x_1 \exp(f_\text{scale}(x_2, u)) + f_\text{shift}(x_2, u)
-  y_2 = x_2 \exp(g_\text{scale}(y_1, u)) + g_\text{shift}(y_1, u)
+  y_1 = x_1 s_f(x_2, u) + t_f(x_2, u)
+  y_2 = x_2 s_g(y_1, u) + t_g(y_1, u)
 }
 
-The inverse transformation is given by:
-
-\deqn{
-  x_1 = y_1 \exp(g_\text{scale}(y_2, u)) + g_\text{shift}(y_2, u)
-  x_2 = y_2 \exp(f_\text{scale}(x_1, u)) + f_\text{shift}(x_1, u)
-}
-
-The log determinant of the Jacobian of the transformation is given by:
-
-\deqn{
-  \log | \det \frac{\partial y}{\partial x} |
-   = \sum_{i=1}^2 f_\text{scale}(x_i, u) + g_\text{scale}(y_i, u)
-}
+where the scales \eqn{s_f} and \eqn{s_g} are constrained to be positive by
+the affine coupling transform.
 
 By performing multiple such transformations in sequence, we can construct a
 complex normalizing flow capable of modeling complicated conditional
@@ -91,10 +71,7 @@ flow_model <- nn_affine_coupling_block(2, 4)
 x <- torch_randn(10, 2)
 u <- torch_randn(10, 4)
 y <- flow_model(x, u)
-# y will be a tensor of dimensions [10, 2]
 x_recovered <- flow_model$reverse(y, u)
-# x_recovered will be a tensor of dimensions [10, 2]
-# and numerically close to the original x
 
 # Coupling block used as part of a more complex flow model
 flow_model <- nn_sequential_conditional_flow(
