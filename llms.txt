@@ -1,0 +1,58 @@
+# torchflow
+
+Normalizing flows in R using the [torch](https://torch.mlverse.org/)
+package.
+
+You can install this package from source using the `devtools` package:
+
+`{r} devtools::install_github('mbertolacci/torchflow')`
+
+Go read the vignette on the package website to learn more:
+[torchflow](https://mbertolacci.github.io/torchflow/).
+
+*More details to come*
+
+# Package index
+
+## All functions
+
+- [`forward_kl_loss()`](https://mbertolacci.github.io/torchflow/reference/forward_kl_loss.md)
+  : Forward KL Loss
+- [`generate_from_conditional_flow()`](https://mbertolacci.github.io/torchflow/reference/generate_from_conditional_flow.md)
+  : Generate samples from a conditional flow model
+- [`nn_actnorm_block()`](https://mbertolacci.github.io/torchflow/reference/nn_actnorm_block.md)
+  : ActNorm Block
+- [`nn_affine_coupling_block()`](https://mbertolacci.github.io/torchflow/reference/nn_affine_coupling_block.md)
+  : Affine Coupling Block
+- [`nn_affine_coupling_transform()`](https://mbertolacci.github.io/torchflow/reference/nn_affine_coupling_transform.md)
+  : Affine Coupling Transform
+- [`nn_conditional()`](https://mbertolacci.github.io/torchflow/reference/nn_conditional.md)
+  : Conditional Module
+- [`nn_conditional_flow()`](https://mbertolacci.github.io/torchflow/reference/nn_conditional_flow.md)
+  : Conditional Normalizing Flow
+- [`nn_conditional_mlp()`](https://mbertolacci.github.io/torchflow/reference/nn_conditional_mlp.md)
+  : Conditional Multilayer Perceptron
+- [`nn_coupling_transform()`](https://mbertolacci.github.io/torchflow/reference/nn_coupling_transform.md)
+  : Coupling Transform
+- [`nn_dual_coupling_block()`](https://mbertolacci.github.io/torchflow/reference/nn_dual_coupling_block.md)
+  : Dual Coupling Block
+- [`nn_permutation_flow()`](https://mbertolacci.github.io/torchflow/reference/nn_permutation_flow.md)
+  : Permutation Flow
+- [`nn_sequential_conditional_flow()`](https://mbertolacci.github.io/torchflow/reference/nn_sequential_conditional_flow.md)
+  : Sequential Conditional Flow
+- [`nn_single_coupling_block()`](https://mbertolacci.github.io/torchflow/reference/nn_single_coupling_block.md)
+  : Single Coupling Block
+- [`nn_spline_coupling_block()`](https://mbertolacci.github.io/torchflow/reference/nn_spline_coupling_block.md)
+  : Spline Coupling Block
+- [`nn_spline_coupling_transform()`](https://mbertolacci.github.io/torchflow/reference/nn_spline_coupling_transform.md)
+  : Spline Coupling Transform
+- [`nn_summarizing_conditional_flow()`](https://mbertolacci.github.io/torchflow/reference/nn_summarizing_conditional_flow.md)
+  : Summarizing Conditional Flow
+- [`train_conditional_flow()`](https://mbertolacci.github.io/torchflow/reference/train_conditional_flow.md)
+  : Train a conditional flow model
+
+# Articles
+
+### All vignettes
+
+- [torchflow](https://mbertolacci.github.io/torchflow/articles/torchflow.md):
