@@ -23,6 +23,7 @@
 #' )
 #'
 #' @seealso [nn_conditional_flow()]
+#' @include conditional-flow.R
 #' @export
 nn_actnorm_block <- nn_module(
   inherit = nn_conditional_flow,

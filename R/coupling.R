@@ -104,6 +104,7 @@
 #' y <- coupling(x)
 #' x_recovered <- coupling$reverse(y)
 #'
+#' @include conditional-flow.R conditional-network.R transform.R
 #' @export
 nn_single_coupling_block <- nn_module(
   inherit = nn_conditional_flow,

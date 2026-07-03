@@ -29,6 +29,7 @@
 #' summarizing_flow <- nn_summarizing_conditional_flow(summary_model, flow_model)
 #'
 #' @seealso [nn_conditional_flow()]
+#' @include conditional-flow.R
 #' @export
 nn_summarizing_conditional_flow <- nn_module(
   inherit = nn_conditional_flow,

@@ -21,6 +21,7 @@
 #'   nn_affine_coupling_block(10, 5)
 #' )
 #' @seealso [nn_conditional_flow()]
+#' @include conditional-flow.R
 #' @export
 nn_permutation_flow <- nn_module(
   inherit = nn_conditional_flow,

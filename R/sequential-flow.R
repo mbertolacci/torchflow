@@ -16,6 +16,7 @@
 #' )
 #'
 #' @seealso [nn_conditional_flow()]
+#' @include conditional-flow.R
 #' @export
 nn_sequential_conditional_flow <- nn_module(
   inherit = nn_conditional_flow,

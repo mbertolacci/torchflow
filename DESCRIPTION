@@ -10,8 +10,9 @@ Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.3.1
 Imports:
-    torch,
-    progress
+    progress,
+    rlang,
+    torch
 Suggests: 
     knitr,
     rmarkdown,
@@ -19,3 +20,16 @@ Suggests:
 Config/testthat/edition: 3
 VignetteBuilder: knitr
 URL: https://mbertolacci.github.io/torchflow/
+Collate: 
+    'conditional-flow.R'
+    'actnorm.R'
+    'conditional-network.R'
+    'transform.R'
+    'coupling.R'
+    'generate.R'
+    'loss.R'
+    'permutation.R'
+    'sequential-flow.R'
+    'summarizing-flow.R'
+    'torchflow-package.R'
+    'train.R'
