@@ -53,6 +53,11 @@ normalizing flows.</p>
 forward and reverse method, as well as a dimension method. Subclasses created
 with <code><a href="https://torch.mlverse.org/docs/reference/nn_module.html" class="external-link">torch::nn_module()</a></code> should implement these methods. The class is a subclass
 of <code><a href="https://torch.mlverse.org/docs/reference/nn_module.html" class="external-link">torch::nn_module()</a></code>, and it inherits all of its methods and semantics.</p>
+<p>The base class also provides a <code>loss()</code> method compatible with <code><a href="https://mlverse.github.io/luz/reference/setup.html" class="external-link">luz::setup()</a></code>.
+For luz datasets, the first batch element (<code>input</code>) is treated as the
+conditioning input and the second (<code>target</code>) as the sample to transform. The
+method evaluates the flow as <code>ctx$model(target, input)</code> and computes the
+forward KL loss with <code><a href="forward_kl_loss.html">forward_kl_loss()</a></code>.</p>
     </div>
     <div class="section level2">
     <h2 id="forward-method">Forward method<a class="anchor" aria-label="anchor" href="#forward-method"></a></h2>
@@ -104,7 +109,7 @@ the flow. Example:</p>
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.1.</p>
 </div>
 
     </footer></div>

@@ -20,6 +20,14 @@ should implement these methods. The class is a subclass of
 [`torch::nn_module()`](https://torch.mlverse.org/docs/reference/nn_module.html),
 and it inherits all of its methods and semantics.
 
+The base class also provides a `loss()` method compatible with
+[`luz::setup()`](https://mlverse.github.io/luz/reference/setup.html).
+For luz datasets, the first batch element (`input`) is treated as the
+conditioning input and the second (`target`) as the sample to transform.
+The method evaluates the flow as `ctx$model(target, input)` and computes
+the forward KL loss with
+[`forward_kl_loss()`](https://mbertolacci.github.io/torchflow/reference/forward_kl_loss.md).
+
 ## Forward method
 
 The forward method should return the output and the log determinant of

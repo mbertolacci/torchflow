@@ -36,11 +36,11 @@ blocks and permutation flows. The flow is just a standard torch
 x <- torch_randn(5, 2)
 flow_model(x)
 #> torch_tensor
-#>  1.7179  0.6873
-#>  0.2569  1.2622
-#>  0.2112  0.5482
-#>  0.6333  0.8801
-#>  1.2444  0.3795
+#> -1.7643 -0.6731
+#>  0.1615  0.8262
+#> -1.6197  0.3996
+#>  1.4587 -0.0257
+#> -2.3079 -0.1036
 #> [ CPUFloatType{5,2} ][ grad_fn = <CatBackward0> ]
 ```
 
@@ -54,11 +54,11 @@ flow. This can also be done directly using the
 
 generate_from_conditional_flow(flow_model, 5)
 #> torch_tensor
-#>  0.1701  1.2481
-#> -0.8484  0.4220
-#> -0.1483  0.0610
-#>  1.2175 -1.3286
-#>  0.2228 -0.0904
+#>  0.1446 -0.3376
+#> -1.4231  0.1548
+#>  0.9433  0.6673
+#>  0.4506 -1.5292
+#> -0.6118 -0.6629
 #> [ CPUFloatType{5,2} ][ grad_fn = <ViewBackward0> ]
 ```
 
@@ -83,15 +83,15 @@ x_recovered <- spline_flow_model$reverse(y)
 
 y
 #> torch_tensor
-#>  0.0647  0.1708
-#> -0.7780  0.0936
-#>  1.2688  1.0145
-#> -1.3678  0.5485
-#> -0.7063  1.2729
+#> -1.5688  0.3759
+#>  1.6414  0.5290
+#>  0.4800  1.1087
+#> -0.7837 -0.4561
+#>  1.4390  0.5675
 #> [ CPUFloatType{5,2} ][ grad_fn = <CatBackward0> ]
 torch_max(torch_abs(x - x_recovered))
 #> torch_tensor
-#> 3.725290298461914e-08
+#> 2.9802322387695312e-08
 #> [ CPUFloatType{} ][ grad_fn = <MaxBackward1> ]
 ```
 
@@ -114,11 +114,11 @@ x_recovered <- flow_model$reverse(y)
 
 y
 #> torch_tensor
-#>  2.2168
-#>  0.2091
-#> -1.1785
-#> -0.8041
-#>  1.4215
+#>  0.5577
+#>  0.4343
+#> -1.8791
+#>  0.4799
+#>  2.1265
 #> [ CPUFloatType{5,1} ][ grad_fn = <CatBackward0> ]
 torch_max(torch_abs(x - x_recovered))
 #> torch_tensor
@@ -132,11 +132,11 @@ Sampling works in the same way as for multivariate flows:
 
 generate_from_conditional_flow(flow_model, 5)
 #> torch_tensor
-#>  1.6415
-#>  1.7105
-#> -1.7468
-#>  1.4666
-#> -1.2473
+#> -0.8748
+#>  0.9877
+#>  2.3516
+#> -0.9081
+#>  0.2622
 #> [ CPUFloatType{5,1} ][ grad_fn = <ViewBackward0> ]
 ```
 
@@ -168,11 +168,11 @@ follows:
 conditioning <- torch_randn(3)
 generate_from_conditional_flow(flow_model, 5, conditioning)
 #> torch_tensor
-#>  1.3427 -1.0032
-#> -1.5097  0.6648
-#> -1.0214  0.1426
-#>  0.7233  0.3910
-#> -1.2330  0.6616
+#>  1.3037  0.5725
+#>  0.7520  2.5229
+#> -0.1383  0.4189
+#> -0.8427  1.3874
+#>  0.9764  0.7915
 #> [ CPUFloatType{5,2} ][ grad_fn = <ViewBackward0> ]
 ```
 
@@ -184,34 +184,34 @@ conditioning <- torch_randn(8, 3)
 generate_from_conditional_flow(flow_model, 5, conditioning)
 #> torch_tensor
 #> (1,.,.) = 
-#>  0.0416  0.4903
-#>   0.6840  0.5995
-#>   1.7326  1.0740
-#>  -0.8492  0.6209
-#>   0.8082  2.1107
-#>   0.6547 -0.8297
-#>   1.5801 -0.5704
-#>   0.7626 -0.3476
+#>  0.2580  0.9484
+#>   1.1710 -1.4612
+#>   0.5786 -1.7176
+#>   0.4977  0.2994
+#>  -0.1501  1.7049
+#>   1.1069  0.3332
+#>  -0.2313  0.1653
+#>  -1.5135  0.2784
 #> 
 #> (2,.,.) = 
-#> -0.4957  0.3075
-#>   0.8407  1.2028
-#>  -0.6546  0.0608
-#>  -0.5537  0.5423
-#>  -1.2205  0.0433
-#>   1.4881 -0.8850
-#>  -1.3780  1.2798
-#>  -0.9202  0.8891
+#> -2.0329  1.4437
+#>   0.3373  0.5657
+#>   1.2622  1.4830
+#>   0.0952 -0.4900
+#>  -0.6994 -1.6108
+#>   0.0736  0.3558
+#>  -0.0750 -0.5050
+#>  -1.1546 -0.8480
 #> 
 #> (3,.,.) = 
-#> -0.0358 -0.3371
-#>   0.5324 -0.2289
-#>  -0.7385  1.3433
-#>  -0.9971 -0.4866
-#>  -2.8624 -1.3913
-#>  -0.0631 -0.5767
-#>  -1.0078 -0.5679
-#>   0.4528 -0.4577
+#>  0.0632  0.0347
+#>  -0.2204  0.5619
+#>  -0.7296 -0.7859
+#>  -0.1002 -0.5365
+#>  -0.2507 -1.1429
+#>  -0.8594 -1.4960
+#>  -1.1675 -0.9385
+#>   0.8372 -0.1389
 #> 
 #> ... [the output was truncated (use n=-1 to disable)]
 #> [ CPUFloatType{5,8,2} ][ grad_fn = <ViewBackward0> ]
@@ -243,36 +243,36 @@ generate_samples <- function(...) {
 generate_samples()
 #> $target
 #> torch_tensor
-#>  1.4078 -0.1516
-#>  0.1619 -0.9840
-#>  0.3720 -1.4109
-#> -1.8222 -0.6166
-#>  0.3198  0.2025
-#>  0.1260 -0.9170
-#>  0.1048 -2.2995
-#> -0.0068 -2.3473
-#>  5.1051  0.8975
-#>  0.3631 -0.1862
-#> -0.0392 -3.3018
-#> -1.2448  0.0778
-#>  0.0603 -1.5085
-#>  0.4443  0.7738
-#>  0.2539 -1.1918
-#> -0.1806 -0.8638
-#>  0.2013  0.7066
-#> -0.2705  0.4622
-#>  0.2554 -1.8927
-#>  0.6628  0.0809
-#>  1.5557  0.0725
-#> -4.4410  0.8451
-#> -0.6911 -0.0879
-#> -0.0794  0.5344
-#>  1.7295  0.6690
-#>  0.3014 -0.1149
-#>  0.1736 -2.3976
-#>  0.7211  0.3601
-#> -0.2952 -0.4846
-#>  1.6849  0.4495
+#> -0.3237 -0.6801
+#>  0.4244 -0.8948
+#> -0.4852 -1.4182
+#> -0.0800 -0.8686
+#> -0.4226 -1.1163
+#> -3.8252  0.5364
+#> -0.6037  0.5260
+#>  0.2892 -1.1443
+#> -0.2108 -0.4647
+#>  0.2437 -1.6185
+#>  0.4543 -0.1250
+#> -0.7346 -0.3445
+#>  0.3688 -0.5011
+#> -0.5484 -1.6510
+#>  0.1959  0.1914
+#>  1.6139  0.0179
+#>  0.0180 -1.1707
+#> -0.7871 -0.2547
+#> -0.4208  0.1344
+#> -4.6178  0.7348
+#>  2.5131  0.9543
+#> -0.0154 -2.3613
+#>  0.0491 -3.2933
+#>  0.3581  0.0349
+#>  1.1786  0.4837
+#> -0.1521 -0.0551
+#>  0.6819 -0.0581
+#> -0.5764 -1.1971
+#>  0.0048 -2.8107
+#>  1.1686 -0.2456
 #> ... [the output was truncated (use n=-1 to disable)]
 #> [ CPUFloatType{1024,2} ]
 ```
@@ -306,261 +306,261 @@ train_conditional_flow(
   }
 )
 #> = Starting epoch 1 
-#> Test loss: 1.192193 
+#> Test loss: 1.352987 
 #> = Starting epoch 2 
-#> Test loss: 1.133625 
+#> Test loss: 1.278748 
 #> = Starting epoch 3 
-#> Test loss: 1.067848 
+#> Test loss: 1.197736 
 #> = Starting epoch 4 
-#> Test loss: 0.9964097 
+#> Test loss: 1.113483 
 #> = Starting epoch 5 
-#> Test loss: 0.9247698 
+#> Test loss: 1.028094 
 #> = Starting epoch 6 
-#> Test loss: 0.8548194 
+#> Test loss: 0.9471374 
 #> = Starting epoch 7 
-#> Test loss: 0.7895316 
+#> Test loss: 0.8731999 
 #> = Starting epoch 8 
-#> Test loss: 0.7276387 
+#> Test loss: 0.7978641 
 #> = Starting epoch 9 
-#> Test loss: 0.6680658 
+#> Test loss: 0.729042 
 #> = Starting epoch 10 
-#> Test loss: 0.6062267 
+#> Test loss: 0.65716 
 #> = Starting epoch 11 
-#> Test loss: 0.5470526 
+#> Test loss: 0.6047417 
 #> = Starting epoch 12 
-#> Test loss: 0.4965625 
+#> Test loss: 0.5570822 
 #> = Starting epoch 13 
-#> Test loss: 0.4758255 
+#> Test loss: 0.5555143 
 #> = Starting epoch 14 
-#> Test loss: 0.4514318 
+#> Test loss: 0.5512314 
 #> = Starting epoch 15 
-#> Test loss: 0.4618566 
+#> Test loss: 0.5672613 
 #> = Starting epoch 16 
-#> Test loss: 0.4451246 
+#> Test loss: 0.5760901 
 #> = Starting epoch 17 
-#> Test loss: 0.473314 
+#> Test loss: 0.5909589 
 #> = Starting epoch 18 
-#> Test loss: 0.4446838 
+#> Test loss: 0.5892233 
 #> = Starting epoch 19 
-#> Test loss: 0.4357255 
+#> Test loss: 0.574774 
 #> = Starting epoch 20 
-#> Test loss: 0.4339485 
+#> Test loss: 0.5740153 
 #> = Starting epoch 21 
-#> Test loss: 0.4161826 
+#> Test loss: 0.5349825 
 #> = Starting epoch 22 
-#> Test loss: 0.4045274 
+#> Test loss: 0.5036096 
 #> = Starting epoch 23 
-#> Test loss: 0.4142436 
+#> Test loss: 0.4956441 
 #> = Starting epoch 24 
-#> Test loss: 0.4095464 
+#> Test loss: 0.4813409 
 #> = Starting epoch 25 
-#> Test loss: 0.3917949 
+#> Test loss: 0.4654467 
 #> = Starting epoch 26 
-#> Test loss: 0.3865648 
+#> Test loss: 0.4600905 
 #> = Starting epoch 27 
-#> Test loss: 0.3890164 
+#> Test loss: 0.4659606 
 #> = Starting epoch 28 
-#> Test loss: 0.3886444 
+#> Test loss: 0.4659551 
 #> = Starting epoch 29 
-#> Test loss: 0.3883346 
+#> Test loss: 0.4651598 
 #> = Starting epoch 30 
-#> Test loss: 0.3869959 
+#> Test loss: 0.4665864 
 #> = Starting epoch 31 
-#> Test loss: 0.3795865 
+#> Test loss: 0.4657956 
 #> = Starting epoch 32 
-#> Test loss: 0.3725685 
+#> Test loss: 0.4616663 
 #> = Starting epoch 33 
-#> Test loss: 0.3722701 
+#> Test loss: 0.4585747 
 #> = Starting epoch 34 
-#> Test loss: 0.3730264 
+#> Test loss: 0.4562497 
 #> = Starting epoch 35 
-#> Test loss: 0.3735918 
+#> Test loss: 0.4499168 
 #> = Starting epoch 36 
-#> Test loss: 0.3660091 
+#> Test loss: 0.4424081 
 #> = Starting epoch 37 
-#> Test loss: 0.3588941 
+#> Test loss: 0.4392762 
 #> = Starting epoch 38 
-#> Test loss: 0.3600026 
+#> Test loss: 0.4315724 
 #> = Starting epoch 39 
-#> Test loss: 0.3560542 
+#> Test loss: 0.4296353 
 #> = Starting epoch 40 
-#> Test loss: 0.3564112 
+#> Test loss: 0.4308472 
 #> = Starting epoch 41 
-#> Test loss: 0.357451 
+#> Test loss: 0.4270186 
 #> = Starting epoch 42 
-#> Test loss: 0.3517385 
+#> Test loss: 0.4230314 
 #> = Starting epoch 43 
-#> Test loss: 0.3541207 
+#> Test loss: 0.4238397 
 #> = Starting epoch 44 
-#> Test loss: 0.3547005 
+#> Test loss: 0.4201143 
 #> = Starting epoch 45 
-#> Test loss: 0.3518279 
+#> Test loss: 0.4218487 
 #> = Starting epoch 46 
-#> Test loss: 0.3534946 
+#> Test loss: 0.4182592 
 #> = Starting epoch 47 
-#> Test loss: 0.3611968 
+#> Test loss: 0.4134986 
 #> = Starting epoch 48 
-#> Test loss: 0.3524582 
+#> Test loss: 0.4163702 
 #> = Starting epoch 49 
-#> Test loss: 0.3505865 
+#> Test loss: 0.4091715 
 #> = Starting epoch 50 
-#> Test loss: 0.3492982 
+#> Test loss: 0.4177631 
 #> = Starting epoch 51 
-#> Test loss: 0.3490276 
+#> Test loss: 0.4136117 
 #> = Starting epoch 52 
-#> Test loss: 0.3600411 
+#> Test loss: 0.4066332 
 #> = Starting epoch 53 
-#> Test loss: 0.3476688 
+#> Test loss: 0.4172759 
 #> = Starting epoch 54 
-#> Test loss: 0.3508847 
+#> Test loss: 0.4045648 
 #> = Starting epoch 55 
-#> Test loss: 0.3480189 
+#> Test loss: 0.4140955 
 #> = Starting epoch 56 
-#> Test loss: 0.3538189 
+#> Test loss: 0.4134179 
 #> = Starting epoch 57 
-#> Test loss: 0.3564135 
+#> Test loss: 0.4041783 
 #> = Starting epoch 58 
-#> Test loss: 0.3498394 
+#> Test loss: 0.4099116 
 #> = Starting epoch 59 
-#> Test loss: 0.346329 
+#> Test loss: 0.3985088 
 #> = Starting epoch 60 
-#> Test loss: 0.3477117 
+#> Test loss: 0.40016 
 #> = Starting epoch 61 
-#> Test loss: 0.3440098 
+#> Test loss: 0.3965876 
 #> = Starting epoch 62 
-#> Test loss: 0.3457586 
+#> Test loss: 0.3958271 
 #> = Starting epoch 63 
-#> Test loss: 0.3395473 
+#> Test loss: 0.3987118 
 #> = Starting epoch 64 
-#> Test loss: 0.3406793 
+#> Test loss: 0.398964 
 #> = Starting epoch 65 
-#> Test loss: 0.3439919 
+#> Test loss: 0.4008296 
 #> = Starting epoch 66 
-#> Test loss: 0.342172 
+#> Test loss: 0.4017216 
 #> = Starting epoch 67 
-#> Test loss: 0.349689 
+#> Test loss: 0.4012151 
 #> = Starting epoch 68 
-#> Test loss: 0.3430805 
+#> Test loss: 0.4031049 
 #> = Starting epoch 69 
-#> Test loss: 0.3389173 
+#> Test loss: 0.3998488 
 #> = Starting epoch 70 
-#> Test loss: 0.3392885 
+#> Test loss: 0.3955206 
 #> = Starting epoch 71 
-#> Test loss: 0.3423255 
+#> Test loss: 0.3913098 
 #> = Starting epoch 72 
-#> Test loss: 0.3428674 
+#> Test loss: 0.3883861 
 #> = Starting epoch 73 
-#> Test loss: 0.3387966 
+#> Test loss: 0.3853782 
 #> = Starting epoch 74 
-#> Test loss: 0.3424947 
+#> Test loss: 0.3871993 
 #> = Starting epoch 75 
-#> Test loss: 0.3457115 
+#> Test loss: 0.3942252 
 #> = Starting epoch 76 
-#> Test loss: 0.3447536 
+#> Test loss: 0.3828428 
 #> = Starting epoch 77 
-#> Test loss: 0.3437839 
+#> Test loss: 0.3858472 
 #> = Starting epoch 78 
-#> Test loss: 0.338828 
+#> Test loss: 0.382165 
 #> = Starting epoch 79 
-#> Test loss: 0.3346277 
+#> Test loss: 0.3875421 
 #> = Starting epoch 80 
-#> Test loss: 0.3334674 
+#> Test loss: 0.3897325 
 #> = Starting epoch 81 
-#> Test loss: 0.3340393 
+#> Test loss: 0.3828738 
 #> = Starting epoch 82 
-#> Test loss: 0.3336533 
+#> Test loss: 0.3839411 
 #> = Starting epoch 83 
-#> Test loss: 0.3341531 
+#> Test loss: 0.3872853 
 #> = Starting epoch 84 
-#> Test loss: 0.3322111 
+#> Test loss: 0.3802991 
 #> = Starting epoch 85 
-#> Test loss: 0.3347909 
+#> Test loss: 0.3857347 
 #> = Starting epoch 86 
-#> Test loss: 0.3347741 
+#> Test loss: 0.3822364 
 #> = Starting epoch 87 
-#> Test loss: 0.3308733 
+#> Test loss: 0.3784367 
 #> = Starting epoch 88 
-#> Test loss: 0.3310525 
+#> Test loss: 0.3804981 
 #> = Starting epoch 89 
-#> Test loss: 0.3307816 
+#> Test loss: 0.3771877 
 #> = Starting epoch 90 
-#> Test loss: 0.3316883 
+#> Test loss: 0.3821052 
 #> = Starting epoch 91 
-#> Test loss: 0.3304616 
+#> Test loss: 0.3896319 
 #> = Starting epoch 92 
-#> Test loss: 0.3306396 
+#> Test loss: 0.3759111 
 #> = Starting epoch 93 
-#> Test loss: 0.3399062 
+#> Test loss: 0.3800206 
 #> = Starting epoch 94 
-#> Test loss: 0.3306135 
+#> Test loss: 0.3795123 
 #> = Starting epoch 95 
-#> Test loss: 0.3302236 
+#> Test loss: 0.3885282 
 #> = Starting epoch 96 
-#> Test loss: 0.337094 
+#> Test loss: 0.4018164 
 #> = Starting epoch 97 
-#> Test loss: 0.3270627 
+#> Test loss: 0.3725834 
 #> = Starting epoch 98 
-#> Test loss: 0.3389605 
+#> Test loss: 0.3799687 
 #> = Starting epoch 99 
-#> Test loss: 0.3387972 
+#> Test loss: 0.3781576 
 #> = Starting epoch 100 
-#> Test loss: 0.3335708 
+#> Test loss: 0.368983 
 #> = Starting epoch 101 
-#> Test loss: 0.3472291 
+#> Test loss: 0.3741205 
 #> = Starting epoch 102 
-#> Test loss: 0.3365577 
+#> Test loss: 0.3769834 
 #> = Starting epoch 103 
-#> Test loss: 0.3321988 
+#> Test loss: 0.3725211 
 #> = Starting epoch 104 
-#> Test loss: 0.3483598 
+#> Test loss: 0.3730062 
 #> = Starting epoch 105 
-#> Test loss: 0.3467729 
+#> Test loss: 0.3728346 
 #> = Starting epoch 106 
-#> Test loss: 0.3272054 
+#> Test loss: 0.3688296 
 #> = Starting epoch 107 
-#> Test loss: 0.3348717 
+#> Test loss: 0.3795431 
 #> = Starting epoch 108 
-#> Test loss: 0.3403797 
+#> Test loss: 0.3816218 
 #> = Starting epoch 109 
-#> Test loss: 0.3284846 
+#> Test loss: 0.3714893 
 #> = Starting epoch 110 
-#> Test loss: 0.3415016 
+#> Test loss: 0.3764892 
 #> = Starting epoch 111 
-#> Test loss: 0.335772 
+#> Test loss: 0.3775806 
 #> = Starting epoch 112 
-#> Test loss: 0.328819 
+#> Test loss: 0.3759674 
 #> = Starting epoch 113 
-#> Test loss: 0.3314244 
+#> Test loss: 0.3822531 
 #> = Starting epoch 114 
-#> Test loss: 0.3284698 
+#> Test loss: 0.368648 
 #> = Starting epoch 115 
-#> Test loss: 0.3321001 
+#> Test loss: 0.371012 
 #> = Starting epoch 116 
-#> Test loss: 0.3349137 
+#> Test loss: 0.3715886 
 #> = Starting epoch 117 
-#> Test loss: 0.3323621 
+#> Test loss: 0.3701208 
 #> = Starting epoch 118 
-#> Test loss: 0.3318624 
+#> Test loss: 0.3776811 
 #> = Starting epoch 119 
-#> Test loss: 0.329792 
+#> Test loss: 0.3679525 
 #> = Starting epoch 120 
-#> Test loss: 0.3289927 
+#> Test loss: 0.3749079 
 #> = Starting epoch 121 
-#> Test loss: 0.3270006 
+#> Test loss: 0.3740299 
 #> = Starting epoch 122 
-#> Test loss: 0.324139 
+#> Test loss: 0.4205672 
 #> = Starting epoch 123 
-#> Test loss: 0.3239949 
+#> Test loss: 0.4963447 
 #> = Starting epoch 124 
-#> Test loss: 0.3238574 
+#> Test loss: 0.4614847 
 #> = Starting epoch 125 
-#> Test loss: 0.3228601 
+#> Test loss: 0.4029231 
 #> = Starting epoch 126 
-#> Test loss: 0.3230047 
+#> Test loss: 0.3855864 
 #> = Starting epoch 127 
-#> Test loss: 0.3240964 
+#> Test loss: 0.4243133 
 #> = Starting epoch 128 
-#> Test loss: 0.3245459
+#> Test loss: 0.4253325
 ```
 
 It looks as though the test loss has converged. We can sample from the
@@ -640,517 +640,517 @@ train_conditional_flow(
   }
 )
 #> = Starting epoch 1 
-#> Test loss: 1.182373 
+#> Test loss: 1.235104 
 #> = Starting epoch 2 
-#> Test loss: 1.112105 
+#> Test loss: 1.161637 
 #> = Starting epoch 3 
-#> Test loss: 1.038888 
+#> Test loss: 1.087455 
 #> = Starting epoch 4 
-#> Test loss: 0.9641711 
+#> Test loss: 1.013524 
 #> = Starting epoch 5 
-#> Test loss: 0.8888053 
+#> Test loss: 0.9389997 
 #> = Starting epoch 6 
-#> Test loss: 0.8131318 
+#> Test loss: 0.8629651 
 #> = Starting epoch 7 
-#> Test loss: 0.7370822 
+#> Test loss: 0.7831652 
 #> = Starting epoch 8 
-#> Test loss: 0.6594728 
+#> Test loss: 0.6991326 
 #> = Starting epoch 9 
-#> Test loss: 0.5794646 
+#> Test loss: 0.6099796 
 #> = Starting epoch 10 
-#> Test loss: 0.4959565 
+#> Test loss: 0.5157736 
 #> = Starting epoch 11 
-#> Test loss: 0.407536 
+#> Test loss: 0.4180205 
 #> = Starting epoch 12 
-#> Test loss: 0.3160904 
+#> Test loss: 0.3202264 
 #> = Starting epoch 13 
-#> Test loss: 0.2255729 
+#> Test loss: 0.2246976 
 #> = Starting epoch 14 
-#> Test loss: 0.137872 
+#> Test loss: 0.1284185 
 #> = Starting epoch 15 
-#> Test loss: 0.05966717 
+#> Test loss: 0.04440379 
 #> = Starting epoch 16 
-#> Test loss: 0.004103839 
+#> Test loss: 0.000856936 
 #> = Starting epoch 17 
-#> Test loss: -0.03029847 
+#> Test loss: -0.021191 
 #> = Starting epoch 18 
-#> Test loss: -0.04691112 
+#> Test loss: -0.03826737 
 #> = Starting epoch 19 
-#> Test loss: -0.05551678 
+#> Test loss: -0.05089629 
 #> = Starting epoch 20 
-#> Test loss: -0.08245492 
+#> Test loss: -0.09157854 
 #> = Starting epoch 21 
-#> Test loss: -0.1307901 
+#> Test loss: -0.1478677 
 #> = Starting epoch 22 
-#> Test loss: -0.1898184 
+#> Test loss: -0.2023 
 #> = Starting epoch 23 
-#> Test loss: -0.2518724 
+#> Test loss: -0.2727855 
 #> = Starting epoch 24 
-#> Test loss: -0.2835209 
+#> Test loss: -0.3354691 
 #> = Starting epoch 25 
-#> Test loss: -0.3330079 
+#> Test loss: -0.381951 
 #> = Starting epoch 26 
-#> Test loss: -0.383348 
+#> Test loss: -0.4473241 
 #> = Starting epoch 27 
-#> Test loss: -0.440035 
+#> Test loss: -0.4744091 
 #> = Starting epoch 28 
-#> Test loss: -0.4653577 
+#> Test loss: -0.4999082 
 #> = Starting epoch 29 
-#> Test loss: -0.5053006 
+#> Test loss: -0.5344474 
 #> = Starting epoch 30 
-#> Test loss: -0.5436277 
+#> Test loss: -0.5570746 
 #> = Starting epoch 31 
-#> Test loss: -0.576721 
+#> Test loss: -0.5872532 
 #> = Starting epoch 32 
-#> Test loss: -0.5997151 
+#> Test loss: -0.6077206 
 #> = Starting epoch 33 
-#> Test loss: -0.602532 
+#> Test loss: -0.615349 
 #> = Starting epoch 34 
-#> Test loss: -0.6110654 
+#> Test loss: -0.6342636 
 #> = Starting epoch 35 
-#> Test loss: -0.6603447 
+#> Test loss: -0.6656718 
 #> = Starting epoch 36 
-#> Test loss: -0.6911004 
+#> Test loss: -0.6909893 
 #> = Starting epoch 37 
-#> Test loss: -0.7216598 
+#> Test loss: -0.7211207 
 #> = Starting epoch 38 
-#> Test loss: -0.7502022 
+#> Test loss: -0.7488486 
 #> = Starting epoch 39 
-#> Test loss: -0.7615544 
+#> Test loss: -0.7581905 
 #> = Starting epoch 40 
-#> Test loss: -0.787514 
+#> Test loss: -0.7856451 
 #> = Starting epoch 41 
-#> Test loss: -0.8193688 
+#> Test loss: -0.8341182 
 #> = Starting epoch 42 
-#> Test loss: -0.8488042 
+#> Test loss: -0.8521712 
 #> = Starting epoch 43 
-#> Test loss: -0.8726512 
+#> Test loss: -0.8576968 
 #> = Starting epoch 44 
-#> Test loss: -0.8916656 
+#> Test loss: -0.8896368 
 #> = Starting epoch 45 
-#> Test loss: -0.8988534 
+#> Test loss: -0.9293932 
 #> = Starting epoch 46 
-#> Test loss: -0.9078624 
+#> Test loss: -0.958735 
 #> = Starting epoch 47 
-#> Test loss: -0.9300594 
+#> Test loss: -0.9539469 
 #> = Starting epoch 48 
-#> Test loss: -0.9404053 
+#> Test loss: -0.9658142 
 #> = Starting epoch 49 
-#> Test loss: -0.9750069 
+#> Test loss: -0.9697835 
 #> = Starting epoch 50 
-#> Test loss: -0.9960424 
+#> Test loss: -1.012259 
 #> = Starting epoch 51 
-#> Test loss: -0.9605005 
+#> Test loss: -1.043931 
 #> = Starting epoch 52 
-#> Test loss: -0.9987951 
+#> Test loss: -1.064102 
 #> = Starting epoch 53 
-#> Test loss: -1.033989 
+#> Test loss: -1.071424 
 #> = Starting epoch 54 
-#> Test loss: -0.9994045 
+#> Test loss: -1.075763 
 #> = Starting epoch 55 
-#> Test loss: -1.073301 
+#> Test loss: -1.080834 
 #> = Starting epoch 56 
-#> Test loss: -1.078676 
+#> Test loss: -1.092009 
 #> = Starting epoch 57 
-#> Test loss: -1.070393 
+#> Test loss: -1.1076 
 #> = Starting epoch 58 
-#> Test loss: -1.093874 
+#> Test loss: -1.126339 
 #> = Starting epoch 59 
-#> Test loss: -1.056556 
+#> Test loss: -1.088287 
 #> = Starting epoch 60 
-#> Test loss: -1.051744 
+#> Test loss: -1.163872 
 #> = Starting epoch 61 
-#> Test loss: -1.101452 
+#> Test loss: -1.120451 
 #> = Starting epoch 62 
-#> Test loss: -1.108722 
+#> Test loss: -1.1733 
 #> = Starting epoch 63 
-#> Test loss: -1.111386 
+#> Test loss: -1.164774 
 #> = Starting epoch 64 
-#> Test loss: -1.14598 
+#> Test loss: -1.189823 
 #> = Starting epoch 65 
-#> Test loss: -1.164662 
+#> Test loss: -1.163503 
 #> = Starting epoch 66 
-#> Test loss: -1.153785 
+#> Test loss: -1.194759 
 #> = Starting epoch 67 
-#> Test loss: -1.163095 
+#> Test loss: -1.1436 
 #> = Starting epoch 68 
-#> Test loss: -1.169363 
+#> Test loss: -1.201026 
 #> = Starting epoch 69 
-#> Test loss: -1.163785 
+#> Test loss: -1.179689 
 #> = Starting epoch 70 
-#> Test loss: -1.17055 
+#> Test loss: -1.213942 
 #> = Starting epoch 71 
-#> Test loss: -1.194137 
+#> Test loss: -1.191445 
 #> = Starting epoch 72 
-#> Test loss: -1.193874 
+#> Test loss: -1.208952 
 #> = Starting epoch 73 
-#> Test loss: -1.174616 
+#> Test loss: -1.153196 
 #> = Starting epoch 74 
-#> Test loss: -1.206589 
+#> Test loss: -1.245654 
 #> = Starting epoch 75 
-#> Test loss: -1.211468 
+#> Test loss: -1.164784 
 #> = Starting epoch 76 
-#> Test loss: -1.207958 
+#> Test loss: -1.251997 
 #> = Starting epoch 77 
-#> Test loss: -1.225413 
+#> Test loss: -1.194567 
 #> = Starting epoch 78 
-#> Test loss: -1.233982 
+#> Test loss: -1.196761 
 #> = Starting epoch 79 
-#> Test loss: -1.243667 
+#> Test loss: -1.258924 
 #> = Starting epoch 80 
-#> Test loss: -1.263218 
+#> Test loss: -1.219843 
 #> = Starting epoch 81 
-#> Test loss: -1.267154 
+#> Test loss: -1.141532 
 #> = Starting epoch 82 
-#> Test loss: -1.26754 
+#> Test loss: -1.123561 
 #> = Starting epoch 83 
-#> Test loss: -1.268281 
+#> Test loss: -1.171093 
 #> = Starting epoch 84 
-#> Test loss: -1.260491 
+#> Test loss: -1.223439 
 #> = Starting epoch 85 
-#> Test loss: -1.265645 
+#> Test loss: -1.177964 
 #> = Starting epoch 86 
-#> Test loss: -1.271238 
+#> Test loss: -1.093544 
 #> = Starting epoch 87 
-#> Test loss: -1.277655 
+#> Test loss: -1.123199 
 #> = Starting epoch 88 
-#> Test loss: -1.286033 
+#> Test loss: -1.214433 
 #> = Starting epoch 89 
-#> Test loss: -1.282942 
+#> Test loss: -1.224938 
 #> = Starting epoch 90 
-#> Test loss: -1.29478 
+#> Test loss: -1.16787 
 #> = Starting epoch 91 
-#> Test loss: -1.291468 
+#> Test loss: -1.191574 
 #> = Starting epoch 92 
-#> Test loss: -1.300102 
+#> Test loss: -1.252049 
 #> = Starting epoch 93 
-#> Test loss: -1.290621 
+#> Test loss: -1.264398 
 #> = Starting epoch 94 
-#> Test loss: -1.300214 
+#> Test loss: -1.229466 
 #> = Starting epoch 95 
-#> Test loss: -1.293672 
+#> Test loss: -1.22453 
 #> = Starting epoch 96 
-#> Test loss: -1.305208 
+#> Test loss: -1.263436 
 #> = Starting epoch 97 
-#> Test loss: -1.304945 
+#> Test loss: -1.275043 
 #> = Starting epoch 98 
-#> Test loss: -1.321242 
+#> Test loss: -1.236719 
 #> = Starting epoch 99 
-#> Test loss: -1.314343 
+#> Test loss: -1.210205 
 #> = Starting epoch 100 
-#> Test loss: -1.326037 
+#> Test loss: -1.204618 
 #> = Starting epoch 101 
-#> Test loss: -1.319565 
+#> Test loss: -1.235753 
 #> = Starting epoch 102 
-#> Test loss: -1.323908 
+#> Test loss: -1.282313 
 #> = Starting epoch 103 
-#> Test loss: -1.334535 
+#> Test loss: -1.292845 
 #> = Starting epoch 104 
-#> Test loss: -1.322221 
+#> Test loss: -1.271426 
 #> = Starting epoch 105 
-#> Test loss: -1.321765 
+#> Test loss: -1.270918 
 #> = Starting epoch 106 
-#> Test loss: -1.33423 
+#> Test loss: -1.288683 
 #> = Starting epoch 107 
-#> Test loss: -1.332948 
+#> Test loss: -1.309901 
 #> = Starting epoch 108 
-#> Test loss: -1.339203 
+#> Test loss: -1.299946 
 #> = Starting epoch 109 
-#> Test loss: -1.335896 
+#> Test loss: -1.313279 
 #> = Starting epoch 110 
-#> Test loss: -1.341194 
+#> Test loss: -1.305623 
 #> = Starting epoch 111 
-#> Test loss: -1.346449 
+#> Test loss: -1.293514 
 #> = Starting epoch 112 
-#> Test loss: -1.358631 
+#> Test loss: -1.297937 
 #> = Starting epoch 113 
-#> Test loss: -1.350926 
+#> Test loss: -1.314655 
 #> = Starting epoch 114 
-#> Test loss: -1.346662 
+#> Test loss: -1.32425 
 #> = Starting epoch 115 
-#> Test loss: -1.355905 
+#> Test loss: -1.319244 
 #> = Starting epoch 116 
-#> Test loss: -1.348621 
+#> Test loss: -1.309697 
 #> = Starting epoch 117 
-#> Test loss: -1.349571 
+#> Test loss: -1.319812 
 #> = Starting epoch 118 
-#> Test loss: -1.357604 
+#> Test loss: -1.32695 
 #> = Starting epoch 119 
-#> Test loss: -1.343068 
+#> Test loss: -1.316109 
 #> = Starting epoch 120 
-#> Test loss: -1.344723 
+#> Test loss: -1.306357 
 #> = Starting epoch 121 
-#> Test loss: -1.350523 
+#> Test loss: -1.312207 
 #> = Starting epoch 122 
-#> Test loss: -1.367468 
+#> Test loss: -1.324086 
 #> = Starting epoch 123 
-#> Test loss: -1.372964 
+#> Test loss: -1.318377 
 #> = Starting epoch 124 
-#> Test loss: -1.373043 
+#> Test loss: -1.307313 
 #> = Starting epoch 125 
-#> Test loss: -1.370417 
+#> Test loss: -1.312105 
 #> = Starting epoch 126 
-#> Test loss: -1.375646 
+#> Test loss: -1.334633 
 #> = Starting epoch 127 
-#> Test loss: -1.374753 
+#> Test loss: -1.342663 
 #> = Starting epoch 128 
-#> Test loss: -1.381429 
+#> Test loss: -1.314122 
 #> = Starting epoch 129 
-#> Test loss: -1.378006 
+#> Test loss: -1.303788 
 #> = Starting epoch 130 
-#> Test loss: -1.379149 
+#> Test loss: -1.329466 
 #> = Starting epoch 131 
-#> Test loss: -1.378031 
+#> Test loss: -1.334765 
 #> = Starting epoch 132 
-#> Test loss: -1.373506 
+#> Test loss: -1.310944 
 #> = Starting epoch 133 
-#> Test loss: -1.373495 
+#> Test loss: -1.313559 
 #> = Starting epoch 134 
-#> Test loss: -1.39555 
+#> Test loss: -1.341197 
 #> = Starting epoch 135 
-#> Test loss: -1.362576 
+#> Test loss: -1.340664 
 #> = Starting epoch 136 
-#> Test loss: -1.391833 
+#> Test loss: -1.321438 
 #> = Starting epoch 137 
-#> Test loss: -1.377768 
+#> Test loss: -1.321307 
 #> = Starting epoch 138 
-#> Test loss: -1.387993 
+#> Test loss: -1.339173 
 #> = Starting epoch 139 
-#> Test loss: -1.378717 
+#> Test loss: -1.353055 
 #> = Starting epoch 140 
-#> Test loss: -1.377146 
+#> Test loss: -1.35797 
 #> = Starting epoch 141 
-#> Test loss: -1.383498 
+#> Test loss: -1.343075 
 #> = Starting epoch 142 
-#> Test loss: -1.400559 
+#> Test loss: -1.330583 
 #> = Starting epoch 143 
-#> Test loss: -1.386252 
+#> Test loss: -1.343359 
 #> = Starting epoch 144 
-#> Test loss: -1.368818 
+#> Test loss: -1.340493 
 #> = Starting epoch 145 
-#> Test loss: -1.399115 
+#> Test loss: -1.34442 
 #> = Starting epoch 146 
-#> Test loss: -1.394872 
+#> Test loss: -1.352065 
 #> = Starting epoch 147 
-#> Test loss: -1.386927 
+#> Test loss: -1.361777 
 #> = Starting epoch 148 
-#> Test loss: -1.39661 
+#> Test loss: -1.354138 
 #> = Starting epoch 149 
-#> Test loss: -1.40307 
+#> Test loss: -1.352241 
 #> = Starting epoch 150 
-#> Test loss: -1.392983 
+#> Test loss: -1.359106 
 #> = Starting epoch 151 
-#> Test loss: -1.408146 
+#> Test loss: -1.363906 
 #> = Starting epoch 152 
-#> Test loss: -1.39025 
+#> Test loss: -1.364966 
 #> = Starting epoch 153 
-#> Test loss: -1.402869 
+#> Test loss: -1.364846 
 #> = Starting epoch 154 
-#> Test loss: -1.388273 
+#> Test loss: -1.374705 
 #> = Starting epoch 155 
-#> Test loss: -1.398575 
+#> Test loss: -1.367807 
 #> = Starting epoch 156 
-#> Test loss: -1.401421 
+#> Test loss: -1.365253 
 #> = Starting epoch 157 
-#> Test loss: -1.407255 
+#> Test loss: -1.376521 
 #> = Starting epoch 158 
-#> Test loss: -1.392082 
+#> Test loss: -1.372672 
 #> = Starting epoch 159 
-#> Test loss: -1.396863 
+#> Test loss: -1.372299 
 #> = Starting epoch 160 
-#> Test loss: -1.410049 
+#> Test loss: -1.364572 
 #> = Starting epoch 161 
-#> Test loss: -1.405115 
+#> Test loss: -1.361834 
 #> = Starting epoch 162 
-#> Test loss: -1.411435 
+#> Test loss: -1.370253 
 #> = Starting epoch 163 
-#> Test loss: -1.415449 
+#> Test loss: -1.369457 
 #> = Starting epoch 164 
-#> Test loss: -1.398754 
+#> Test loss: -1.360791 
 #> = Starting epoch 165 
-#> Test loss: -1.397963 
+#> Test loss: -1.375546 
 #> = Starting epoch 166 
-#> Test loss: -1.358517 
+#> Test loss: -1.378762 
 #> = Starting epoch 167 
-#> Test loss: -1.385158 
+#> Test loss: -1.372631 
 #> = Starting epoch 168 
-#> Test loss: -1.359846 
+#> Test loss: -1.375416 
 #> = Starting epoch 169 
-#> Test loss: -1.29613 
+#> Test loss: -1.38777 
 #> = Starting epoch 170 
-#> Test loss: -1.402402 
+#> Test loss: -1.385056 
 #> = Starting epoch 171 
-#> Test loss: -1.344185 
+#> Test loss: -1.379745 
 #> = Starting epoch 172 
-#> Test loss: -1.347904 
+#> Test loss: -1.384876 
 #> = Starting epoch 173 
-#> Test loss: -1.397904 
+#> Test loss: -1.387825 
 #> = Starting epoch 174 
-#> Test loss: -1.389089 
+#> Test loss: -1.383155 
 #> = Starting epoch 175 
-#> Test loss: -1.322032 
+#> Test loss: -1.389258 
 #> = Starting epoch 176 
-#> Test loss: -1.385696 
+#> Test loss: -1.394925 
 #> = Starting epoch 177 
-#> Test loss: -1.379668 
+#> Test loss: -1.388434 
 #> = Starting epoch 178 
-#> Test loss: -1.373662 
+#> Test loss: -1.382191 
 #> = Starting epoch 179 
-#> Test loss: -1.392098 
+#> Test loss: -1.383497 
 #> = Starting epoch 180 
-#> Test loss: -1.418043 
+#> Test loss: -1.38093 
 #> = Starting epoch 181 
-#> Test loss: -1.38066 
+#> Test loss: -1.386164 
 #> = Starting epoch 182 
-#> Test loss: -1.385327 
+#> Test loss: -1.395264 
 #> = Starting epoch 183 
-#> Test loss: -1.377574 
+#> Test loss: -1.397324 
 #> = Starting epoch 184 
-#> Test loss: -1.29486 
+#> Test loss: -1.392619 
 #> = Starting epoch 185 
-#> Test loss: -1.30119 
+#> Test loss: -1.396527 
 #> = Starting epoch 186 
-#> Test loss: -1.357249 
+#> Test loss: -1.399156 
 #> = Starting epoch 187 
-#> Test loss: -1.405124 
+#> Test loss: -1.395388 
 #> = Starting epoch 188 
-#> Test loss: -1.388363 
+#> Test loss: -1.390759 
 #> = Starting epoch 189 
-#> Test loss: -1.366155 
+#> Test loss: -1.374961 
 #> = Starting epoch 190 
-#> Test loss: -1.399587 
+#> Test loss: -1.381762 
 #> = Starting epoch 191 
-#> Test loss: -1.413017 
+#> Test loss: -1.393375 
 #> = Starting epoch 192 
-#> Test loss: -1.382978 
+#> Test loss: -1.400173 
 #> = Starting epoch 193 
-#> Test loss: -1.373667 
+#> Test loss: -1.400796 
 #> = Starting epoch 194 
-#> Test loss: -1.398624 
+#> Test loss: -1.397059 
 #> = Starting epoch 195 
-#> Test loss: -1.421038 
+#> Test loss: -1.398163 
 #> = Starting epoch 196 
-#> Test loss: -1.396904 
+#> Test loss: -1.402197 
 #> = Starting epoch 197 
-#> Test loss: -1.402232 
+#> Test loss: -1.408081 
 #> = Starting epoch 198 
-#> Test loss: -1.425868 
+#> Test loss: -1.404255 
 #> = Starting epoch 199 
-#> Test loss: -1.415671 
+#> Test loss: -1.400918 
 #> = Starting epoch 200 
-#> Test loss: -1.40134 
+#> Test loss: -1.389056 
 #> = Starting epoch 201 
-#> Test loss: -1.40226 
+#> Test loss: -1.37326 
 #> = Starting epoch 202 
-#> Test loss: -1.422513 
+#> Test loss: -1.387016 
 #> = Starting epoch 203 
-#> Test loss: -1.418728 
+#> Test loss: -1.390213 
 #> = Starting epoch 204 
-#> Test loss: -1.395606 
+#> Test loss: -1.391067 
 #> = Starting epoch 205 
-#> Test loss: -1.417021 
+#> Test loss: -1.399378 
 #> = Starting epoch 206 
-#> Test loss: -1.403119 
+#> Test loss: -1.400293 
 #> = Starting epoch 207 
-#> Test loss: -1.383206 
+#> Test loss: -1.401732 
 #> = Starting epoch 208 
-#> Test loss: -1.404176 
+#> Test loss: -1.404093 
 #> = Starting epoch 209 
-#> Test loss: -1.414542 
+#> Test loss: -1.408671 
 #> = Starting epoch 210 
-#> Test loss: -1.396154 
+#> Test loss: -1.406441 
 #> = Starting epoch 211 
-#> Test loss: -1.379712 
+#> Test loss: -1.400244 
 #> = Starting epoch 212 
-#> Test loss: -1.417914 
+#> Test loss: -1.395388 
 #> = Starting epoch 213 
-#> Test loss: -1.419961 
+#> Test loss: -1.39179 
 #> = Starting epoch 214 
-#> Test loss: -1.390139 
+#> Test loss: -1.402482 
 #> = Starting epoch 215 
-#> Test loss: -1.375754 
+#> Test loss: -1.409302 
 #> = Starting epoch 216 
-#> Test loss: -1.391989 
+#> Test loss: -1.407092 
 #> = Starting epoch 217 
-#> Test loss: -1.418898 
+#> Test loss: -1.407213 
 #> = Starting epoch 218 
-#> Test loss: -1.415817 
+#> Test loss: -1.392236 
 #> = Starting epoch 219 
-#> Test loss: -1.385042 
+#> Test loss: -1.398014 
 #> = Starting epoch 220 
-#> Test loss: -1.415354 
+#> Test loss: -1.389201 
 #> = Starting epoch 221 
-#> Test loss: -1.427649 
+#> Test loss: -1.403805 
 #> = Starting epoch 222 
-#> Test loss: -1.414428 
+#> Test loss: -1.379252 
 #> = Starting epoch 223 
-#> Test loss: -1.407155 
+#> Test loss: -1.391586 
 #> = Starting epoch 224 
-#> Test loss: -1.41301 
+#> Test loss: -1.298837 
 #> = Starting epoch 225 
-#> Test loss: -1.418762 
+#> Test loss: -1.333828 
 #> = Starting epoch 226 
-#> Test loss: -1.41833 
+#> Test loss: -1.404978 
 #> = Starting epoch 227 
-#> Test loss: -1.408263 
+#> Test loss: -1.379434 
 #> = Starting epoch 228 
-#> Test loss: -1.429723 
+#> Test loss: -1.359704 
 #> = Starting epoch 229 
-#> Test loss: -1.429499 
+#> Test loss: -1.412236 
 #> = Starting epoch 230 
-#> Test loss: -1.41951 
+#> Test loss: -1.391483 
 #> = Starting epoch 231 
-#> Test loss: -1.415971 
+#> Test loss: -1.364606 
 #> = Starting epoch 232 
-#> Test loss: -1.428061 
+#> Test loss: -1.372846 
 #> = Starting epoch 233 
-#> Test loss: -1.440043 
+#> Test loss: -1.403506 
 #> = Starting epoch 234 
-#> Test loss: -1.438747 
+#> Test loss: -1.385739 
 #> = Starting epoch 235 
-#> Test loss: -1.432439 
+#> Test loss: -1.373251 
 #> = Starting epoch 236 
-#> Test loss: -1.432991 
+#> Test loss: -1.389808 
 #> = Starting epoch 237 
-#> Test loss: -1.43127 
+#> Test loss: -1.384222 
 #> = Starting epoch 238 
-#> Test loss: -1.430795 
+#> Test loss: -1.379506 
 #> = Starting epoch 239 
-#> Test loss: -1.436224 
+#> Test loss: -1.401834 
 #> = Starting epoch 240 
-#> Test loss: -1.441621 
+#> Test loss: -1.401507 
 #> = Starting epoch 241 
-#> Test loss: -1.440126 
+#> Test loss: -1.401339 
 #> = Starting epoch 242 
-#> Test loss: -1.439955 
+#> Test loss: -1.39976 
 #> = Starting epoch 243 
-#> Test loss: -1.43638 
+#> Test loss: -1.404801 
 #> = Starting epoch 244 
-#> Test loss: -1.435058 
+#> Test loss: -1.399129 
 #> = Starting epoch 245 
-#> Test loss: -1.441028 
+#> Test loss: -1.410925 
 #> = Starting epoch 246 
-#> Test loss: -1.447242 
+#> Test loss: -1.408674 
 #> = Starting epoch 247 
-#> Test loss: -1.44751 
+#> Test loss: -1.40327 
 #> = Starting epoch 248 
-#> Test loss: -1.445026 
+#> Test loss: -1.410019 
 #> = Starting epoch 249 
-#> Test loss: -1.446798 
+#> Test loss: -1.410446 
 #> = Starting epoch 250 
-#> Test loss: -1.447627 
+#> Test loss: -1.402437 
 #> = Starting epoch 251 
-#> Test loss: -1.447137 
+#> Test loss: -1.423491 
 #> = Starting epoch 252 
-#> Test loss: -1.445806 
+#> Test loss: -1.400958 
 #> = Starting epoch 253 
-#> Test loss: -1.446719 
+#> Test loss: -1.410783 
 #> = Starting epoch 254 
-#> Test loss: -1.451767 
+#> Test loss: -1.419274 
 #> = Starting epoch 255 
-#> Test loss: -1.455465 
+#> Test loss: -1.410238 
 #> = Starting epoch 256 
-#> Test loss: -1.453992
+#> Test loss: -1.413607
 ```
 
 We can generate samples from the trained flow as follows, where now the
@@ -1240,16 +1240,16 @@ summary_model <- nn_sequential(
 
 summary_model(test_set$conditioning[1 : 10, , drop = FALSE])
 #> torch_tensor
-#> -0.1049 -0.1509 -0.3628 -0.9058  0.7269  0.4506 -0.2504 -0.6884
-#> -0.8033  2.1851 -0.9775 -0.7034 -0.1768  0.0075 -0.0521  0.1465
-#> -0.3514  0.1740 -0.5556 -0.8789  0.5821  0.2612 -0.2288 -0.5535
-#> -0.4862  0.3272 -0.7337 -0.8647  0.4533  0.0089 -0.3073 -0.4337
-#> -0.3368  0.1242 -0.5647 -0.8882  0.5844  0.2168 -0.2838 -0.5428
-#> -0.7039  0.7093 -0.8975 -0.8145  0.2744 -0.1232 -0.2198 -0.3270
-#> -0.2666  0.0142 -0.5515 -0.9004  0.6054  0.1952 -0.3323 -0.5592
-#> -0.1455 -0.1327 -0.4334 -0.9086  0.6803  0.3282 -0.3202 -0.6361
-#> -0.4018  0.5262 -0.6026 -0.9285  0.7652  0.7943 -0.0580 -0.5396
-#> -0.3789  0.1519 -0.6338 -0.8725  0.5302  0.1133 -0.3186 -0.5013
+#>  0.8808 -0.4516  0.1276  0.6069 -0.8523 -0.8365 -0.8911 -0.0145
+#>  1.0112 -0.5399 -0.1001  0.6504 -1.0432 -0.8209 -1.1022  0.1204
+#>  0.9269 -0.4934  0.2573  0.5437 -0.7589 -0.8374 -0.7930 -0.0201
+#>  0.9506 -0.6324  0.3409  0.4918 -0.6635 -0.7574 -0.6561  0.0631
+#>  0.9478 -0.5384  0.3100  0.5208 -0.7103 -0.8228 -0.7350 -0.0048
+#>  0.9552 -0.4934  0.2871  0.5203 -0.7514 -0.8440 -0.8086 -0.0396
+#>  2.2429 -1.0575 -1.3244  0.5820 -1.5739 -1.0249 -2.5322  0.8417
+#>  0.9183 -0.4747  0.1104  0.6099 -0.8746 -0.8269 -0.9093  0.0082
+#>  0.9431 -0.6318  0.1211  0.5878 -0.8310 -0.7464 -0.8295  0.1457
+#>  0.9778 -0.7154  0.3942  0.4612 -0.5955 -0.7155 -0.5599  0.1035
 #> [ CPUFloatType{10,8} ][ grad_fn = <SumBackward1> ]
 ```
 
@@ -1304,517 +1304,517 @@ train_conditional_flow(
   }
 )
 #> = Starting epoch 1 
-#> Test loss: 1.134564 
+#> Test loss: 1.056542 
 #> = Starting epoch 2 
-#> Test loss: 0.9356406 
+#> Test loss: 0.9386197 
 #> = Starting epoch 3 
-#> Test loss: 0.7690399 
+#> Test loss: 0.8395875 
 #> = Starting epoch 4 
-#> Test loss: 0.6031162 
+#> Test loss: 0.6740577 
 #> = Starting epoch 5 
-#> Test loss: 0.3989416 
+#> Test loss: 0.4795395 
 #> = Starting epoch 6 
-#> Test loss: 0.1591704 
+#> Test loss: 0.2887294 
 #> = Starting epoch 7 
-#> Test loss: -0.09299451 
+#> Test loss: 0.1006605 
 #> = Starting epoch 8 
-#> Test loss: -0.338802 
+#> Test loss: -0.1061829 
 #> = Starting epoch 9 
-#> Test loss: -0.5930048 
+#> Test loss: -0.348986 
 #> = Starting epoch 10 
-#> Test loss: -0.8214306 
+#> Test loss: -0.5937135 
 #> = Starting epoch 11 
-#> Test loss: -0.9426203 
+#> Test loss: -0.8172616 
 #> = Starting epoch 12 
-#> Test loss: -1.076075 
+#> Test loss: -1.033609 
 #> = Starting epoch 13 
-#> Test loss: -1.251378 
+#> Test loss: -1.169163 
 #> = Starting epoch 14 
-#> Test loss: -1.183387 
+#> Test loss: -1.276567 
 #> = Starting epoch 15 
-#> Test loss: -1.356371 
+#> Test loss: -1.120428 
 #> = Starting epoch 16 
-#> Test loss: -1.338996 
+#> Test loss: -1.445064 
 #> = Starting epoch 17 
-#> Test loss: -1.540197 
+#> Test loss: -1.372398 
 #> = Starting epoch 18 
-#> Test loss: -1.520128 
+#> Test loss: -1.557822 
 #> = Starting epoch 19 
-#> Test loss: -1.524854 
+#> Test loss: -1.585135 
 #> = Starting epoch 20 
-#> Test loss: -1.698525 
+#> Test loss: -1.590711 
 #> = Starting epoch 21 
-#> Test loss: -1.817748 
+#> Test loss: -1.705605 
 #> = Starting epoch 22 
-#> Test loss: -1.741385 
+#> Test loss: -1.741658 
 #> = Starting epoch 23 
-#> Test loss: -1.842311 
+#> Test loss: -1.816008 
 #> = Starting epoch 24 
-#> Test loss: -1.918706 
+#> Test loss: -1.856513 
 #> = Starting epoch 25 
-#> Test loss: -1.874225 
+#> Test loss: -1.876365 
 #> = Starting epoch 26 
-#> Test loss: -1.923441 
+#> Test loss: -1.882213 
 #> = Starting epoch 27 
-#> Test loss: -1.996694 
+#> Test loss: -1.972118 
 #> = Starting epoch 28 
-#> Test loss: -2.010686 
+#> Test loss: -2.068038 
 #> = Starting epoch 29 
-#> Test loss: -2.076713 
+#> Test loss: -2.09432 
 #> = Starting epoch 30 
-#> Test loss: -1.997622 
+#> Test loss: -2.135259 
 #> = Starting epoch 31 
-#> Test loss: -2.150722 
+#> Test loss: -2.114792 
 #> = Starting epoch 32 
-#> Test loss: -2.127865 
+#> Test loss: -2.205391 
 #> = Starting epoch 33 
-#> Test loss: -2.192909 
+#> Test loss: -2.186504 
 #> = Starting epoch 34 
-#> Test loss: -2.196797 
+#> Test loss: -2.248096 
 #> = Starting epoch 35 
-#> Test loss: -2.224841 
+#> Test loss: -2.278724 
 #> = Starting epoch 36 
-#> Test loss: -2.312041 
+#> Test loss: -2.311905 
 #> = Starting epoch 37 
-#> Test loss: -2.291585 
+#> Test loss: -2.380715 
 #> = Starting epoch 38 
-#> Test loss: -2.37378 
+#> Test loss: -2.363258 
 #> = Starting epoch 39 
-#> Test loss: -2.351274 
+#> Test loss: -2.420071 
 #> = Starting epoch 40 
-#> Test loss: -2.386789 
+#> Test loss: -2.478081 
 #> = Starting epoch 41 
-#> Test loss: -2.391502 
+#> Test loss: -2.483109 
 #> = Starting epoch 42 
-#> Test loss: -2.465843 
+#> Test loss: -2.507818 
 #> = Starting epoch 43 
-#> Test loss: -2.45746 
+#> Test loss: -2.549404 
 #> = Starting epoch 44 
-#> Test loss: -2.513049 
+#> Test loss: -2.589152 
 #> = Starting epoch 45 
-#> Test loss: -2.488416 
+#> Test loss: -2.574725 
 #> = Starting epoch 46 
-#> Test loss: -2.566628 
+#> Test loss: -2.596677 
 #> = Starting epoch 47 
-#> Test loss: -2.489439 
+#> Test loss: -2.548864 
 #> = Starting epoch 48 
-#> Test loss: -2.54049 
+#> Test loss: -2.530041 
 #> = Starting epoch 49 
-#> Test loss: -2.568236 
+#> Test loss: -2.626273 
 #> = Starting epoch 50 
-#> Test loss: -2.623852 
+#> Test loss: -2.615583 
 #> = Starting epoch 51 
-#> Test loss: -2.639988 
+#> Test loss: -2.50384 
 #> = Starting epoch 52 
-#> Test loss: -2.604292 
+#> Test loss: -2.712681 
 #> = Starting epoch 53 
-#> Test loss: -2.674639 
+#> Test loss: -2.45332 
 #> = Starting epoch 54 
-#> Test loss: -2.645894 
+#> Test loss: -2.651956 
 #> = Starting epoch 55 
-#> Test loss: -2.657378 
+#> Test loss: -2.666153 
 #> = Starting epoch 56 
-#> Test loss: -2.734213 
+#> Test loss: -2.6177 
 #> = Starting epoch 57 
-#> Test loss: -2.711623 
+#> Test loss: -2.6903 
 #> = Starting epoch 58 
-#> Test loss: -2.78101 
+#> Test loss: -2.685179 
 #> = Starting epoch 59 
-#> Test loss: -2.771801 
+#> Test loss: -2.705271 
 #> = Starting epoch 60 
-#> Test loss: -2.768803 
+#> Test loss: -2.736803 
 #> = Starting epoch 61 
-#> Test loss: -2.773424 
+#> Test loss: -2.736627 
 #> = Starting epoch 62 
-#> Test loss: -2.80783 
+#> Test loss: -2.784014 
 #> = Starting epoch 63 
-#> Test loss: -2.760985 
+#> Test loss: -2.734004 
 #> = Starting epoch 64 
-#> Test loss: -2.686851 
+#> Test loss: -2.729198 
 #> = Starting epoch 65 
-#> Test loss: -2.697898 
+#> Test loss: -2.779279 
 #> = Starting epoch 66 
-#> Test loss: -2.817012 
+#> Test loss: -2.808273 
 #> = Starting epoch 67 
-#> Test loss: -2.802046 
+#> Test loss: -2.834967 
 #> = Starting epoch 68 
-#> Test loss: -2.732559 
+#> Test loss: -2.80118 
 #> = Starting epoch 69 
-#> Test loss: -2.746552 
+#> Test loss: -2.850321 
 #> = Starting epoch 70 
-#> Test loss: -2.838277 
+#> Test loss: -2.812217 
 #> = Starting epoch 71 
-#> Test loss: -2.789402 
+#> Test loss: -2.860163 
 #> = Starting epoch 72 
-#> Test loss: -2.871503 
+#> Test loss: -2.858403 
 #> = Starting epoch 73 
-#> Test loss: -2.838221 
+#> Test loss: -2.868072 
 #> = Starting epoch 74 
-#> Test loss: -2.88151 
+#> Test loss: -2.86394 
 #> = Starting epoch 75 
-#> Test loss: -2.909405 
+#> Test loss: -2.873101 
 #> = Starting epoch 76 
-#> Test loss: -2.862554 
+#> Test loss: -2.866317 
 #> = Starting epoch 77 
-#> Test loss: -2.911548 
+#> Test loss: -2.82303 
 #> = Starting epoch 78 
-#> Test loss: -2.824543 
+#> Test loss: -2.874326 
 #> = Starting epoch 79 
-#> Test loss: -2.850159 
+#> Test loss: -2.91161 
 #> = Starting epoch 80 
-#> Test loss: -2.954418 
+#> Test loss: -2.894839 
 #> = Starting epoch 81 
-#> Test loss: -2.849318 
+#> Test loss: -2.821064 
 #> = Starting epoch 82 
-#> Test loss: -2.803244 
+#> Test loss: -2.797119 
 #> = Starting epoch 83 
-#> Test loss: -2.841402 
+#> Test loss: -2.880533 
 #> = Starting epoch 84 
-#> Test loss: -2.863329 
+#> Test loss: -2.856995 
 #> = Starting epoch 85 
-#> Test loss: -2.89787 
+#> Test loss: -2.647371 
 #> = Starting epoch 86 
-#> Test loss: -2.91226 
+#> Test loss: -2.927388 
 #> = Starting epoch 87 
-#> Test loss: -2.827475 
+#> Test loss: -2.898995 
 #> = Starting epoch 88 
-#> Test loss: -2.876979 
+#> Test loss: -2.899976 
 #> = Starting epoch 89 
-#> Test loss: -2.831712 
+#> Test loss: -2.952538 
 #> = Starting epoch 90 
-#> Test loss: -2.940163 
+#> Test loss: -2.884227 
 #> = Starting epoch 91 
-#> Test loss: -2.846497 
+#> Test loss: -2.943613 
 #> = Starting epoch 92 
-#> Test loss: -2.914375 
+#> Test loss: -2.843575 
 #> = Starting epoch 93 
-#> Test loss: -2.932103 
+#> Test loss: -2.869985 
 #> = Starting epoch 94 
-#> Test loss: -2.908951 
+#> Test loss: -2.971624 
 #> = Starting epoch 95 
-#> Test loss: -2.993556 
+#> Test loss: -2.797068 
 #> = Starting epoch 96 
-#> Test loss: -2.900775 
+#> Test loss: -2.973121 
 #> = Starting epoch 97 
-#> Test loss: -2.933077 
+#> Test loss: -2.913483 
 #> = Starting epoch 98 
-#> Test loss: -2.984877 
+#> Test loss: -2.930388 
 #> = Starting epoch 99 
-#> Test loss: -2.892719 
+#> Test loss: -2.986427 
 #> = Starting epoch 100 
-#> Test loss: -2.981115 
+#> Test loss: -2.931566 
 #> = Starting epoch 101 
-#> Test loss: -2.933431 
+#> Test loss: -3.00165 
 #> = Starting epoch 102 
-#> Test loss: -2.860167 
+#> Test loss: -2.948899 
 #> = Starting epoch 103 
-#> Test loss: -2.96215 
+#> Test loss: -3.002074 
 #> = Starting epoch 104 
-#> Test loss: -2.841102 
+#> Test loss: -3.021454 
 #> = Starting epoch 105 
-#> Test loss: -2.867465 
+#> Test loss: -2.976741 
 #> = Starting epoch 106 
-#> Test loss: -2.969654 
+#> Test loss: -2.99652 
 #> = Starting epoch 107 
-#> Test loss: -2.885745 
+#> Test loss: -3.010398 
 #> = Starting epoch 108 
-#> Test loss: -2.974466 
+#> Test loss: -2.974086 
 #> = Starting epoch 109 
-#> Test loss: -2.944029 
+#> Test loss: -3.018012 
 #> = Starting epoch 110 
-#> Test loss: -2.981341 
+#> Test loss: -3.011648 
 #> = Starting epoch 111 
-#> Test loss: -2.965318 
+#> Test loss: -2.98257 
 #> = Starting epoch 112 
-#> Test loss: -2.960611 
+#> Test loss: -3.028962 
 #> = Starting epoch 113 
-#> Test loss: -2.982128 
+#> Test loss: -3.036261 
 #> = Starting epoch 114 
-#> Test loss: -2.899274 
+#> Test loss: -3.010018 
 #> = Starting epoch 115 
-#> Test loss: -3.028512 
+#> Test loss: -3.054339 
 #> = Starting epoch 116 
-#> Test loss: -2.950992 
+#> Test loss: -3.032013 
 #> = Starting epoch 117 
-#> Test loss: -3.012172 
+#> Test loss: -2.995591 
 #> = Starting epoch 118 
-#> Test loss: -2.952145 
+#> Test loss: -3.033182 
 #> = Starting epoch 119 
-#> Test loss: -3.007243 
+#> Test loss: -3.055732 
 #> = Starting epoch 120 
-#> Test loss: -2.947665 
+#> Test loss: -3.029338 
 #> = Starting epoch 121 
-#> Test loss: -3.027764 
+#> Test loss: -3.051992 
 #> = Starting epoch 122 
-#> Test loss: -2.990798 
+#> Test loss: -3.02594 
 #> = Starting epoch 123 
-#> Test loss: -2.961181 
+#> Test loss: -3.036039 
 #> = Starting epoch 124 
-#> Test loss: -3.050055 
+#> Test loss: -3.040451 
 #> = Starting epoch 125 
-#> Test loss: -2.96513 
+#> Test loss: -3.037863 
 #> = Starting epoch 126 
-#> Test loss: -3.016084 
+#> Test loss: -3.012582 
 #> = Starting epoch 127 
-#> Test loss: -3.008646 
+#> Test loss: -2.987597 
 #> = Starting epoch 128 
-#> Test loss: -3.045155 
+#> Test loss: -3.052055 
 #> = Starting epoch 129 
-#> Test loss: -3.032161 
+#> Test loss: -3.063831 
 #> = Starting epoch 130 
-#> Test loss: -3.056933 
+#> Test loss: -3.065559 
 #> = Starting epoch 131 
-#> Test loss: -3.057185 
+#> Test loss: -3.084764 
 #> = Starting epoch 132 
-#> Test loss: -3.042372 
+#> Test loss: -3.069906 
 #> = Starting epoch 133 
-#> Test loss: -3.057983 
+#> Test loss: -3.079223 
 #> = Starting epoch 134 
-#> Test loss: -3.033668 
+#> Test loss: -3.049434 
 #> = Starting epoch 135 
-#> Test loss: -3.042723 
+#> Test loss: -3.071605 
 #> = Starting epoch 136 
-#> Test loss: -3.044032 
+#> Test loss: -3.073457 
 #> = Starting epoch 137 
-#> Test loss: -3.046454 
+#> Test loss: -3.046532 
 #> = Starting epoch 138 
-#> Test loss: -3.068455 
+#> Test loss: -3.033834 
 #> = Starting epoch 139 
-#> Test loss: -3.037072 
+#> Test loss: -3.030584 
 #> = Starting epoch 140 
-#> Test loss: -3.094856 
+#> Test loss: -3.032061 
 #> = Starting epoch 141 
-#> Test loss: -3.03997 
+#> Test loss: -3.078155 
 #> = Starting epoch 142 
-#> Test loss: -3.092174 
+#> Test loss: -3.090306 
 #> = Starting epoch 143 
-#> Test loss: -3.079784 
+#> Test loss: -3.084477 
 #> = Starting epoch 144 
-#> Test loss: -3.099052 
+#> Test loss: -3.061762 
 #> = Starting epoch 145 
-#> Test loss: -3.036117 
+#> Test loss: -3.061894 
 #> = Starting epoch 146 
-#> Test loss: -3.067021 
+#> Test loss: -3.031111 
 #> = Starting epoch 147 
-#> Test loss: -3.109645 
+#> Test loss: -3.060192 
 #> = Starting epoch 148 
-#> Test loss: -3.065303 
+#> Test loss: -3.047997 
 #> = Starting epoch 149 
-#> Test loss: -3.09472 
+#> Test loss: -3.042882 
 #> = Starting epoch 150 
-#> Test loss: -3.077351 
+#> Test loss: -3.109193 
 #> = Starting epoch 151 
-#> Test loss: -3.08922 
+#> Test loss: -3.055078 
 #> = Starting epoch 152 
-#> Test loss: -3.11421 
+#> Test loss: -3.100046 
 #> = Starting epoch 153 
-#> Test loss: -3.112979 
+#> Test loss: -3.126127 
 #> = Starting epoch 154 
-#> Test loss: -3.113968 
+#> Test loss: -3.119638 
 #> = Starting epoch 155 
-#> Test loss: -3.095075 
+#> Test loss: -3.084233 
 #> = Starting epoch 156 
-#> Test loss: -3.10071 
+#> Test loss: -3.06316 
 #> = Starting epoch 157 
-#> Test loss: -3.1297 
+#> Test loss: -2.997062 
 #> = Starting epoch 158 
-#> Test loss: -3.068668 
+#> Test loss: -2.998207 
 #> = Starting epoch 159 
-#> Test loss: -3.093112 
+#> Test loss: -3.060229 
 #> = Starting epoch 160 
-#> Test loss: -3.117157 
+#> Test loss: -3.112577 
 #> = Starting epoch 161 
-#> Test loss: -3.098739 
+#> Test loss: -3.091738 
 #> = Starting epoch 162 
-#> Test loss: -3.110104 
+#> Test loss: -3.099608 
 #> = Starting epoch 163 
-#> Test loss: -3.068111 
+#> Test loss: -3.058151 
 #> = Starting epoch 164 
-#> Test loss: -3.023243 
+#> Test loss: -3.098911 
 #> = Starting epoch 165 
-#> Test loss: -2.977605 
+#> Test loss: -3.109108 
 #> = Starting epoch 166 
-#> Test loss: -2.952754 
+#> Test loss: -3.057822 
 #> = Starting epoch 167 
-#> Test loss: -2.987625 
+#> Test loss: -3.089241 
 #> = Starting epoch 168 
-#> Test loss: -3.114289 
+#> Test loss: -3.013163 
 #> = Starting epoch 169 
-#> Test loss: -3.107441 
+#> Test loss: -3.110768 
 #> = Starting epoch 170 
-#> Test loss: -3.102925 
+#> Test loss: -3.101031 
 #> = Starting epoch 171 
-#> Test loss: -3.072851 
+#> Test loss: -3.058825 
 #> = Starting epoch 172 
-#> Test loss: -3.107334 
+#> Test loss: -3.068336 
 #> = Starting epoch 173 
-#> Test loss: -3.073855 
+#> Test loss: -3.114203 
 #> = Starting epoch 174 
-#> Test loss: -3.120916 
+#> Test loss: -3.114196 
 #> = Starting epoch 175 
-#> Test loss: -3.125312 
+#> Test loss: -3.121705 
 #> = Starting epoch 176 
-#> Test loss: -3.087086 
+#> Test loss: -3.046431 
 #> = Starting epoch 177 
-#> Test loss: -3.155078 
+#> Test loss: -3.081213 
 #> = Starting epoch 178 
-#> Test loss: -3.106663 
+#> Test loss: -3.135944 
 #> = Starting epoch 179 
-#> Test loss: -3.101152 
+#> Test loss: -3.084801 
 #> = Starting epoch 180 
-#> Test loss: -3.138899 
+#> Test loss: -3.044056 
 #> = Starting epoch 181 
-#> Test loss: -3.130334 
+#> Test loss: -2.929623 
 #> = Starting epoch 182 
-#> Test loss: -3.025861 
+#> Test loss: -2.972875 
 #> = Starting epoch 183 
-#> Test loss: -2.979645 
+#> Test loss: -3.107115 
 #> = Starting epoch 184 
-#> Test loss: -3.096791 
+#> Test loss: -2.95728 
 #> = Starting epoch 185 
-#> Test loss: -3.111028 
+#> Test loss: -2.810732 
 #> = Starting epoch 186 
-#> Test loss: -3.096455 
+#> Test loss: -3.068263 
 #> = Starting epoch 187 
-#> Test loss: -3.008854 
+#> Test loss: -3.045385 
 #> = Starting epoch 188 
-#> Test loss: -3.125357 
+#> Test loss: -2.945726 
 #> = Starting epoch 189 
-#> Test loss: -3.075463 
+#> Test loss: -3.093689 
 #> = Starting epoch 190 
-#> Test loss: -3.002415 
+#> Test loss: -3.018431 
 #> = Starting epoch 191 
-#> Test loss: -3.074185 
+#> Test loss: -3.031064 
 #> = Starting epoch 192 
-#> Test loss: -3.125898 
+#> Test loss: -3.100938 
 #> = Starting epoch 193 
-#> Test loss: -3.081466 
+#> Test loss: -2.978924 
 #> = Starting epoch 194 
-#> Test loss: -3.145071 
+#> Test loss: -3.064328 
 #> = Starting epoch 195 
-#> Test loss: -3.086061 
+#> Test loss: -3.11476 
 #> = Starting epoch 196 
-#> Test loss: -3.088467 
+#> Test loss: -2.938916 
 #> = Starting epoch 197 
-#> Test loss: -3.106972 
+#> Test loss: -3.03276 
 #> = Starting epoch 198 
-#> Test loss: -3.117547 
+#> Test loss: -3.139549 
 #> = Starting epoch 199 
-#> Test loss: -3.00883 
+#> Test loss: -2.905089 
 #> = Starting epoch 200 
-#> Test loss: -3.138612 
+#> Test loss: -3.047354 
 #> = Starting epoch 201 
-#> Test loss: -3.079094 
+#> Test loss: -3.108354 
 #> = Starting epoch 202 
-#> Test loss: -3.007431 
+#> Test loss: -2.958102 
 #> = Starting epoch 203 
-#> Test loss: -3.112639 
+#> Test loss: -3.15145 
 #> = Starting epoch 204 
-#> Test loss: -3.015652 
+#> Test loss: -3.020781 
 #> = Starting epoch 205 
-#> Test loss: -2.840463 
+#> Test loss: -3.114461 
 #> = Starting epoch 206 
-#> Test loss: -3.082205 
+#> Test loss: -3.056366 
 #> = Starting epoch 207 
-#> Test loss: -3.027816 
+#> Test loss: -3.129591 
 #> = Starting epoch 208 
-#> Test loss: -2.921512 
+#> Test loss: -3.12358 
 #> = Starting epoch 209 
-#> Test loss: -3.145227 
+#> Test loss: -3.101906 
 #> = Starting epoch 210 
-#> Test loss: -2.925695 
+#> Test loss: -3.115268 
 #> = Starting epoch 211 
-#> Test loss: -3.037395 
+#> Test loss: -3.140951 
 #> = Starting epoch 212 
-#> Test loss: -3.082635 
+#> Test loss: -3.148306 
 #> = Starting epoch 213 
-#> Test loss: -3.026129 
+#> Test loss: -3.113291 
 #> = Starting epoch 214 
-#> Test loss: -3.153349 
+#> Test loss: -3.176642 
 #> = Starting epoch 215 
-#> Test loss: -3.036299 
+#> Test loss: -3.160311 
 #> = Starting epoch 216 
-#> Test loss: -3.141055 
+#> Test loss: -3.158305 
 #> = Starting epoch 217 
-#> Test loss: -3.061598 
+#> Test loss: -3.15784 
 #> = Starting epoch 218 
-#> Test loss: -3.126058 
+#> Test loss: -3.134449 
 #> = Starting epoch 219 
-#> Test loss: -3.080551 
+#> Test loss: -3.127414 
 #> = Starting epoch 220 
-#> Test loss: -3.113679 
+#> Test loss: -3.15876 
 #> = Starting epoch 221 
-#> Test loss: -3.092361 
+#> Test loss: -3.138489 
 #> = Starting epoch 222 
-#> Test loss: -3.122052 
+#> Test loss: -3.141831 
 #> = Starting epoch 223 
-#> Test loss: -3.113446 
+#> Test loss: -3.154915 
 #> = Starting epoch 224 
-#> Test loss: -3.127715 
+#> Test loss: -3.141156 
 #> = Starting epoch 225 
-#> Test loss: -3.125727 
+#> Test loss: -3.169217 
 #> = Starting epoch 226 
-#> Test loss: -3.080161 
+#> Test loss: -3.158553 
 #> = Starting epoch 227 
-#> Test loss: -3.149535 
+#> Test loss: -3.172288 
 #> = Starting epoch 228 
-#> Test loss: -3.117029 
+#> Test loss: -3.172488 
 #> = Starting epoch 229 
-#> Test loss: -3.08911 
+#> Test loss: -3.161778 
 #> = Starting epoch 230 
-#> Test loss: -3.149917 
+#> Test loss: -3.13713 
 #> = Starting epoch 231 
-#> Test loss: -3.125072 
+#> Test loss: -3.175882 
 #> = Starting epoch 232 
-#> Test loss: -3.124526 
+#> Test loss: -3.150422 
 #> = Starting epoch 233 
-#> Test loss: -3.136627 
+#> Test loss: -3.170208 
 #> = Starting epoch 234 
-#> Test loss: -3.143704 
+#> Test loss: -3.139156 
 #> = Starting epoch 235 
-#> Test loss: -3.058082 
+#> Test loss: -3.159464 
 #> = Starting epoch 236 
-#> Test loss: -3.169304 
+#> Test loss: -3.111871 
 #> = Starting epoch 237 
-#> Test loss: -3.118725 
+#> Test loss: -3.176301 
 #> = Starting epoch 238 
-#> Test loss: -3.159218 
+#> Test loss: -3.123937 
 #> = Starting epoch 239 
-#> Test loss: -3.156425 
+#> Test loss: -3.160495 
 #> = Starting epoch 240 
-#> Test loss: -3.161412 
+#> Test loss: -3.105833 
 #> = Starting epoch 241 
-#> Test loss: -3.166286 
+#> Test loss: -3.150261 
 #> = Starting epoch 242 
-#> Test loss: -3.186077 
+#> Test loss: -3.163246 
 #> = Starting epoch 243 
-#> Test loss: -3.126829 
+#> Test loss: -3.147137 
 #> = Starting epoch 244 
-#> Test loss: -3.183649 
+#> Test loss: -3.090566 
 #> = Starting epoch 245 
-#> Test loss: -3.155633 
+#> Test loss: -2.909898 
 #> = Starting epoch 246 
-#> Test loss: -3.172286 
+#> Test loss: -2.948209 
 #> = Starting epoch 247 
-#> Test loss: -3.129761 
+#> Test loss: -3.101851 
 #> = Starting epoch 248 
-#> Test loss: -3.195953 
+#> Test loss: -2.871951 
 #> = Starting epoch 249 
-#> Test loss: -3.167488 
+#> Test loss: -2.750423 
 #> = Starting epoch 250 
-#> Test loss: -3.12622 
+#> Test loss: -3.144527 
 #> = Starting epoch 251 
-#> Test loss: -3.11099 
+#> Test loss: -2.885798 
 #> = Starting epoch 252 
-#> Test loss: -3.162816 
+#> Test loss: -3.002835 
 #> = Starting epoch 253 
-#> Test loss: -3.109933 
+#> Test loss: -3.106793 
 #> = Starting epoch 254 
-#> Test loss: -3.102034 
+#> Test loss: -2.965309 
 #> = Starting epoch 255 
-#> Test loss: -3.186757 
+#> Test loss: -3.097294 
 #> = Starting epoch 256 
-#> Test loss: -3.107025
+#> Test loss: -3.061787
 ```
 
 We can generate samples from the trained model as before:
@@ -1967,261 +1967,261 @@ train_conditional_flow(
   }
 )
 #> = Starting epoch 1 
-#> Test loss: 1.04876 
+#> Test loss: 1.241299 
 #> = Starting epoch 2 
-#> Test loss: 1.023354 
+#> Test loss: 1.213195 
 #> = Starting epoch 3 
-#> Test loss: 0.9940539 
+#> Test loss: 1.181334 
 #> = Starting epoch 4 
-#> Test loss: 0.9610918 
+#> Test loss: 1.145761 
 #> = Starting epoch 5 
-#> Test loss: 0.9249921 
+#> Test loss: 1.10692 
 #> = Starting epoch 6 
-#> Test loss: 0.8867676 
+#> Test loss: 1.065282 
 #> = Starting epoch 7 
-#> Test loss: 0.8480463 
+#> Test loss: 1.022015 
 #> = Starting epoch 8 
-#> Test loss: 0.8106439 
+#> Test loss: 0.9786137 
 #> = Starting epoch 9 
-#> Test loss: 0.774828 
+#> Test loss: 0.9378191 
 #> = Starting epoch 10 
-#> Test loss: 0.7396892 
+#> Test loss: 0.9002584 
 #> = Starting epoch 11 
-#> Test loss: 0.7029217 
+#> Test loss: 0.8659097 
 #> = Starting epoch 12 
-#> Test loss: 0.6644295 
+#> Test loss: 0.831512 
 #> = Starting epoch 13 
-#> Test loss: 0.6241944 
+#> Test loss: 0.7923454 
 #> = Starting epoch 14 
-#> Test loss: 0.5800337 
+#> Test loss: 0.7496518 
 #> = Starting epoch 15 
-#> Test loss: 0.531288 
+#> Test loss: 0.7023552 
 #> = Starting epoch 16 
-#> Test loss: 0.478272 
+#> Test loss: 0.6513882 
 #> = Starting epoch 17 
-#> Test loss: 0.4216902 
+#> Test loss: 0.5973183 
 #> = Starting epoch 18 
-#> Test loss: 0.3645326 
+#> Test loss: 0.5409579 
 #> = Starting epoch 19 
-#> Test loss: 0.3097535 
+#> Test loss: 0.4831415 
 #> = Starting epoch 20 
-#> Test loss: 0.2597191 
+#> Test loss: 0.4240643 
 #> = Starting epoch 21 
-#> Test loss: 0.21539 
+#> Test loss: 0.3644621 
 #> = Starting epoch 22 
-#> Test loss: 0.1747942 
+#> Test loss: 0.3034844 
 #> = Starting epoch 23 
-#> Test loss: 0.1322253 
+#> Test loss: 0.2430431 
 #> = Starting epoch 24 
-#> Test loss: 0.08412915 
+#> Test loss: 0.1839069 
 #> = Starting epoch 25 
-#> Test loss: 0.03139067 
+#> Test loss: 0.1270038 
 #> = Starting epoch 26 
-#> Test loss: -0.01929188 
+#> Test loss: 0.06826788 
 #> = Starting epoch 27 
-#> Test loss: -0.06240398 
+#> Test loss: 0.004615724 
 #> = Starting epoch 28 
-#> Test loss: -0.09567398 
+#> Test loss: -0.05956089 
 #> = Starting epoch 29 
-#> Test loss: -0.1304615 
+#> Test loss: -0.1031048 
 #> = Starting epoch 30 
-#> Test loss: -0.1730136 
+#> Test loss: -0.125881 
 #> = Starting epoch 31 
-#> Test loss: -0.2174689 
+#> Test loss: -0.1800785 
 #> = Starting epoch 32 
-#> Test loss: -0.2691979 
+#> Test loss: -0.2489877 
 #> = Starting epoch 33 
-#> Test loss: -0.3280402 
+#> Test loss: -0.3175726 
 #> = Starting epoch 34 
-#> Test loss: -0.3804556 
+#> Test loss: -0.3519652 
 #> = Starting epoch 35 
-#> Test loss: -0.4076276 
+#> Test loss: -0.3826392 
 #> = Starting epoch 36 
-#> Test loss: -0.4579298 
+#> Test loss: -0.4236596 
 #> = Starting epoch 37 
-#> Test loss: -0.4713022 
+#> Test loss: -0.4397382 
 #> = Starting epoch 38 
-#> Test loss: -0.5280868 
+#> Test loss: -0.4628551 
 #> = Starting epoch 39 
-#> Test loss: -0.5706424 
+#> Test loss: -0.5020535 
 #> = Starting epoch 40 
-#> Test loss: -0.599811 
+#> Test loss: -0.5605165 
 #> = Starting epoch 41 
-#> Test loss: -0.6736492 
+#> Test loss: -0.5864271 
 #> = Starting epoch 42 
-#> Test loss: -0.6623207 
+#> Test loss: -0.6153975 
 #> = Starting epoch 43 
-#> Test loss: -0.7679939 
+#> Test loss: -0.6466674 
 #> = Starting epoch 44 
-#> Test loss: -0.758714 
+#> Test loss: -0.6606249 
 #> = Starting epoch 45 
-#> Test loss: -0.8195606 
+#> Test loss: -0.6904659 
 #> = Starting epoch 46 
-#> Test loss: -0.8276714 
+#> Test loss: -0.7522526 
 #> = Starting epoch 47 
-#> Test loss: -0.8730924 
+#> Test loss: -0.8088346 
 #> = Starting epoch 48 
-#> Test loss: -0.933872 
+#> Test loss: -0.8068212 
 #> = Starting epoch 49 
-#> Test loss: -0.9010844 
+#> Test loss: -0.8952706 
 #> = Starting epoch 50 
-#> Test loss: -0.9814008 
+#> Test loss: -0.9282489 
 #> = Starting epoch 51 
-#> Test loss: -0.9774665 
+#> Test loss: -0.784091 
 #> = Starting epoch 52 
-#> Test loss: -0.9983236 
+#> Test loss: -0.9843494 
 #> = Starting epoch 53 
-#> Test loss: -1.040366 
+#> Test loss: -0.9552588 
 #> = Starting epoch 54 
-#> Test loss: -1.013731 
+#> Test loss: -0.9104232 
 #> = Starting epoch 55 
-#> Test loss: -1.098831 
+#> Test loss: -1.007158 
 #> = Starting epoch 56 
-#> Test loss: -1.075713 
+#> Test loss: -1.062367 
 #> = Starting epoch 57 
-#> Test loss: -1.124401 
+#> Test loss: -1.075744 
 #> = Starting epoch 58 
-#> Test loss: -1.058516 
+#> Test loss: -1.119204 
 #> = Starting epoch 59 
-#> Test loss: -1.23675 
+#> Test loss: -1.092405 
 #> = Starting epoch 60 
-#> Test loss: -1.175929 
+#> Test loss: -1.17273 
 #> = Starting epoch 61 
-#> Test loss: -1.22153 
+#> Test loss: -1.20098 
 #> = Starting epoch 62 
-#> Test loss: -1.254558 
+#> Test loss: -1.223645 
 #> = Starting epoch 63 
-#> Test loss: -1.297772 
+#> Test loss: -1.257624 
 #> = Starting epoch 64 
-#> Test loss: -1.359224 
+#> Test loss: -1.258504 
 #> = Starting epoch 65 
-#> Test loss: -1.350065 
+#> Test loss: -1.240636 
 #> = Starting epoch 66 
-#> Test loss: -1.388704 
+#> Test loss: -1.284702 
 #> = Starting epoch 67 
-#> Test loss: -1.413713 
+#> Test loss: -1.356329 
 #> = Starting epoch 68 
-#> Test loss: -1.455549 
+#> Test loss: -1.37797 
 #> = Starting epoch 69 
-#> Test loss: -1.445389 
+#> Test loss: -1.388709 
 #> = Starting epoch 70 
-#> Test loss: -1.49058 
+#> Test loss: -1.441272 
 #> = Starting epoch 71 
-#> Test loss: -1.512571 
+#> Test loss: -1.38496 
 #> = Starting epoch 72 
-#> Test loss: -1.528346 
+#> Test loss: -1.446184 
 #> = Starting epoch 73 
-#> Test loss: -1.579729 
+#> Test loss: -1.403917 
 #> = Starting epoch 74 
-#> Test loss: -1.588424 
+#> Test loss: -1.448674 
 #> = Starting epoch 75 
-#> Test loss: -1.572472 
+#> Test loss: -1.422456 
 #> = Starting epoch 76 
-#> Test loss: -1.65285 
+#> Test loss: -1.497867 
 #> = Starting epoch 77 
-#> Test loss: -1.666589 
+#> Test loss: -1.519677 
 #> = Starting epoch 78 
-#> Test loss: -1.689815 
+#> Test loss: -1.482682 
 #> = Starting epoch 79 
-#> Test loss: -1.720475 
+#> Test loss: -1.446197 
 #> = Starting epoch 80 
-#> Test loss: -1.737261 
+#> Test loss: -1.493649 
 #> = Starting epoch 81 
-#> Test loss: -1.763912 
+#> Test loss: -1.628282 
 #> = Starting epoch 82 
-#> Test loss: -1.785713 
+#> Test loss: -1.497611 
 #> = Starting epoch 83 
-#> Test loss: -1.776102 
+#> Test loss: -1.096736 
 #> = Starting epoch 84 
-#> Test loss: -1.800743 
+#> Test loss: -1.570871 
 #> = Starting epoch 85 
-#> Test loss: -1.797954 
+#> Test loss: -1.486406 
 #> = Starting epoch 86 
-#> Test loss: -1.659925 
+#> Test loss: -1.4958 
 #> = Starting epoch 87 
-#> Test loss: -1.766549 
+#> Test loss: -1.544404 
 #> = Starting epoch 88 
-#> Test loss: -1.789733 
+#> Test loss: -1.554627 
 #> = Starting epoch 89 
-#> Test loss: -1.895724 
+#> Test loss: -1.488919 
 #> = Starting epoch 90 
-#> Test loss: -1.835806 
+#> Test loss: -1.460143 
 #> = Starting epoch 91 
-#> Test loss: -1.87747 
+#> Test loss: -1.614595 
 #> = Starting epoch 92 
-#> Test loss: -1.91821 
+#> Test loss: -1.609903 
 #> = Starting epoch 93 
-#> Test loss: -1.925137 
+#> Test loss: -1.635557 
 #> = Starting epoch 94 
-#> Test loss: -1.926198 
+#> Test loss: -1.639202 
 #> = Starting epoch 95 
-#> Test loss: -1.916033 
+#> Test loss: -1.702752 
 #> = Starting epoch 96 
-#> Test loss: -1.971862 
+#> Test loss: -1.626896 
 #> = Starting epoch 97 
-#> Test loss: -1.981288 
+#> Test loss: -1.653559 
 #> = Starting epoch 98 
-#> Test loss: -1.949286 
+#> Test loss: -1.683834 
 #> = Starting epoch 99 
-#> Test loss: -2.016642 
+#> Test loss: -1.737577 
 #> = Starting epoch 100 
-#> Test loss: -2.021958 
+#> Test loss: -1.687341 
 #> = Starting epoch 101 
-#> Test loss: -2.015808 
+#> Test loss: -1.780876 
 #> = Starting epoch 102 
-#> Test loss: -2.041027 
+#> Test loss: -1.754284 
 #> = Starting epoch 103 
-#> Test loss: -2.060213 
+#> Test loss: -1.797385 
 #> = Starting epoch 104 
-#> Test loss: -2.064524 
+#> Test loss: -1.781355 
 #> = Starting epoch 105 
-#> Test loss: -2.081934 
+#> Test loss: -1.795308 
 #> = Starting epoch 106 
-#> Test loss: -2.076672 
+#> Test loss: -1.822464 
 #> = Starting epoch 107 
-#> Test loss: -2.097594 
+#> Test loss: -1.80223 
 #> = Starting epoch 108 
-#> Test loss: -2.0943 
+#> Test loss: -1.874405 
 #> = Starting epoch 109 
-#> Test loss: -2.1173 
+#> Test loss: -1.810679 
 #> = Starting epoch 110 
-#> Test loss: -2.126104 
+#> Test loss: -1.849463 
 #> = Starting epoch 111 
-#> Test loss: -2.086421 
+#> Test loss: -1.879088 
 #> = Starting epoch 112 
-#> Test loss: -2.105959 
+#> Test loss: -1.855226 
 #> = Starting epoch 113 
-#> Test loss: -2.117651 
+#> Test loss: -1.861955 
 #> = Starting epoch 114 
-#> Test loss: -2.13902 
+#> Test loss: -1.886285 
 #> = Starting epoch 115 
-#> Test loss: -2.171432 
+#> Test loss: -1.767466 
 #> = Starting epoch 116 
-#> Test loss: -2.16675 
+#> Test loss: -1.855772 
 #> = Starting epoch 117 
-#> Test loss: -2.197868 
+#> Test loss: -1.911113 
 #> = Starting epoch 118 
-#> Test loss: -2.190988 
+#> Test loss: -1.817192 
 #> = Starting epoch 119 
-#> Test loss: -2.144438 
+#> Test loss: -1.847489 
 #> = Starting epoch 120 
-#> Test loss: -2.154878 
+#> Test loss: -1.93243 
 #> = Starting epoch 121 
-#> Test loss: -2.222761 
+#> Test loss: -1.914279 
 #> = Starting epoch 122 
-#> Test loss: -2.235627 
+#> Test loss: -1.866788 
 #> = Starting epoch 123 
-#> Test loss: -2.227682 
+#> Test loss: -1.889521 
 #> = Starting epoch 124 
-#> Test loss: -2.237281 
+#> Test loss: -1.965211 
 #> = Starting epoch 125 
-#> Test loss: -2.236151 
+#> Test loss: -1.77689 
 #> = Starting epoch 126 
-#> Test loss: -2.246128 
+#> Test loss: -1.664507 
 #> = Starting epoch 127 
-#> Test loss: -2.264808 
+#> Test loss: -1.977085 
 #> = Starting epoch 128 
-#> Test loss: -2.285321
+#> Test loss: -1.80753
 ```
 
 We can now generate samples from the trained model:
@@ -2230,7 +2230,7 @@ We can now generate samples from the trained model:
 
 test_samples <- as_array(generate_from_conditional_flow(summarizing_flow_model, 1024, test_set$conditioning[1 : 4, , , drop = FALSE]))
 str(test_samples)
-#>  num [1:1024, 1:4, 1:2] -1.2783 0.5758 -0.0812 0.2823 -0.2485 ...
+#>  num [1:1024, 1:4, 1:2] -0.7415 -0.8741 -0.83986 0.00521 -0.55005 ...
 
 test_target <- as_array(test_set$target)
 
