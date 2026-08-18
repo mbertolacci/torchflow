@@ -16,6 +16,12 @@ The base class, \code{nn_conditional_flow}, is an abstract class that provides a
 forward and reverse method, as well as a dimension method. Subclasses created
 with \code{\link[torch:nn_module]{torch::nn_module()}} should implement these methods. The class is a subclass
 of \code{\link[torch:nn_module]{torch::nn_module()}}, and it inherits all of its methods and semantics.
+
+The base class also provides a \code{loss()} method compatible with \code{\link[luz:setup]{luz::setup()}}.
+For luz datasets, the first batch element (\code{input}) is treated as the
+conditioning input and the second (\code{target}) as the sample to transform. The
+method evaluates the flow as \code{ctx$model(target, input)} and computes the
+forward KL loss with \code{\link[=forward_kl_loss]{forward_kl_loss()}}.
 }
 \section{Forward method}{
 
